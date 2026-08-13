@@ -1,7 +1,7 @@
 # MiniMax-H3 on p5e.48xlarge (8xH200) — measured, 2026-08-12/13
 
 Box: `ec2-35-163-211-46.us-west-2`, `lmsysorg/sglang:dev` @ `c7c03ec53b`, weights at
-`/opt/dlami/nvme/h3-fl2va` (both the FL2VA and Ref2VA partitions, 196 GiB) mounted as
+`/opt/dlami/nvme/h3` (both the FL2VA and Ref2VA partitions, 196 GiB) mounted as
 `/models/MiniMax-H3` (the registry matches on the `--model-path` *basename*, so a local dir must be
 named `MiniMax-H3`). All three patches in `patches/` applied inside the container in order
 (cpu-offload → short-edge → target-width-height); 480p opt-in via
@@ -451,7 +451,28 @@ Fleet size for 1 QPS (scaled in replicas, since H3 does not batch) is in `DEPLOY
 section 3: **10 boxes** for t2va at 2x4 GPUs, **30 boxes** for ref2va at 2x4 GPUs.
 
 Always pass `--warmup-resolutions` for every resolution served; the cookbook measures ~10 s of
-first-request cost otherwise, and the builder takes raw `WxH` so `864x480` works even unpatched.
+first-request cost otherwise, and the builder takes raw `WxH` so `864x480` is accepted even
+unpatched. `serve.sh` now defaults to both shapes (`WARMUP="1344x768 864x480"`) — see the open
+question below on whether the list is honoured.
+
+### Open observation: the warmup list may be ignored (image `c7c03ec53b`)
+
+One 8-GPU run recorded `"warmup_resolutions": ["864x480"]` in `server_args`, yet the scheduler's only
+warmup request was `server warmup req (1344x768x124f, 2/50 steps)`, 7.65 s — the shape asked for was
+not the shape warmed, and 50 steps is the release default.
+
+Suspected cause, from reading only: the list does reach request construction
+(`server_warmup.py:137` passes it, `build_warmup_reqs()` calls `parse_size`), but `width` is not a
+declared `Req` field and `Req.__getattr__`/`__setattr__`
+(`runtime/pipelines_core/schedule_batch.py:251`/`269`) delegate to `sampling_params`, whose release
+defaults are 1344x768 / 50 steps. **Not confirmed by experiment.**
+
+Consequences, already in the guides: don't treat warmup success as evidence the short-edge patch is
+live (use `git diff --stat`), and don't assume a listed shape is warm — check with
+`grep -o 'warmup req ([^)]*)'` and budget ~10 s extra for any served shape that is missing.
+
+`warmtest.sh` would settle it (launch on 4 free GPUs at each `WARMUP` value, print the warmup
+requests actually run, time cold vs warm at both shapes). Not yet run.
 
 The platform-specific commands, trap list and Fabric Manager recovery recipe are collected in
 `DEPLOYMENT_GUIDE.md` / `DEPLOYMENT_GUIDE_zh.md` — that is the customer-facing document.

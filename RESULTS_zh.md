@@ -1,7 +1,7 @@
 # MiniMax-H3 在 p5e.48xlarge（8×H200）上的实测 —— 2026-08-12/13
 
 机器：`ec2-35-163-211-46.us-west-2`，镜像 `lmsysorg/sglang:dev` @ `c7c03ec53b`，权重在
-`/opt/dlami/nvme/h3-fl2va`（FL2VA + Ref2VA 两个分区，共 196 GiB），挂成 `/models/MiniMax-H3`
+`/opt/dlami/nvme/h3`（FL2VA + Ref2VA 两个分区，共 196 GiB），挂成 `/models/MiniMax-H3`
 （registry 匹配 `--model-path` 的 **basename**，所以本地目录必须叫 `MiniMax-H3`）。容器内按序打了
 `patches/` 下的三个 patch（cpu-offload → short-edge → target-width-height），480p 通过
 `SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480` 开启。
@@ -433,7 +433,26 @@ block**：12.09 s vs 12.05 s，输出 mp4 与不开时**逐字节相同**。不�
 t2va 2×4 卡 **10 台**、ref2va 2×4 卡 **30 台**。
 
 无论哪种，**都要给 `--warmup-resolutions` 列全所有会服务的分辨率**（cookbook 自己也测到
-不预热的首个请求要多付约 10 s；builder 吃原始 `WxH`，所以 `864x480` 即使不打 patch 也能预热）。
+不预热的首个请求要多付约 10 s；builder 吃原始 `WxH`，所以 `864x480` 即使不打 patch 也能被接受）。
+`serve.sh` 现在默认两个形状都预热（`WARMUP="1344x768 864x480"`）——但这个列表到底有没有被采纳，
+见下面这条待定观察。
+
+### 待定观察：预热列表可能被忽略（镜像 `c7c03ec53b`）
+
+某次 8 卡运行的 `server_args` 记着 `"warmup_resolutions": ["864x480"]`，但调度器唯一那条预热请求是
+`server warmup req (1344x768x124f, 2/50 steps)`，7.65 s —— 要求预热的形状不是实际预热的形状，
+而 50 步是发布默认值。
+
+只靠读码得到的推测：列表确实到了构造请求这一步（`server_warmup.py:137` 传了，
+`build_warmup_reqs()` 做了 `parse_size`），但 `width` 不是 `Req` 的声明字段，
+`Req.__getattr__`/`__setattr__`（`runtime/pipelines_core/schedule_batch.py:251`/`269`）会转发到
+`sampling_params`，那里的发布默认值正是 1344x768 / 50 步。**未经实验确认。**
+
+两条已经写进指南的后果：别把预热成功当作短边 patch 生效的证据（要看 `git diff --stat`）；
+别假定列了的形状真的热了——用 `grep -o 'warmup req ([^)]*)'` 核，缺的那些按第一个请求多付约 10 s 算。
+
+`warmtest.sh` 能给出结论（用 4 张空卡分别按两个 `WARMUP` 值起服务，打印实际跑了哪些预热请求，
+两个形状各测冷/热）。**还没跑。**
 
 两个平台各自的推荐命令、踩坑清单和 Fabric Manager 恢复步骤都收在
 `DEPLOYMENT_GUIDE_zh.md` —— **那份才是给客户看的文档。**

@@ -20,29 +20,40 @@ seed 1101**；**三种任务与容量规划（第三章）用 864x480 / 243 帧�
 
 ### 0.1 下载权重
 
-`serve.sh` **不会**自动下模型。整个 HF 仓库是 **464 GiB**，但没必要全下——里面还有一套
-sglang 从来不读的 diffusers 扁平布局。按任务下：
+`serve.sh` **不会**自动下模型。一条命令把两个权重分区都下下来：
 
 ```bash
+source /opt/pytorch/bin/activate
 pip install -U "huggingface_hub[cli]"
-export HF_HOME=/opt/dlami/nvme/hf                     # 别放 / 盘，会满
-D=/opt/dlami/nvme/h3                                  # 宿主机上叫什么都行，见 0.2 第三条注
-
-# (1) t2va + fl2va 需要的分区：134 GiB
-hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
-
-# (2) 还要 ref2va 的话：先拉它的 config/index（约 29 MB），再让脚本补权重
-hf download MiniMaxAI/MiniMax-H3 --include "Ref2VA/*" \
-  --exclude "Ref2VA/transformer/*.safetensors" --local-dir $D
-bash fill_ref2va.sh $D        # 自动下 Ref2VA/transformer（62 GiB）+ 硬链其余 16 个文件
+hf download MiniMaxAI/MiniMax-H3 \
+  --include "FL2VA/*" --include "Ref2VA/*" \
+  --local-dir /opt/dlami/nvme/h3     # 162 个文件，269 GiB
 ```
 
-`fill_ref2va.sh` 是省 74 GiB 的关键：**Ref2VA 除 transformer 外的 16 个 LFS 文件与 FL2VA
-逐个 oid 相同**（用 HF tree API 对过 oid，不是"看文件大小一样就当一样"），所以硬链接即可。
-不补齐会在加载时死在
+**`--include` 每个 pattern 要写一次** —— 一个 `--include` 只吃一个值，写成 `--include "A" "B"` 会把
+`B` 当文件名，报 `Error: File not found in repository ... /Ref2VA/%2A`。改过这条命令就先加
+`--dry-run` 核一遍：正确的那条列出 162 个文件，每个分区 81 个。
+
+这就是服务端会读的全部内容：**`FL2VA/` 服务 t2va 和 fl2va，`Ref2VA/` 服务 ref2va**。
+别整仓拉（**464 GiB**）——剩下的是一套 sglang 从来不读的 diffusers 扁平布局。
+只服务 t2va/fl2va 的话去掉第二个 `--include`，是 **134 GiB**。
+
+可选，省 **73 GiB**：**Ref2VA 除 transformer 外的 16 个 LFS 文件与 FL2VA 逐个 oid 相同**
+（用 HF tree API 对过 oid，不是"看文件大小一样就当一样"），所以那 16 个可以硬链而不必下两遍：
+
+```bash
+D=/opt/dlami/nvme/h3
+hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
+hf download MiniMaxAI/MiniMax-H3 --include "Ref2VA/*" \
+  --exclude "Ref2VA/transformer/*.safetensors" --local-dir $D   # 只要 config/index，约 29 MB
+bash fill_ref2va.sh $D        # 自动下 Ref2VA/transformer（62 GiB）+ 硬链其余 16 个
+```
+
+**196 GiB** 而不是 269 GiB。漏掉第三条命令就会在加载时死在
 `ValueError: no safetensors files found in .../Ref2VA/transformer`。
 
-最终磁盘占用 **196 GiB**（对比全量 464 GiB）。
+两条路都一样：真正要紧的是**目录名**而不是下载方式 —— `serve.sh` 默认用
+`/opt/dlami/nvme/h3`，并把它挂成 `/models/MiniMax-H3`（见 0.2 第三条注）。
 
 ### 0.2 三种部署模式
 
@@ -186,9 +197,24 @@ SHORT_EDGES= ./serve.sh         # 保持发布的 768-only 策略，patch 保持
 ```
 
 **`./serve.sh` 不带任何参数就是推荐配置**：8 卡、TP=1、Ulysses=8、`encoder-parallel auto`、
-480p 打开并预热、不预热其他分辨率 —— 也就是实测 10.05 s / 6.2 视频/分 / 每卡 95.9 GiB 那个形态。
-它建的是常驻的 `sleep infinity` 容器、patch 打在容器里，所以之后换参数重启既不会重新 pull 镜像
-也不会重复打 patch；`stop` 只杀 server 进程、保留容器，打好的源码不会丢。
+480p 打开、`WARMUP="1344x768 864x480"` —— 也就是实测 10.05 s / 6.2 视频/分 / 每卡 95.9 GiB
+那个形态。它建的是常驻的 `sleep infinity` 容器、patch 打在容器里，所以之后换参数重启既不会重新
+pull 镜像也不会重复打 patch；`stop` 只杀 server 进程、保留容器，打好的源码不会丢。
+
+**预热默认值覆盖客户可能用的两种分辨率** —— `1344x768` 和 `864x480`：没预热的分辨率第一个请求要
+多付约 10 秒，而多出来的那次预热只花约 7.65 秒、整个服务生命周期只付一次。要收窄用
+`WARMUP="864x480" ./serve.sh`；**96 GB 卡（g7e）上必须收窄**——2.2 节那个 79.4 GiB 只在 480p 下量过，
+而 `1344x768` 面积是它的 2.49 倍。`OFFLOAD=1` 还留着 768 时 `serve.sh` 会警告。
+
+**要去日志确认这个列表被采纳了，别默认它生效。** 镜像 `c7c03ec53b` 上，记着
+`warmup_resolutions=["864x480"]` 的服务实际预热的是 `1344x768x124f`（原因推测与状态见
+`RESULTS_zh.md`）。自查：
+
+```bash
+docker exec h3 bash -lc "tr '\r' '\n' < /out/serve_fl2va.log | grep -o 'warmup req ([^)]*)'"
+```
+
+要服务的形状没出现在输出里，就按"它的第一个请求慢约 10 秒"来算。
 
 `patches/` 下的**三个 patch 全部会被应用，而且顺序是固定的**：
 
@@ -234,7 +260,7 @@ docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
       --model-path /models/MiniMax-H3 --model-variant fl2va \
       --num-gpus 8 --ulysses-degree 8 \
       --performance-mode speed \
-      --warmup-resolutions 864x480 \
+      --warmup-resolutions 1344x768 864x480 \
       --host 0.0.0.0 --port 30010 > /out/serve.log 2>&1'
 ```
 
@@ -243,8 +269,9 @@ docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
 注意 `git apply` **不是幂等的**，跑第二次会失败。所以这种一次性写法只适合用完就删的容器；要反复
 重启就用 `serve.sh`（它用 `--check` + stamp 文件区分"还没打"和"已经打过"，见 1.1）。
 
-验证 patch 真的生效了——**不要用"预热成功"当证据**，因为 `--warmup-resolutions` 吃原始 `WxH`、
-绕过短边校验器，不打 patch 也能预热：
+验证 patch 真的生效了——**不要用"预热成功"当证据**。预热是拿原始 `WxH` 走 `parse_size` 造请求，
+根本不经过 H3 的短边校验器；而且（见 1.1）它连"列了就一定预热"都不保证，所以它两个方向都说明
+不了问题。真正的证据是源码树：
 
 ```bash
 docker exec h3 git -C /sgl-workspace/sglang diff --stat
@@ -385,6 +412,8 @@ CUDA_VISIBLE_DEVICES=$n SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480 sglang serve \
 ```
 
 这里故意没有 `--encoder-parallel`：1 卡副本没有可折叠的 rank，传了也没有任何效果（见 1.5）。
+预热列表这里**故意只留 480p**，和 H200 的默认值不同：下面那个 79.4 GiB 是在 480p 下量的，
+而 `1344x768` 面积是它的 2.49 倍。
 
 **每卡 79.4 GiB，66.22 s / 请求，8 卡合计约 7.25 视频/分钟。**
 
@@ -473,8 +502,10 @@ QPS = 副本数 / 单请求延迟
 
 ## 四、两个平台共同的坑
 
-1. **`--warmup-resolutions` 必须传，且要覆盖所有会用到的分辨率**。不传的话首个请求要多付约
-   10 秒。它吃原始 `WxH`，所以 `864x480` 即使不打补丁也认。
+1. **`--warmup-resolutions` 必须传，且要覆盖所有会用到的分辨率**（没预热的分辨率首个请求要多付约
+   10 秒），**传完还要去日志里确认它被采纳了**：对服务日志 `grep -o 'warmup req ([^)]*)'`。在镜像
+   `c7c03ec53b` 上，配了 `["864x480"]` 的服务实际预热的是 `1344x768x124f`（见 1.1）。这个 flag 走
+   `parse_size` 吃原始 `WxH`，所以 `864x480` 不打补丁也认——但"参数被接受"不等于"真的预热了"。
 2. **`--base-gpu-id` 对多副本无效**。它出现在 `server_args` 里，但副本 1 的 rank 仍然落在
    GPU 0-3 上和副本 0 撞车，然后双双 OOM。用 `CUDA_VISIBLE_DEVICES` 隔离。
 3. **副本端口至少间隔 2**。服务除了 `0.0.0.0:<port>` 还会绑 `127.0.0.1:<port+1>`，间隔 1 会在

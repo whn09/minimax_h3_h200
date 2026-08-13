@@ -24,29 +24,41 @@ on `p5e.48xlarge`.
 
 ### 0.1 Download the weights
 
-`serve.sh` does **not** download the model. The full HF repo is **464 GiB**, but you never need all
-of it — it also carries a flat diffusers layout that sglang never reads. Download per task:
+`serve.sh` does **not** download the model. One command gets both weight partitions:
 
 ```bash
+source /opt/pytorch/bin/activate
 pip install -U "huggingface_hub[cli]"
-export HF_HOME=/opt/dlami/nvme/hf                     # not on /, it will fill up
-D=/opt/dlami/nvme/h3                                  # any host name works, see note 3 in 0.2
-
-# (1) the partition t2va + fl2va need: 134 GiB
-hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
-
-# (2) if you also want ref2va: fetch its config/index first (~29 MB), then let the script fill in
-hf download MiniMaxAI/MiniMax-H3 --include "Ref2VA/*" \
-  --exclude "Ref2VA/transformer/*.safetensors" --local-dir $D
-bash fill_ref2va.sh $D        # downloads Ref2VA/transformer (62 GiB) + hardlinks the other 16 files
+hf download MiniMaxAI/MiniMax-H3 \
+  --include "FL2VA/*" --include "Ref2VA/*" \
+  --local-dir /opt/dlami/nvme/h3     # 162 files, 269 GiB
 ```
 
-`fill_ref2va.sh` is what saves 74 GiB: **every one of Ref2VA's 16 non-transformer LFS files has the
-same oid as FL2VA's** (compared oid-by-oid through the HF tree API, not "the sizes look equal"), so
-hardlinking is exact. Skipping this step fails at load time with
+**Repeat `--include` per pattern** — each one takes a single value, so `--include "A" "B"` treats `B`
+as a filename and fails with `Error: File not found in repository ... /Ref2VA/%2A`. Add `--dry-run`
+to check a variant before transferring; the correct command lists 162 files, 81 per partition.
+
+That is everything the server ever opens: **`FL2VA/` serves t2va and fl2va, `Ref2VA/` serves
+ref2va**. Do not clone the whole repo (**464 GiB**) — the remainder is a flat diffusers layout that
+sglang never reads. Serving only t2va/fl2va, drop the second `--include` and it is **134 GiB**.
+
+Optional, saves **73 GiB**: **every one of Ref2VA's 16 non-transformer LFS files has the same oid as
+FL2VA's** (compared oid-by-oid through the HF tree API, not "the sizes look equal"), so they can be
+hardlinked instead of downloaded twice:
+
+```bash
+D=/opt/dlami/nvme/h3
+hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
+hf download MiniMaxAI/MiniMax-H3 --include "Ref2VA/*" \
+  --exclude "Ref2VA/transformer/*.safetensors" --local-dir $D   # config/index only, ~29 MB
+bash fill_ref2va.sh $D        # downloads Ref2VA/transformer (62 GiB) + hardlinks the other 16
+```
+
+**196 GiB** instead of 269 GiB. Forgetting the third command is what fails at load time with
 `ValueError: no safetensors files found in .../Ref2VA/transformer`.
 
-Final on-disk footprint: **196 GiB** (vs 464 GiB for the whole repo).
+Either way the directory name matters, not the download route: `serve.sh` defaults to
+`/opt/dlami/nvme/h3` and mounts it as `/models/MiniMax-H3` (see note 3 in 0.2).
 
 ### 0.2 The three deployment modes
 
@@ -203,11 +215,27 @@ SHORT_EDGES= ./serve.sh         # released 768-only policy, patch stays inert
 ```
 
 **Bare `./serve.sh`, with no arguments and no env vars, is the recommended configuration**:
-8 GPUs, TP=1, Ulysses=8, `encoder-parallel auto`, 480p enabled and warmed, nothing else warmed —
+8 GPUs, TP=1, Ulysses=8, `encoder-parallel auto`, 480p enabled, and `WARMUP="1344x768 864x480"` —
 the measured 10.05 s / 6.2 vid/min / 95.9 GiB-per-GPU shape. It creates a long-lived
 `sleep infinity` container and patches the source *inside* it, so restarting the server with
 different flags neither re-pulls the image nor re-applies the patch. `stop` kills only the server
 process and keeps the container, so the patched source survives.
+
+**The warmup default covers both shapes the customer may ask for** — `1344x768` and `864x480` — since
+a cold shape's first request pays ~10 s extra and the extra warmup costs ~7.65 s once per server
+lifetime. Narrow it with `WARMUP="864x480" ./serve.sh`, and **do narrow it on a 96 GB card (g7e)**:
+the 79.4 GiB fit in 2.2 was measured at 480p only and `1344x768` is 2.49x the area. `serve.sh` warns
+if you leave both on with `OFFLOAD=1`.
+
+**Confirm the list was honoured — do not assume it.** On image `c7c03ec53b` a server recording
+`warmup_resolutions=["864x480"]` warmed `1344x768x124f` instead (likely cause and status in
+`RESULTS.md`). Check with:
+
+```bash
+docker exec h3 bash -lc "tr '\r' '\n' < /out/serve_fl2va.log | grep -o 'warmup req ([^)]*)'"
+```
+
+Any served shape missing from that output should be budgeted at ~10 s extra on its first request.
 
 **All three patches in `patches/` are applied, and the order is fixed:**
 
@@ -257,7 +285,7 @@ docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
       --model-path /models/MiniMax-H3 --model-variant fl2va \
       --num-gpus 8 --ulysses-degree 8 \
       --performance-mode speed \
-      --warmup-resolutions 864x480 \
+      --warmup-resolutions 1344x768 864x480 \
       --host 0.0.0.0 --port 30010 > /out/serve.log 2>&1'
 ```
 
@@ -267,8 +295,10 @@ docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
 suitable for a container you throw away; for anything you restart repeatedly, use `serve.sh`,
 which distinguishes "not yet applied" from "already applied" with `--check` plus stamp files (1.1).
 
-Verify the patch is actually live — do **not** use "warmup succeeded" as evidence, because
-`--warmup-resolutions` takes raw `WxH` and bypasses the short-edge validator even unpatched:
+Verify the patch is actually live — do **not** use "warmup succeeded" as evidence. Warmup builds its
+requests from raw `WxH` through `parse_size` rather than through the canonical short-edge validator,
+and (see 1.1) it does not reliably warm the shapes you list at all, so it tells you nothing either
+way. The source tree is the evidence:
 
 ```bash
 docker exec h3 git -C /sgl-workspace/sglang diff --stat
@@ -420,7 +450,8 @@ CUDA_VISIBLE_DEVICES=$n SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480 sglang serve \
 ```
 
 Note `--encoder-parallel` is absent on purpose: a 1-GPU replica has nothing to fold over, so the
-flag would have no effect (section 1.5).
+flag would have no effect (section 1.5). The warmup list is deliberately **480p only** here, unlike
+the H200 default: the 79.4 GiB fit below was measured at 480p and `1344x768` is 2.49x the area.
 
 **79.4 GiB per GPU, 66.22 s per request, ~7.25 videos/min across 8 GPUs.**
 
@@ -514,8 +545,11 @@ cheaper than sizing the whole fleet for the most expensive task: at, say, 10% re
 
 ## 4. Traps common to both platforms
 
-1. **Always pass `--warmup-resolutions`, covering every resolution served.** Otherwise the first
-   request pays ~10 s extra. It takes raw `WxH`, so `864x480` works even unpatched.
+1. **Always pass `--warmup-resolutions`, covering every resolution served** — otherwise the first
+   request at a cold shape pays ~10 s extra — **and then check the log that it was honoured**:
+   `grep -o 'warmup req ([^)]*)'` on the server log. On image `c7c03ec53b` a server configured with
+   `["864x480"]` warmed `1344x768x124f` instead (1.1). The flag takes raw `WxH` via `parse_size`,
+   which is why `864x480` is accepted even unpatched, but acceptance is not proof of warming.
 2. **`--base-gpu-id` does not work for multiple replicas.** It appears in `server_args`, but
    replica 1's ranks still land on GPUs 0-3, collide with replica 0, and both OOM. Isolate with
    `CUDA_VISIBLE_DEVICES`.

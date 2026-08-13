@@ -7,7 +7,7 @@
 # re-apply the patch.
 #
 # THE DEFAULTS ARE THE RECOMMENDED H200 CONFIG: 8 GPUs, TP=1, Ulysses=8, encoder-parallel auto,
-# 480p enabled and warmed, nothing else warmed. That is the measured 10.05 s / 6.2 vid/min /
+# 480p enabled, warmup covering 1344x768 + 864x480. That is the measured 10.05 s / 6.2 vid/min /
 # 95.9 GiB-per-GPU shape. Bare `./serve.sh` needs no arguments and no env vars.
 #
 # THREE DEPLOYMENT MODES:
@@ -99,13 +99,22 @@ case $VARIANT in
   ref2va) PORT=${PORT:-30030}; MASTER=${MASTER:-30120}; SCHED=${SCHED:-5720} ;;
   *) echo "VARIANT must be fl2va (serves t2va+fl2va) or ref2va, got '$VARIANT'" >&2; exit 2 ;;
 esac
-LOG=/out/serve_$VARIANT.log
+# Overridable so a hand-started extra replica does not truncate a running replica's log.
+LOG=${LOG:-/out/serve_$VARIANT.log}
 # Every resolution served must be warmed, or the first request at a cold shape pays about 10 s.
-# parse_size takes raw WxH and bypasses the canonical short-edge validator, so 864x480 warms up
-# even on an unpatched server. Default warms ONLY 864x480 -- the recommended shape -- because
-# warming a resolution you never serve just adds startup time. Serving 768p too:
-#   WARMUP="1344x768 864x480" ./serve.sh
-WARMUP=${WARMUP:-"864x480"}
+# Default warms BOTH shapes the customer may ask for: 1344x768 (the released resolution) and
+# 864x480. parse_size takes raw WxH, so 864x480 is accepted here even on an unpatched server.
+# Costs one extra warmup request at startup (the 768p one was 7.65 s in the log), paid once per
+# server lifetime. Narrow it when you know what you serve:
+#   WARMUP="864x480" ./serve.sh
+# On a 96 GB card (g7e) do narrow it: the 79.4 GiB single-GPU fit was only ever verified at 480p,
+# and 1344x768 is 2.49x the area, so warming it may not fit. The script warns if you leave both on
+# with OFFLOAD=1.
+# CAVEAT, unresolved: on this image the scheduler logged its one warmup request as
+# `server warmup req (1344x768x124f, ...)` even though server_args recorded
+# warmup_resolutions=["864x480"], i.e. the shape asked for was not the shape warmed. Check yours:
+#   docker exec h3 bash -lc "tr '\r' '\n' < /out/serve_fl2va.log | grep -o 'warmup req ([^)]*)'"
+WARMUP=${WARMUP:-"1344x768 864x480"}
 # Comma-separated extra short edges. Empty leaves the released 768-only policy untouched.
 SHORT_EDGES=${SHORT_EDGES-480}
 
@@ -240,6 +249,9 @@ docker exec "$NAME" bash -lc '
 echo "== starting server: variant=$VARIANT port=$PORT gpus=$GPUS${DEVICES:+ devices=$DEVICES}" \
      "tp=$TP ulysses=$ULYSSES encoder-parallel=$ENCODER_PARALLEL" \
      "offload=${OFFLOAD:-0} short_edges='${SHORT_EDGES:-<none>}' warmup='$WARMUP'"
+# The 96 GB single-GPU fit (79.4 GiB) was measured at 480p only, and 1344x768 is 2.49x the area.
+case "$WARMUP" in *1344x768*) [ -n "${OFFLOAD:-}" ] && echo "== warning: OFFLOAD=1 with a" \
+  "1344x768 warmup -- the 96 GB fit was only verified at 480p; use WARMUP=\"864x480\" there" ;; esac
 docker exec -d "$NAME" bash -lc "
   cd /sgl-workspace/sglang
   ${DEVICES:+CUDA_VISIBLE_DEVICES=$DEVICES} \

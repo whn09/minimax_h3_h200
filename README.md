@@ -41,7 +41,7 @@ start the server → send a request → collect the video.
    gated on 1344x768 *and* 50 steps).
 
 4. **Scripts**: `serve.sh` (start/stop/status, three deployment modes), `fill_ref2va.sh` (fills in
-   the Ref2VA weights for 74 GiB less disk), `h3gen.py` (submitter covering all three tasks),
+   the Ref2VA weights for 73 GiB less disk), `h3gen.py` (submitter covering all three tasks),
    `h3get.py` (a sidecar that turns one GET URL into an mp4), `h3req.py` (the original polling
    submitter).
 
@@ -102,8 +102,13 @@ SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480 sglang serve \
 Three things to get right:
 
 - **`--warmup-resolutions` must list every resolution served**; without it the first request at a
-  cold shape pays about 10 s. It takes raw `WxH` and bypasses the canonical short-edge validator, so
-  `864x480` warms up even on an unpatched server. It is `nargs="+"`, so one server can warm both.
+  cold shape pays about 10 s. It is `nargs="+"`, so one server can warm both — which is what
+  `serve.sh` does by default (`WARMUP="1344x768 864x480"`, ~7.65 s extra at startup; narrow it to
+  `864x480` on a 96 GB card). It takes raw `WxH` via `parse_size` and bypasses the canonical
+  short-edge validator, so `864x480` is *accepted* even on an unpatched server — but acceptance is
+  not warming: on image `c7c03ec53b` a server configured with `["864x480"]` logged its only warmup
+  request as `1344x768x124f`. Always confirm with
+  `grep -o 'warmup req ([^)]*)'` on the server log (guide §1.1).
 - **Omitting `--output-path` is a trap**: the server writes to a relative `outputs/` inside the
   container, which is usually not mounted, and the videos die with the container. `serve.sh` passes
   it, so videos land on the host at `/opt/dlami/nvme/out/videos/<id>.mp4`.
@@ -182,7 +187,7 @@ python3 h3req.py 480 40 5 u8_480p_40
 | `RESULTS.md` / `RESULTS_zh.md` | measured results (EN/ZH) |
 | `patches/` | the three delivered patches + `make_patch.sh` for re-diffing |
 | `serve.sh` | start/stop/status, three deployment modes (validated on hardware) |
-| `fill_ref2va.sh` | fills in Ref2VA: downloads only the transformer, hardlinks the other 16 files from FL2VA, saving 74 GiB |
+| `fill_ref2va.sh` | fills in Ref2VA: downloads only the transformer, hardlinks the other 16 files from FL2VA, saving 73 GiB |
 | `h3gen.py` | general submitter: three tasks / both geometry groups / any steps and duration |
 | `h3get.py` | sidecar turning one GET URL into an mp4 (demo use) |
 | `h3req.py` | the original t2va polling submitter |

@@ -33,7 +33,7 @@
    三种任务的步数扫描、长宽参数的 11 个边界用例、两个负面结论（Cache-DiT 在 H3 上是 no-op；
    `quality: "high"` 同时钉死 1344×768 **和** 50 步）。
 
-4. **脚本**：`serve.sh`（起/停/状态，三种部署模式）、`fill_ref2va.sh`（省 74 GiB 补齐 Ref2VA
+4. **脚本**：`serve.sh`（起/停/状态，三种部署模式）、`fill_ref2va.sh`（省 73 GiB 补齐 Ref2VA
    权重）、`h3gen.py`（三种任务的通用提交脚本）、`h3get.py`（一条 GET URL 直接出 mp4 的
    sidecar）、`h3req.py`（最早的轮询式提交脚本）。
 
@@ -91,8 +91,12 @@ SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480 sglang serve \
 三个必须注意的点：
 
 - **`--warmup-resolutions` 要列出所有会被请求的分辨率。** 否则某个分辨率的第一个请求要额外付
-  约 10 秒。它吃的是原始 `WxH`、走 `parse_size`，绕过了 H3 的短边校验器，所以 `864x480`
-  即使在**没打 patch** 的服务上也能预热。它是 `nargs="+"`，一个服务可以同时预热两种分辨率。
+  约 10 秒。它是 `nargs="+"`，一个服务可以同时预热两种分辨率——`serve.sh` 默认就是两种
+  （`WARMUP="1344x768 864x480"`，启动多付约 7.65 秒；96 GB 卡上收窄成 `864x480`）。它吃的是原始
+  `WxH`、走 `parse_size`，绕过了 H3 的短边校验器，所以 `864x480` 即使在**没打 patch** 的服务上也
+  **能被接受**——但"被接受"不等于"真预热了"：镜像 `c7c03ec53b` 上配了 `["864x480"]` 的服务，
+  唯一那次预热请求打的是 `1344x768x124f`。务必用服务日志上的
+  `grep -o 'warmup req ([^)]*)'` 复核（详见指南 1.1）。
 - **`--output-path` 不传是个坑。** 服务端默认写容器内的相对路径 `outputs/`，那个目录一般没被
   挂载，视频会跟容器一起消失。`serve.sh` 已经传了，落在宿主机
   `/opt/dlami/nvme/out/videos/<id>.mp4`。
@@ -167,7 +171,7 @@ python3 h3req.py 480 40 5 u8_480p_40
 | `RESULTS_zh.md` / `RESULTS.md` | 实测结果（中/英） |
 | `patches/` | 三个交付 patch + `make_patch.sh`（重新 diff 用） |
 | `serve.sh` | 起/停/状态，三种部署模式（已在真机验证） |
-| `fill_ref2va.sh` | 补齐 Ref2VA 权重：只下 transformer，其余 16 个文件硬链 FL2VA，省 74 GiB |
+| `fill_ref2va.sh` | 补齐 Ref2VA 权重：只下 transformer，其余 16 个文件硬链 FL2VA，省 73 GiB |
 | `h3gen.py` | 通用提交脚本：三种任务 / 两组几何参数 / 任意步数片长 |
 | `h3get.py` | 一条 GET URL 直接返回 mp4 的 sidecar（演示用） |
 | `h3req.py` | 早期的 t2va 轮询式提交脚本 |
