@@ -1,11 +1,175 @@
 # MiniMax-H3 deployment guide: H200 and g7e (RTX PRO 6000)
 
-Customer-facing deployment recommendations. Every number was measured on `p5e.48xlarge` (8xH200)
-at a fixed **864x480 / 124 frames / 40 steps / t2va / seed 1101**, timed client-side (POST to
-`status: completed`). Full experimental record in `RESULTS.md`, patches in `patches/`.
+Customer-facing deployment recommendations. Every number was measured on `p5e.48xlarge` (8xH200),
+timed client-side (POST to `status: completed`). Full experimental record in `RESULTS.md`, patches
+in `patches/`.
+
+Two baseline conditions, do not mix them: the **topology and memory tables use 864x480 / 124 frames
+(5 s clip) / 40 steps / t2va / seed 1101**; **section 3 (the three tasks and capacity planning) uses
+864x480 / 243 frames (10 s clip) / 16 steps**, because the customer confirmed "10 seconds" means
+**clip duration**, not time-to-first-video.
+
+**All three tasks (t2va / fl2va / ref2va) are validated on real hardware**, and one box can serve
+all three at once — see 0.2.
 
 Headline: **H200 has two cheap parallel levers (Ulysses and TP); g7e has neither.** The optimal
 shape differs completely between the two platforms — do not port the H200 command to g7e.
+
+---
+
+## 0. Quick start (the current recommended flow)
+
+Four steps: download weights → start the server → send a request → collect the video. All measured
+on `p5e.48xlarge`.
+
+### 0.1 Download the weights
+
+`serve.sh` does **not** download the model. The full HF repo is **464 GiB**, but you never need all
+of it — it also carries a flat diffusers layout that sglang never reads. Download per task:
+
+```bash
+pip install -U "huggingface_hub[cli]"
+export HF_HOME=/opt/dlami/nvme/hf                     # not on /, it will fill up
+D=/opt/dlami/nvme/h3-fl2va                            # any host name works, see note 3 in 0.2
+
+# (1) the partition t2va + fl2va need: 134 GiB
+hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
+
+# (2) if you also want ref2va: fetch its config/index first (~29 MB), then let the script fill in
+hf download MiniMaxAI/MiniMax-H3 --include "Ref2VA/*" \
+  --exclude "Ref2VA/transformer/*.safetensors" --local-dir $D
+bash fill_ref2va.sh $D        # downloads Ref2VA/transformer (62 GiB) + hardlinks the other 16 files
+```
+
+`fill_ref2va.sh` is what saves 74 GiB: **every one of Ref2VA's 16 non-transformer LFS files has the
+same oid as FL2VA's** (compared oid-by-oid through the HF tree API, not "the sizes look equal"), so
+hardlinking is exact. Skipping this step fails at load time with
+`ValueError: no safetensors files found in .../Ref2VA/transformer`.
+
+Final on-disk footprint: **196 GiB** (vs 464 GiB for the whole repo).
+
+### 0.2 The three deployment modes
+
+`serve.sh` is these three and nothing else worth remembering:
+
+```bash
+# mode 1: fl2va (serves t2va + fl2va), port 30010
+./serve.sh                                   # all 8 GPUs -- the recommended H200 config
+GPUS=4 ./serve.sh                            # 4 GPUs, sglang picks which
+CUDA_VISIBLE_DEVICES=0,1,2,3 ./serve.sh      # exactly those 4 (GPU count is inferred)
+
+# mode 2: ref2va (serves ref2va only), port 30030
+VARIANT=ref2va ./serve.sh
+VARIANT=ref2va CUDA_VISIBLE_DEVICES=4,5,6,7 ./serve.sh
+
+# mode 3: both at once (all three tasks), isolated from each other by CUDA_VISIBLE_DEVICES
+./serve.sh both                              # 4 + 4
+GPUS_A=2 GPUS_B=6 ./serve.sh both            # uneven: ref2va costs 3.3x per step, give it more
+
+# prefix any of these with DRYRUN=1 to print the resolved placement without touching a GPU
+DRYRUN=1 ./serve.sh both
+./serve.sh status | logs | stop               # acts on all replicas unless VARIANT is set
+```
+
+**Why two processes are unavoidable: `--model-variant` selects which DiT is loaded, and the
+task → partition map is a hard gate, not a preference.**
+
+| `--model-variant` | tasks served | default port |
+|---|---|---|
+| `fl2va` (default) | `t2va`, `fl2va` | 30010 |
+| `ref2va` | `ref2va` | 30030 |
+
+Asking an fl2va server for ref2va is refused explicitly:
+
+```
+task 'ref2va' is not served by MiniMax H3 partition 'fl2va'; supported tasks: ['t2va', 'fl2va']
+```
+
+So **the client must route by task**: t2va/fl2va → 30010, ref2va → 30030.
+
+Mode 3 is measured: each replica is ready in 90 s (started sequentially, ~180 s total), 103 GiB per
+GPU for fl2va and 104 GiB for ref2va, all 8 GPUs at 100% when one request runs against each, and
+**ref2va takes the same time as when it owns the box (32.25 s vs 32.17 s) — co-residency is free**,
+because the two device sets are disjoint.
+
+Three things to watch:
+
+- **`--base-gpu-id` does not work** (it is silently ignored); isolation has to go through
+  `CUDA_VISIBLE_DEVICES`.
+- **The two replicas need separate `--master-port` / `--scheduler-port`.** `serve.sh` presets them
+  per variant (30100/5700 and 30120/5720), so there is nothing to fill in.
+- **A local weights directory must be *named* `MiniMax-H3`**: `registry.py:1199` resolves the
+  pipeline class from the basename of `--model-path`. `serve.sh` mounts `$WEIGHTS` as
+  `/models/MiniMax-H3` inside the container, so the host name is free — this only matters if you
+  write the docker command yourself. (The default `h3-fl2va` name is historical; that directory
+  holds both the FL2VA and Ref2VA partitions.)
+
+### 0.3 Sending requests: everything is a parameter
+
+`h3gen.py` covers all three tasks, any geometry, any step count, any clip length:
+
+```bash
+# t2va: 10 s clip, 16 steps, 864x480
+python3 h3gen.py --width 864 --height 480 --steps 16 --duration 10
+
+# the other geometry group (mutually exclusive with width/height)
+python3 h3gen.py --short-edge 480 --aspect 21:9 --steps 20 --duration 10
+
+# fl2va: first frame (last frame optional)
+python3 h3gen.py --task fl2va --image /out/first.png --steps 16 --duration 10
+
+# ref2va: reference video (its audio track comes along) -- note the port
+python3 h3gen.py --task ref2va --ref-video /out/ref.mp4 --steps 8 --port 30030
+```
+
+**The two geometry groups are mutually exclusive**, matching the customer's "pick one of the two
+groups" requirement, and that is how the server validates them too (see 1.6). `--duration` is bound
+by the model's own **4–15 s** range; a 10 s clip is really **243 frames @ 24 fps = 10.125 s**.
+
+### 0.4 Where the videos land
+
+`serve.sh` passes `--output-path /out/videos`, and `/out` is the mounted `$OUTDIR`, so they appear
+**on the host at `/opt/dlami/nvme/out/videos/<video_id>.mp4`**.
+
+**Omitting that flag is a trap**: the server then writes to a relative `outputs/` inside the
+container, which nothing mounts, and the videos die with the container. To disable saving entirely
+and fetch only over HTTP, use `OUTPATH= ./serve.sh`.
+
+The status JSON also carries `file_paths`, so a caller on the same host **does not need a second
+HTTP transfer**:
+
+```json
+{"status": "completed", "file_paths": ["/out/videos/<id>.mp4"], "inference_time_s": 4.26}
+```
+
+### 0.5 The API is an asynchronous three-step (and how to make it one GET URL)
+
+This is the only way sglang's video API works — the POST handler in `video_api.py` ends with
+`# Enqueue the job asynchronously and return immediately`:
+
+```
+POST /v1/videos              -> {"id": ..., "status": "queued"}   returns before any compute
+GET  /v1/videos/{id}         -> "status": "completed"             poll
+GET  /v1/videos/{id}/content -> mp4 bytes
+```
+
+**There is no GET generate route and no parameter that makes POST block for the result** (checked
+across all of `runtime/entrypoints/`). If you want one URL that returns a video — for demos and
+debugging — use `h3get.py` in this directory. It is a sidecar, it does not modify sglang, and it
+walks those three steps for you and returns the mp4 bytes:
+
+```bash
+python3 h3get.py --ref2va-port 30030 &        # listens on 8080
+curl "http://127.0.0.1:8080/gen?prompt=three+cats+playing+brass+instruments\
+&width=864&height=480&steps=16&duration=10" -o v.mp4     # measured 10.07 s
+```
+
+Paste it in a browser and it plays. It routes on `task=` to the right replica and its parameter
+names match `h3gen.py`
+(`prompt/task/width/height/short_edge/aspect/steps/duration/seed/image/ref_video/...`); add
+`&json=1` for the job metadata instead. **It holds the connection for 10–60 s, so do not use it in
+production** — production should POST and poll. Do not expose it publicly either: the paths in the
+URL are read by the server.
 
 ---
 
@@ -22,13 +186,16 @@ Good news: **no image rebuild is needed.** In `lmsysorg/sglang:dev`, sglang is a
 install (`Editable project location: /sgl-workspace/sglang/python`), so `git apply` against
 `/sgl-workspace/sglang` takes effect the next time the server process starts.
 
-The easiest route is the wrapper in this directory, which mounts the patch, applies it
-idempotently, starts the server detached and waits for `/health`:
+The easiest route is the wrapper in this directory, which mounts the patches, applies them
+idempotently, starts the server detached and waits for `/health` (the three deployment modes are in
+0.2):
 
 ```bash
 cd h3_h200_baseline
 ./serve.sh                      # <- the recommended H200 config; see below
 GPUS=4 ./serve.sh               # the cookbook's 4xH200 recipe
+VARIANT=ref2va ./serve.sh       # ref2va only, on port 30030
+./serve.sh both                 # all three tasks: two replicas, 4 + 4
 TP=2 ULYSSES=4 ./serve.sh       # shard the DiT: 63.9 GiB/GPU instead of 95.9
 SHORT_EDGES= ./serve.sh         # released 768-only policy, patch stays inert
 ./serve.sh status | logs | stop
@@ -41,9 +208,30 @@ the measured 10.05 s / 6.2 vid/min / 95.9 GiB-per-GPU shape. It creates a long-l
 different flags neither re-pulls the image nor re-applies the patch. `stop` kills only the server
 process and keeps the container, so the patched source survives.
 
-**Both** patches in `patches/` are applied: the short-edge one enables 480p, and the cpu-offload
-one is required whenever `OFFLOAD=1` (section 2.3). Applying both unconditionally is safe — the
-offload patch is a no-op when no offload flag is passed.
+**All three patches in `patches/` are applied, and the order is fixed:**
+
+| order | patch | what it does | cost of skipping it |
+|---|---|---|---|
+| 1 | `minimax-h3-cpu-offload-inplace.patch` | one line, allows CPU offload | `OFFLOAD=1` dies during warmup (2.3) |
+| 2 | `minimax-h3-short-edge.patch` | enables non-768 short edges (480p) | `SGLANG_..._EXTRA_SHORT_EDGES` does nothing |
+| 3 | `minimax-h3-target-width-height.patch` | accepts `target.width/height` (1.6) | only the 6 released aspect strings work |
+
+**#3 is diffed against a tree that already has #2 applied**, because both edit
+`request_validation.py::_validate_target`. The order is therefore not alphabetical luck, and
+`serve.sh` lists them explicitly; to regenerate, use `patches/make_patch.sh` (it reverse-applies #3,
+commits temporarily, then re-applies, so the diff stays clean).
+
+Applying all three unconditionally is safe: #1 is a no-op without an offload flag, #2 is inert
+without the env var, and #3 is inert unless you send width/height.
+
+**Idempotency uses stamp files, not `git apply -R --check`.** The latter is broken as an
+"already applied?" test here: patch #3 rewrites #2's hunk context, so on a tree with all three
+applied, the reverse check fails for #2 and the script would wrongly report `DOES_NOT_APPLY`. What
+it does instead is try `git apply --check` first (apply and drop a stamp if it succeeds), and if
+that fails, look for a stamp in `/sgl-workspace/.h3-patches/`: present means `ALREADY`, absent means
+genuinely inapplicable and it exits. Stamps live and die with the patched source (both are in the
+container filesystem), so "stamp present but source unpatched" cannot happen. Verified: three
+`APPLIED` lines on a fresh container, three `ALREADY` lines on the next run.
 
 Then submit the recommended request, also with no arguments:
 
@@ -76,7 +264,7 @@ docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
 
 `git apply` is **not idempotent** — running it twice fails. This one-shot form is therefore only
 suitable for a container you throw away; for anything you restart repeatedly, use `serve.sh`,
-which distinguishes "not yet applied" from "already applied" with `--check` and `-R --check`.
+which distinguishes "not yet applied" from "already applied" with `--check` plus stamp files (1.1).
 
 Verify the patch is actually live — do **not** use "warmup succeeded" as evidence, because
 `--warmup-resolutions` takes raw `WxH` and bypasses the short-edge validator even unpatched:
@@ -87,9 +275,9 @@ docker exec h3 git -C /sgl-workspace/sglang log --oneline -1   # expect c7c03ec5
 ```
 
 **The patch is diffed against image commit `c7c03ec53b`.** If you pull a newer `:dev` it may not
-apply; `serve.sh` fails loudly with `PATCH_DOES_NOT_APPLY -- image moved off c7c03ec53b` rather
-than serving half-patched, and the `&&` in the command above short-circuits the same way. Re-diff
-before trusting it on a newer image.
+apply; `serve.sh` fails loudly with `DOES_NOT_APPLY ... image moved off c7c03ec53b` rather than
+serving half-patched, and the `&&` in the command above short-circuits the same way. Re-diff before
+trusting it on a newer image.
 
 ### 1.3 Pick a shape by objective
 
@@ -146,6 +334,45 @@ Two traps:
 - **A 1-GPU replica never folds**: `server_args.py:669` requires `replica_size > tp_size`, so the
   8 x 1 shape carries the full 47.97 GB — the main source of its 132.2 GiB.
 
+### 1.6 Width and height as parameters: `target.width/height` (new patch)
+
+**The released wire contract has no `width`/`height`** — only `{short_edge, aspect_ratio,
+duration_seconds}` — and there are two independent filters:
+`configs/sample/minimax_h3.py::_validate` **projects** `target` onto those three keys (extra
+width/height are dropped silently, with no error), and `request_validation.py::_validate_target`
+accepts only those three. Worse, **`aspect_ratio` is a string membership test** against exactly
+`21:9 / 16:9 / 4:3 / 1:1 / 3:4 / 9:16`, so `"640:480"` is rejected **even though it is 4:3**. (One
+exception: `fl2va` is not bound by that whitelist and takes any `"W:H"`.)
+
+`patches/minimax-h3-target-width-height.patch` adds the second parameter group, and **matches the
+customer's requirement that the two groups are mutually exclusive**. The design principle is refuse
+rather than silently alter:
+
+- both groups given → refused: `target accepts either width+height or short_edge+aspect_ratio, not both`
+- only one of the pair → refused (the missing one reports `must be an integer`)
+- not a multiple of 32 → refused, **not rounded**: `must be a positive multiple of 32, got 481`
+- above the `768*1344 = 1032192` px area cap → refused, **not downscaled** (the ratio path does downscale)
+- `min(w,h)` must be in the allowed short-edge list (`SGLANG_..._EXTRA_SHORT_EDGES` + 768)
+- ratio outside 1:4–4:1 → rejected cleanly by the resolver, not a worker crash
+
+The 11 boundary cases that were measured are in `RESULTS.md`. Positive example:
+`target: {"width": 800, "height": 480}` (5:3, **not** one of the six released ratios) produces an mp4
+that ffprobes as `800,480,124` + aac. Regression evidence: `640:480` is still rejected with the
+original message, so the ratio path was not disturbed.
+
+`h3gen.py` picks the most portable wire form automatically and prints which one it used (`wire=`), so
+"I asked for 864x480 and the server quietly gave me something else" cannot happen:
+
+| `wire` | wire form | requires |
+|---|---|---|
+| `ratio` | `short_edge` + one of the 6 released ratios | nothing; works on a stock image |
+| `literal` | `short_edge` + an arbitrary `"W:H"` | `fl2va` only, also unpatched |
+| `exact` | `target.width` + `target.height` | the patch in this section |
+
+The selection compares **canvases, not ratios**, and the difference matters: `864x480` is ratio
+**1.8, not 16:9's 1.7778** (it is `round32(480 × 16/9)`), so reducing the fraction never yields
+`"16:9"`. The right question is "does 16:9 at short edge 480 land exactly on 864x480?".
+
 ---
 
 ## 2. g7e (RTX PRO 6000, 96 GB, no NVLink)
@@ -168,8 +395,9 @@ constraint.
 
 ### 2.2 Recommended: one replica per GPU + CPU offload
 
-This shape needs **both** patches — the short-edge one for 480p and the cpu-offload one without
-which every `*-cpu-offload` flag dies during warmup (section 2.3). `serve.sh` applies both, so the
+This shape needs **two of the three** patches — the short-edge one for 480p and the cpu-offload one
+without which every `*-cpu-offload` flag dies during warmup (section 2.3). The width/height one is
+optional here (inert unless you send `target.width`). `serve.sh` applies all three, so the
 single-GPU shape is:
 
 ```bash
@@ -177,7 +405,7 @@ OFFLOAD=1 GPUS=1 ULYSSES=1 ./serve.sh
 ```
 
 For all 8 GPUs as 8 independent replicas, `launch_replicas.sh 1` does the fan-out; the underlying
-per-replica command, inside a container where both patches are already applied, is:
+per-replica command, inside a container where the patches are already applied, is:
 
 ```bash
 # one per GPU, n = 0..7; space ports by at least 2
@@ -232,7 +460,58 @@ GPUs.** If the customer's 10 s target is firm, g7e cannot meet it except at very
 
 ---
 
-## 3. Traps common to both platforms
+## 3. Cost differences between the three tasks, and sizing for 1 QPS
+
+### 3.1 ref2va costs 3.2x more per step (10 s clip, 864x480, 4 GPUs)
+
+Per-step cost from multi-point sweeps (server-side `inference_time_s`; client wall adds 1.0–1.6 s):
+
+| task | per step | fit and measured points |
+|---|---|---|
+| t2va | **1.02 s/step** | `2.05 + 1.02×steps` (four points at 12/20/25/50 steps, wall) |
+| fl2va | **1.10 s/step** | `0.87 + 1.102×steps` (8/16/32 steps → 9.79 / 18.35 / 36.19 s) |
+| ref2va | **3.48 s/step** | `3.52 + 3.482×steps` (8/16/32 steps → 31.15 / 59.56 / 114.83 s) |
+
+**fl2va costs only ~8% more than t2va**, so the two can be capacity-planned together. **ref2va costs
+3.16x more per step**, with all three points on the line (the 8-step point repeats at 31.14 / 31.16 s,
+the 16-step at 59.07 / 59.10 s). **The slope difference proves this is not a one-off "encode the
+reference video" cost but a per-step one** — a one-off cost would only raise the 3.52 s intercept.
+The same multiple holds at a 5 s clip (ref2va with a 5 s reference at 16 steps = 22.02 s, ~3.2x t2va
+at the same length). Do not extrapolate ref2va capacity from t2va numbers.
+
+Also, **ref2va derives its output length from the reference material** — passing
+`duration_seconds` in the request is rejected, so a shorter clip means a shorter reference.
+
+### 3.2 How many boxes for 1 QPS
+
+H3 **never batches** (`stop_reason=dynamic_disabled`, see trap 5 in section 4), so
+
+```
+QPS = replicas / per-request latency
+```
+
+and concurrency only queues. At a 10 s clip / 16 steps / 864x480:
+
+| task | shape | per request | QPS per p5e | boxes for 1 QPS |
+|---|---|---|---|---|
+| t2va / fl2va | 2 replicas × 4 GPU | 19.11 s | 0.105 | **10** |
+| t2va / fl2va | 1 replica × 8 GPU | 10.58 s | 0.095 | 11 |
+| ref2va | 2 replicas × 4 GPU | 60.24 s | 0.033 | **30** |
+
+Two points worth making to the customer:
+
+- **4-GPU replicas have slightly higher throughput than 8-GPU ones** (0.105 vs 0.095 QPS/box),
+  because Ulysses is 76% efficient at 8 GPUs. Use 8 GPUs for latency and 4 for throughput; at a
+  1 QPS target, 4-GPU replicas need fewer boxes.
+- **Step count is the only large lever**: at the same 1 QPS, dropping t2va from 16 to 8 steps takes
+  latency from 19.11 s to ~10.6 s and halves the fleet. For quality vs steps see the SSIM table in
+  `RESULTS.md` (40 steps 0.9682 / 20 steps 0.8691).
+
+If ref2va is a small share of traffic, **mixing tasks on one box** (mode 3, unevenly split) is far
+cheaper than sizing the whole fleet for the most expensive task: at, say, 10% ref2va traffic,
+`GPUS_A=4 GPUS_B=4` serves both streams from one box with no separate ref2va fleet.
+
+## 4. Traps common to both platforms
 
 1. **Always pass `--warmup-resolutions`, covering every resolution served.** Otherwise the first
    request pays ~10 s extra. It takes raw `WxH`, so `864x480` works even unpatched.
@@ -253,7 +532,7 @@ GPUs.** If the customer's 10 s target is firm, g7e cannot meet it except at very
 7. **On NVSwitch boxes, check Fabric Manager after any host reboot** (next section) or CUDA will
    not initialize at all.
 
-## 4. Fabric Manager recovery (p5e and other NVSwitch boxes)
+## 5. Fabric Manager recovery (p5e and other NVSwitch boxes)
 
 After a host reboot, if the server dies with `Error 802: system not yet initialized` /
 `cudaGetDeviceCount()` failing, check `systemctl status nvidia-fabricmanager`. The usual cause is
@@ -287,7 +566,7 @@ python3 -c "import torch; print(torch.cuda.device_count(), torch.cuda.can_device
 decision tests. If P2P is down, `auto` silently falls back to `replicate` and wastes 39.7 GiB per
 GPU. In that situation pass `--encoder-parallel fold` explicitly to force it.
 
-## 5. Dead ends — do not spend time here
+## 6. Dead ends — do not spend time here
 
 All confirmed by measurement or by reading the code:
 
@@ -303,7 +582,7 @@ All confirmed by measurement or by reading the code:
 - **`--vae-config.parallel-decode-mode spatial` / `spatial_shard`.** H3 rejects both.
 - **`--use-fsdp-inference`.** Shards only the DiT, which the TP lever above already does.
 
-## 6. Verification commands
+## 7. Verification commands
 
 ```bash
 # after startup, confirm component sizes and the folding decision

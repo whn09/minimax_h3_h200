@@ -1,19 +1,23 @@
-# MiniMax-H3 on p5e.48xlarge (8xH200) — measured, 2026-08-12
+# MiniMax-H3 on p5e.48xlarge (8xH200) — measured, 2026-08-12/13
 
 Box: `ec2-35-163-211-46.us-west-2`, `lmsysorg/sglang:dev` @ `c7c03ec53b`, weights at
-`/opt/dlami/nvme/h3-fl2va` mounted as `/models/MiniMax-H3` (the registry matches on the
-`--model-path` *basename*, so a local dir must be named `MiniMax-H3`).
-`patches/minimax-h3-short-edge.patch` applied inside the container; 480p opt-in via
+`/opt/dlami/nvme/h3-fl2va` (both the FL2VA and Ref2VA partitions, 196 GiB) mounted as
+`/models/MiniMax-H3` (the registry matches on the `--model-path` *basename*, so a local dir must be
+named `MiniMax-H3`). All three patches in `patches/` applied inside the container in order
+(cpu-offload → short-edge → target-width-height); 480p opt-in via
 `SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480`.
 
-Layout: `patches/` the deliverable, `h3req.py` the submitter, `runs/` raw artifacts
+Layout: `patches/` the deliverables, `h3gen.py` / `h3req.py` the submitters, `runs/` raw artifacts
 (mp4 + request/status json + `frame_*.png`), `videos_named/` the same videos under readable
 names, `logs/` server logs. The 4xH100 work it is compared against lives in
 `../h3_h100_baseline/`, and the cookbook snapshot those reference numbers come from is
 `../h3_h100_baseline/sglang/cookbook_snapshot.html`.
 
-All numbers are client-side wall clock from POST to `status: completed`, t2va, 16:9, seed 1101,
-`flow_shift` 12.0 / `audio_flow_shift` 3.0, warmup already covering the served resolution.
+Unless noted, numbers are client-side wall clock from POST to `status: completed`, t2va, 16:9, seed
+1101, `flow_shift` 12.0 / `audio_flow_shift` 3.0, warmup already covering the served resolution. The
+three-task section reports server-side `inference_time_s` instead, because it compares three tasks
+and needs client queueing and 0.5 s poll granularity out of the way; for one request the two differ
+by **1.0–1.6 s** (e.g. mode-3 t2va at 16 steps: infer 17.54 s, wall 19.11 s).
 Repeats of an identical config are **byte-identical** (md5 match), so single runs are sufficient.
 
 ## Patch validation
@@ -21,6 +25,75 @@ Repeats of an identical config are **byte-identical** (md5 match), so single run
 `short_edge: 480` + `aspect_ratio: "16:9"` → ffprobe reports **864x480, 124 frames**. 768p is
 unchanged at 1344x768x124. The 768p 50-step baseline measured **74.28 s** against the cookbook's
 published 74.38 s for the same 4xH200 Ulysses4 recipe, so this box reproduces the reference table.
+
+## All three tasks work, and per-step cost differs 3.2x
+
+Measured on a 4-GPU replica (`--ulysses-degree 4`), 864x480, 10 s clip (243 frames), reporting
+server-side `inference_time_s`. Every output was ffprobed: `864,480,243` + `10.125000` + `aac`.
+
+| steps | t2va | fl2va | ref2va |
+|---|---|---|---|
+| 8 | — | **9.79** | **31.15** (repeats 31.14 / 31.16) |
+| 16 | **17.54** | 18.35 | 59.56 (repeats 59.07 / 59.10) |
+| 32 | — | 36.19 | 114.83 |
+| fit (s) | `wall = 2.05 + 1.02×steps` (four points, see the 4-GPU 10 s section) | `0.87 + 1.102×steps` | `3.52 + 3.482×steps` |
+
+Three conclusions:
+
+- **fl2va costs only ~8% more than t2va** (1.102 vs 1.02 s per step). Supplying a first frame (and
+  optionally a last frame) is nearly free, so the two can be capacity-planned together.
+- **ref2va costs 3.16x more per step** (3.482 vs 1.102 s), with all three points on the fit.
+  **The slope difference proves this is not a one-off "encode the reference video" cost** — a one-off
+  cost would only raise the 3.52 s intercept.
+- **The cost tracks output length, not the mere presence of a reference.** At the same 16 steps with a
+  **5 s** reference video (the output follows it to 124 frames, ffprobe `864,480,124` /
+  `5.175000`): **22.02 s**, versus 59.56 s for the 10 s reference. At the 5 s length t2va/16 steps is
+  ~6.9 s of inference (from `1.54 + 0.400×steps`), a ratio of 3.2x; at 10 s, 17.54 → 59.56 is 3.4x.
+  **The multiple holds at both clip lengths**, which further rules out a one-off cost.
+
+ref2va's `duration_seconds` is **derived from the reference material** and cannot be sent in the
+request (it is rejected), so "control the ref2va output length" means "supply a reference of a
+different length". `h3gen.py` already handles it that way.
+
+## Mode 3: two co-resident replicas do not slow each other down
+
+`./serve.sh both` (fl2va on GPUs 0-3 / :30010, ref2va on GPUs 4-7 / :30030):
+
+| | time to ready | per-GPU memory | one concurrent request each |
+|---|---|---|---|
+| fl2va replica (4 GPU) | 90 s | 103,041–103,161 MiB | t2va 16 steps **19.11 s** (wall) |
+| ref2va replica (4 GPU) | 90 s | 104,045 MiB | ref2va 8 steps **32.25 s** (wall) |
+
+The replicas start sequentially, ~180 s in total. While both requests run, all 8 GPUs report 100%
+`utilization.gpu`. **The key control: ref2va at 8 steps takes 32.17 s with the box to itself and
+32.25 s co-resident (+0.25%)** — free, because the device sets are disjoint. This is what makes
+mixing tasks on one box usable for capacity planning (see `DEPLOYMENT_GUIDE.md` section 3).
+
+## Width/height as parameters: the boundary matrix
+
+Eleven cases, all measured (`negtests.sh` / `negtests2.sh` in `/opt/dlami/nvme/out` on the box):
+
+| case | `target` | outcome |
+|---|---|---|
+| both groups | `width+height+short_edge+aspect_ratio` | rejected: `target accepts either width+height or short_edge+aspect_ratio, not both` |
+| width only | `{"width":800}` | rejected: `target.height must be an integer` |
+| not a multiple of 32 | `800x481` | rejected: `target.height must be a positive multiple of 32, got 481` (**not rounded**) |
+| over the area cap | `1376x768` | rejected: `target.width*height must be at most 1032192 px, got 1056768 for 1376x768` (**not downscaled**) |
+| short edge not opted in | `928x512` | rejected: `min(width, height) is the short edge and must be one of [480, 768] for minimax_h3, got 512 from 928x512` |
+| width also unaligned | `912x512` | rejected: hits the 32-alignment check first (`got 912`) — the two checks' order |
+| ratio 4.07, outside 1:4–4:1 | `1952x480` | rejected: `adapt_shape_v1 ratio must be within the inclusive range 1:4 to 4:1, got 1952:480` |
+| portrait | `480x800` | **completed** (the short edge is 480 — it is `min()`, not `height`) |
+| 21:9-ish | `1120x480` | **completed** |
+| positive control | `800x480` (5:3, **not** one of the six released ratios) | **completed**, ffprobe `800,480,124` + aac |
+| regression control | `short_edge:480 + aspect_ratio:"640:480"` | still rejected with the original message: `must be 'auto' or one of ['21:9','16:9','4:3','1:1','3:4','9:16']` |
+
+That last row is the important regression evidence: **the old ratio path is untouched**, and
+`640:480` is still refused despite being 4:3. Note also that `2464x480` trips the area cap before the
+ratio cap (both exist, area just comes first), so testing the ratio bound requires a shape whose
+area is legal (`1952x480`).
+
+`fl2va` takes the `exact` wire form too: `{"width":800,"height":480}` plus a first frame →
+`800,480,124`.
 
 ## 4 GPUs, `--num-gpus 4 --ulysses-degree 4`
 
@@ -356,18 +429,26 @@ usable lever here. `quality: "high"` is not an alternative — its gate
 (`release_metadata.py::_MINIMAX_H3_QUALITY_WORKLOAD`) pins width 1344 / height 768 / 50 steps, so
 it rejects both a non-768 resolution and any step change.
 
-## Recommendation for a 10 s target
+## Recommendation
 
-1. **8 GPUs, Ulysses=8, 864x480, 40 steps → 10.05 s.** Fidelity loss smaller than the
-   topology-change control. This is the pick.
-2. Want margin: 30 steps → 7.54 s.
+The customer has confirmed that "10 s" means clip *duration*, so item 1 is the main line; items 2–3
+are kept for the 10-s-latency reading.
+
+1. **The customer's reading (10 s clip): 8 GPUs, Ulysses=8, 864x480, 16 steps → 10.58 s wall
+   (9.18 s inference).** 243 frames @ 24 fps = 10.125 s. Step count is a parameter; 8–32 steps are
+   all measured (see the three-task section).
+2. For 10 s of *latency* with a 5 s clip: 8 GPUs / 40 steps → 10.05 s, a fidelity loss smaller than
+   the topology-change control.
 3. Must have 768p: 12 steps → 10.05 s. Holds together (H3 is guidance-distilled) but prompt
    adherence degrades — the 12-step frame shows one cat where the prompt asks for three.
-4. If "10 s" means a 10-second *clip*: 480p / 16 steps ≈ 10 s. 10 s duration at 40 steps is
-   ~23 s and cannot also be a 10 s latency.
+4. **Plan ref2va separately**: 3.16x more per step, so a 10 s clip at 16 steps is 60.24 s wall.
+   Either cut steps (8 steps → 32.2 s), give it more GPUs, or accept lower QPS.
 5. Memory-constrained variant: add `--tp-size 2 --ulysses-degree 4` for 11.08 s at 63.9 GiB/GPU,
    which still clears the 10 s bar only if the customer accepts ~11 s. On an 80 GB card use
    `--tp-size 4 --ulysses-degree 2` (47.5 GiB, 11.59 s).
+
+Fleet size for 1 QPS (scaled in replicas, since H3 does not batch) is in `DEPLOYMENT_GUIDE.md`
+section 3: **10 boxes** for t2va at 2x4 GPUs, **30 boxes** for ref2va at 2x4 GPUs.
 
 Always pass `--warmup-resolutions` for every resolution served; the cookbook measures ~10 s of
 first-request cost otherwise, and the builder takes raw `WxH` so `864x480` works even unpatched.
@@ -385,5 +466,9 @@ generated AAC soundtrack, so audio quality is judgeable from the same file. `run
 mid-clip (frame 62) stills for the side-by-side that mattered: 480p/40 steps vs 768p/12 steps at
 the same 10 s budget.
 
-Both readings of "10 s" are covered by the tables above, so no re-run is needed once the customer
-clarifies: for a 10 s *latency* read the 5 s-clip tables, for a 10 s *clip* read the 10 s rows.
+Samples for the three tasks and the new features are in `videos_named/` too: `mode3_t2va.mp4` /
+`mode3_ref2va.mp4` (the two generated simultaneously while co-resident) and `geturl.mp4` (produced
+from a single GET URL via `h3get.py`).
+
+Both readings of "10 s" are covered by the tables above: for a 10 s *clip* (the customer's reading)
+see the three-task section and the 10 s rows, for a 10 s *latency* see the 5 s-clip tables.

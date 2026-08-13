@@ -1,12 +1,15 @@
 # MiniMax-H3 在 p5e.48xlarge（8×H200）上的实测 —— 2026-08-12/13
 
 机器：`ec2-35-163-211-46.us-west-2`，镜像 `lmsysorg/sglang:dev` @ `c7c03ec53b`，权重在
-`/opt/dlami/nvme/h3-fl2va`，挂成 `/models/MiniMax-H3`（registry 匹配 `--model-path` 的
-**basename**，所以本地目录必须叫 `MiniMax-H3`）。容器内打了
-`patches/minimax-h3-short-edge.patch`，480p 通过 `SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480` 开启。
+`/opt/dlami/nvme/h3-fl2va`（FL2VA + Ref2VA 两个分区，共 196 GiB），挂成 `/models/MiniMax-H3`
+（registry 匹配 `--model-path` 的 **basename**，所以本地目录必须叫 `MiniMax-H3`）。容器内按序打了
+`patches/` 下的三个 patch（cpu-offload → short-edge → target-width-height），480p 通过
+`SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480` 开启。
 
-所有数字都是**客户端 wall clock**（POST 到 `status: completed`），t2va，16:9，seed 1101，
-`flow_shift` 12.0 / `audio_flow_shift` 3.0，服务已预热对应分辨率。
+除特别注明外，数字都是**客户端 wall clock**（POST 到 `status: completed`），t2va，16:9，seed 1101，
+`flow_shift` 12.0 / `audio_flow_shift` 3.0，服务已预热对应分辨率。第二章（三种任务）报的是
+**服务端 `inference_time_s`**，因为那批是三个任务横比、要去掉客户端排队与轮询粒度；同一请求两者
+差 **1.0~1.6 s**（例：mode3 的 t2va 16 步 infer 17.54 s / wall 19.11 s）。
 **同配置重跑逐字节相同**（md5 一致），所以单次 run 即可，不需要取平均。
 
 ## patch 验证
@@ -14,6 +17,70 @@
 `short_edge: 480` + `aspect_ratio: "16:9"` → ffprobe 读出 **864×480、124 帧**；768p 不受影响，
 仍是 1344×768×124。768p / 50 步基线实测 **74.28 s**，官方 cookbook 同配方（4×H200 Ulysses4）
 公布 74.38 s —— 机器和口径都可信。
+
+## 三种任务：全部跑通，且每步成本差 3.2 倍
+
+以下都在 4 卡副本（`--ulysses-degree 4`）、864×480、10 秒片长（243 帧）上测，报的是服务端
+`inference_time_s`。三种任务的输出都 ffprobe 过：`864,480,243` + `10.125000` + `aac`。
+
+| 步数 | t2va | fl2va | ref2va |
+|---|---|---|---|
+| 8 | — | **9.79** | **31.15**（复测 31.14 / 31.16） |
+| 16 | **17.54** | 18.35 | 59.56（复测 59.07 / 59.10） |
+| 32 | — | 36.19 | 114.83 |
+| 拟合（s） | `wall = 2.05 + 1.02×steps`（见下面 4 卡 10 秒片长那节，4 个点） | `0.87 + 1.102×steps` | `3.52 + 3.482×steps` |
+
+三条结论：
+
+- **fl2va 只比 t2va 贵约 8%**（每步 1.102 vs 1.02 s）。给首帧（可选末帧）几乎是免费的，
+  容量规划可以和 t2va 合并。
+- **ref2va 每步贵 3.16 倍**（3.482 vs 1.102 s/step），三个点都落在拟合线上。
+  **斜率差说明这不是"编码参考视频"的一次性开销**——一次性开销只会抬高 3.52 s 的截距。
+- **代价随输出长度走，不随"有参考"这件事走。** 同样 16 步，换成 **5 秒**的参考视频
+  （输出也跟着变成 124 帧，ffprobe `864,480,124` / `5.175000`）：**22.02 s**，
+  而 10 秒参考是 59.56 s。5 秒档下 t2va 16 步约 6.9 s infer（由 `1.54+0.400×steps` 反推），
+  比值 3.2×；10 秒档 17.54 → 59.56 也是 3.4×。**两个片长上倍数一致**，进一步排除一次性开销。
+
+ref2va 的 `duration_seconds` 是**从参考素材推出来的**，请求里不能传（传了会被拒），所以
+"控制 ref2va 的输出长度"等于"换一段不同长度的参考"。`h3gen.py` 已按这个语义处理。
+
+## 模式 3：两个副本同机共驻，互不拖慢
+
+`./serve.sh both`（fl2va 在 GPU 0-3 / :30010，ref2va 在 GPU 4-7 / :30030）：
+
+| | 就绪时间 | 每卡显存 | 同时各发一个请求 |
+|---|---|---|---|
+| fl2va 副本（4 卡） | 90 s | 103,041–103,161 MiB | t2va 16 步 **19.11 s**（wall） |
+| ref2va 副本（4 卡） | 90 s | 104,045 MiB | ref2va 8 步 **32.25 s**（wall） |
+
+两副本串行启动，合计约 180 s。并发时 8 张卡 `utilization.gpu` 全部 100%。
+**关键对照：ref2va 8 步独占整机时是 32.17 s，共驻时 32.25 s（+0.25%）** —— 因为两组卡不重叠，
+共驻是免费的。这条决定了"按任务混合部署"在容量规划上是可用的（见
+`DEPLOYMENT_GUIDE_zh.md` 第三章）。
+
+## 长宽作为参数：边界矩阵（`minimax-h3-target-width-height.patch`）
+
+11 个用例，全部实测（脚本 `negtests.sh` / `negtests2.sh` 在机器上的 `/opt/dlami/nvme/out`）：
+
+| 用例 | `target` | 结果 |
+|---|---|---|
+| 两组都给 | `width+height+short_edge+aspect_ratio` | 拒：`target accepts either width+height or short_edge+aspect_ratio, not both` |
+| 只给 width | `{"width":800}` | 拒：`target.height must be an integer` |
+| 不是 32 的倍数 | `800x481` | 拒：`target.height must be a positive multiple of 32, got 481`（**不四舍五入**） |
+| 超面积上限 | `1376x768` | 拒：`target.width*height must be at most 1032192 px, got 1056768 for 1376x768`（**不缩放**） |
+| 短边未 opt-in | `928x512` | 拒：`min(width, height) is the short edge and must be one of [480, 768] for minimax_h3, got 512 from 928x512` |
+| 宽也不是 32 的倍数 | `912x512` | 拒：先撞 32 对齐（`got 912`）——两道校验的先后顺序 |
+| 比例 4.07 超出 1:4~4:1 | `1952x480` | 拒：`adapt_shape_v1 ratio must be within the inclusive range 1:4 to 4:1, got 1952:480` |
+| 竖屏 | `480x800` | **通过**（短边是 480，min() 而不是 height） |
+| 21:9 近似 | `1120x480` | **通过** |
+| 正例 | `800x480`（5:3，**不在**发布的 6 个比例里） | **通过**，ffprobe `800,480,124` + aac |
+| 回归对照 | `short_edge:480 + aspect_ratio:"640:480"` | 仍按原文案拒：`must be 'auto' or one of ['21:9','16:9','4:3','1:1','3:4','9:16']` |
+
+最后一行是关键的回归证据：**ratio 那条老路一字未动**，`640:480` 仍然被拒——尽管它就是 4:3。
+另外 `2464x480` 会先撞面积上限而不是比例上限（两个上限都在，只是面积先到），所以要测比例上限
+必须挑一个面积合法的形状（`1952x480`）。
+
+`fl2va` 也走得通 `exact` 这条线：`{"width":800,"height":480}` + 首帧 → `800,480,124`。
 
 ## 4 卡（`--num-gpus 4 --ulysses-degree 4`）
 
@@ -349,15 +416,21 @@ block**：12.09 s vs 12.05 s，输出 mp4 与不开时**逐字节相同**。不�
 50 步（shift 还用 `math.isclose` 比），所以**既拒绝非 768 分辨率，也拒绝任何步数改动**——
 和两个降延迟手段都不能叠加。
 
-## 10 秒目标的推荐
+## 推荐配置
 
-1. **8 卡、Ulysses=8、864×480、40 步 → 10.05 s。** 画质损失比"换拓扑"这个对照还小。**首选。**
-2. 要留余量：30 步 → 7.54 s。
+客户已确认"10 秒"指的是**视频时长**，所以主线是下面第 1 条；第 2~3 条保留给"10 秒延迟"这个读法。
+
+1. **客户口径（10 秒片长）：8 卡、Ulysses=8、864×480、16 步 → 10.58 s wall（infer 9.18 s）。**
+   243 帧 @ 24 fps = 10.125 s。步数是参数，8~32 步都实测过（见上面三种任务那节）。
+2. 若要 10 秒**延迟**、5 秒片长：8 卡 / 40 步 → 10.05 s，画质损失比"换拓扑"这个对照还小。
 3. 必须 768p：12 步 → 10.05 s。画面能立住（H3 是 guidance-distilled 的），但 prompt 遵循度掉。
-4. 如果"10 秒"指的是 10 秒**片长**：480p / 16 步 ≈ 10 s。10 秒片长 + 40 步约 23 s，
-   不可能同时满足 10 秒延迟。
+4. **ref2va 单独规划**：每步贵 3.16 倍，10 秒片长 16 步要 60.24 s wall。要么降步数（8 步 32.2 s），
+   要么多给卡，要么接受更低的 QPS。
 5. 显存吃紧的变体：加 `--tp-size 2 --ulysses-degree 4` → 11.08 s / 每卡 63.9 GiB（客户要能接受
    ~11 s）；80 GB 卡上用 `--tp-size 4 --ulysses-degree 2` → 47.5 GiB / 11.59 s。
+
+1 QPS 的机器数（按副本横向扩，H3 不合批）见 `DEPLOYMENT_GUIDE_zh.md` 第三章：
+t2va 2×4 卡 **10 台**、ref2va 2×4 卡 **30 台**。
 
 无论哪种，**都要给 `--warmup-resolutions` 列全所有会服务的分辨率**（cookbook 自己也测到
 不预热的首个请求要多付约 10 s；builder 吃原始 `WxH`，所以 `864x480` 即使不打 patch 也能预热）。
@@ -373,5 +446,8 @@ block**：12.09 s vs 12.05 s，输出 mp4 与不开时**逐字节相同**。不�
 所以音频质量也能从同一个文件里判断。`runs/frame_*.png` 是片中（第 62 帧）抽帧，
 用于同样 10 秒预算下 480p/40 步 vs 768p/12 步的并排对比。
 
-"10 秒"两种读法上面的表都覆盖了，客户确认后**不需要重跑**：要 10 秒**延迟**看 5 秒片长的表，
-要 10 秒**片长**看 10 秒片长那几行。
+三种任务与新功能的样片也在 `videos_named/`：`mode3_t2va.mp4` / `mode3_ref2va.mp4`（模式 3
+共驻时同时生成的两条），`geturl.mp4`（一条 GET URL 出的片，`h3get.py`）。
+
+"10 秒"两种读法上面的表都覆盖了：要 10 秒**片长**（客户的口径）看"三种任务"那节和 10 秒片长
+那几行，要 10 秒**延迟**看 5 秒片长的表。
