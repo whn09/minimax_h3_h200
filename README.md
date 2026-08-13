@@ -151,13 +151,20 @@ length.
 ```bash
 python3 h3gen.py --width 864 --height 480 --steps 16 --duration 10        # t2va, 10 s clip
 python3 h3gen.py --short-edge 480 --aspect 21:9 --steps 20                # the other group
-python3 h3gen.py --task fl2va --image /out/first.png --steps 16           # first frame (last optional)
-python3 h3gen.py --task ref2va --ref-video /out/ref.mp4 --steps 8 --port 30030
+python3 h3gen.py --task fl2va --image assets/first.png --inline --steps 16  # first frame
+python3 h3gen.py --task ref2va --ref-video assets/ref.mp4 --inline --steps 8 --port 30030
+python3 h3gen.py --host <box> --task fl2va --image assets/first.png --inline   # from a laptop
 ```
 
 It prints the wire form it actually used (`wire=ratio|literal|exact`), so "I asked for 864x480 and
 the server quietly gave me something else" cannot happen. The two geometry groups are mutually
 exclusive, as the customer required.
+
+**`--inline` is how the bytes get there.** The server resolves the condition `uri` itself, so a bare
+path is read *on the server*; `--inline` instead sends the file as a `data:` URI in the request body,
+and an `http(s)://` URI makes the server fetch it. Sample materials are in `assets/`. That HTTP fetch
+skips SGLang's SSRF policy on purpose (`material_io.py:719`), so put an allowlist in front of it if
+untrusted callers can reach the API — see §0.3 of the guide.
 
 For one URL that returns a video (demos, debugging) use `h3get.py`. sglang's API is an asynchronous
 three-step (`POST /v1/videos` → poll → `GET /{id}/content`) and **has no GET generate route at all**;
@@ -189,6 +196,7 @@ python3 h3req.py 480 40 5 u8_480p_40
 | `serve.sh` | start/stop/status, three deployment modes (validated on hardware) |
 | `fill_ref2va.sh` | fills in Ref2VA: downloads only the transformer, hardlinks the other 16 files from FL2VA, saving 73 GiB |
 | `h3gen.py` | general submitter: three tasks / both geometry groups / any steps and duration |
+| `assets/` | sample condition materials: `first.png`, `last.png`, `ref.mp4` (10.125 s), `ref5s.mp4` (5.04 s), `refaudio.wav` |
 | `h3get.py` | sidecar turning one GET URL into an mp4 (demo use) |
 | `h3req.py` | the original t2va polling submitter |
 | `launch_replicas.sh` / `launch_mixed.sh` / `serve_topo.sh` | multi-replica and topology-sweep launchers |

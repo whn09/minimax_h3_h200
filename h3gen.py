@@ -17,15 +17,22 @@ Examples
   h3gen.py --width 640 --height 480 --steps 20 --duration 10
   h3gen.py --width 1120 --height 480 --steps 20        # 21:9
 
-  # image -> video+audio (first frame)
-  h3gen.py --task fl2va --image /out/first.png --width 864 --height 480 --steps 20
+  # image -> video+audio (first frame).  --inline sends the bytes in the request body
+  h3gen.py --task fl2va --image assets/first.png --inline --width 864 --height 480 --steps 20
 
   # image + last frame
-  h3gen.py --task fl2va --image /out/first.png --last-image /out/last.png
+  h3gen.py --task fl2va --image assets/first.png --last-image assets/last.png --inline
 
   # reference video (with its soundtrack) -> video+audio.  NOTE: ref2va needs a
   # server started with --model-variant ref2va; it is a different weight partition.
-  h3gen.py --task ref2va --ref-video /out/clip.mp4 --width 864 --height 480
+  h3gen.py --task ref2va --ref-video assets/ref.mp4 --inline --port 30030
+
+  # from your laptop against a remote box: --host, and --inline is then required
+  h3gen.py --host <box> --task fl2va --image assets/first.png --inline
+
+Condition files reach the server three ways, and the server resolves the `uri` string itself:
+`--inline` (bytes in the request body), an http(s):// URL the SERVER fetches, or a plain path that
+only works when the server can see it.  Sample materials are in `assets/`.
 
 Geometry note: the two parameter groups are mutually exclusive, exactly as the customer asked.
 `--short-edge/--aspect` is the released wire contract.  `--width/--height` is not natively a wire
@@ -38,10 +45,45 @@ ladder) and prints which one it used, so a silent substitution is never possible
 
 Force one with --wire ratio|literal|exact when you want to test a specific path.
 """
-import argparse, json, math, os, sys, time, urllib.error, urllib.request
+import argparse, base64, json, math, os, sys, time, urllib.error, urllib.request
 
 CANVAS_MULTIPLE = 32
 MAX_PIXELS = 768 * 1344
+
+#: Schemes the server resolves on its own, so they go on the wire untouched. `data:` / `base64://`
+#: carry the bytes in the request body; http(s) is fetched BY THE SERVER; a bare path or `file://`
+#: is read by the server too, so it only works when client and server share a filesystem.
+#: (`minimax_h3_localize_material_uri`, .../model_specific_stages/minimax_h3/material_io.py:761.)
+PASSTHROUGH_SCHEMES = ("data:", "base64://", "http://", "https://", "file://",
+                       "tar+offset://", "tar+b64header://", "s3://")
+
+#: Only needs to be close enough for the server to pick a temp-file suffix.
+MEDIA_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+               ".webp": "image/webp", ".mp4": "video/mp4", ".mov": "video/quicktime",
+               ".wav": "audio/wav", ".mp3": "audio/mpeg", ".flac": "audio/flac"}
+
+
+def material_uri(value, inline):
+    """Turn a --image/--ref-video argument into the `uri` string the server will resolve.
+
+    Default is pass-through: a bare path is then read *on the server*. With --inline the file is
+    read here and sent as a `data:` URI, which is what a client on a different machine needs.
+    """
+    if value is None or value.startswith(PASSTHROUGH_SCHEMES):
+        return value
+    if not inline:
+        return value
+    path = os.path.expanduser(value)
+    if not os.path.isfile(path):
+        sys.exit(f"--inline: not a file on this client: {path}")
+    media = MEDIA_TYPES.get(os.path.splitext(path)[1].lower(), "application/octet-stream")
+    with open(path, "rb") as fh:
+        raw = fh.read()
+    payload = base64.b64encode(raw).decode("ascii")
+    print(f"inlined {os.path.basename(path)}: {len(raw)} B -> data:{media};base64, "
+          f"{len(payload)} chars", file=sys.stderr)
+    return f"data:{media};base64,{payload}"
+
 
 #: The only aspect_ratio strings a stock server accepts for t2va/ref2va. The check is a literal
 #: string membership test, not a ratio comparison, so "640:480" is refused even though it *is* 4:3.
@@ -93,6 +135,14 @@ def parse_args():
     c.add_argument("--last-image", help="fl2va: last-frame image")
     c.add_argument("--ref-video", help="ref2va: reference video (its soundtrack is used too)")
     c.add_argument("--ref-audio", help="ref2va: reference audio; duration then comes from it")
+    c.add_argument("--inline", action="store_true",
+                   help="send the condition files' bytes in the request body as data: URIs. "
+                        "Without this, a plain path is resolved ON THE SERVER, which only works "
+                        "if it can see that path. http(s):// URIs are fetched by the server and "
+                        "pass through either way.")
+    p.add_argument("--host", default="127.0.0.1",
+                   help="server host; use the box's address to drive it from your laptop "
+                        "(then --inline, since the server cannot see your filesystem)")
     p.add_argument("--port", type=int, default=30010)
     p.add_argument("--out", help="output prefix (default derived from the request)")
     p.add_argument("--no-download", action="store_true")
@@ -188,24 +238,43 @@ def conditions(a):
         conds = []
         # Order matters: the server only accepts frame_index signatures [0], [-1] or [0, -1].
         if a.image:
-            conds.append({"type": "image", "role": "keyframe", "uri": a.image, "frame_index": 0})
+            conds.append({"type": "image", "role": "keyframe",
+                          "uri": material_uri(a.image, a.inline), "frame_index": 0})
         if a.last_image:
-            conds.append({"type": "image", "role": "keyframe", "uri": a.last_image,
-                          "frame_index": -1})
+            conds.append({"type": "image", "role": "keyframe",
+                          "uri": material_uri(a.last_image, a.inline), "frame_index": -1})
         return conds
     # ref2va
     if a.last_image:
         sys.exit("ref2va has no keyframes; --last-image does not apply")
     conds = []
     if a.image:
-        conds.append({"type": "image", "role": "reference", "uri": a.image})
+        conds.append({"type": "image", "role": "reference",
+                      "uri": material_uri(a.image, a.inline)})
     if a.ref_video:
-        conds.append({"type": "video", "role": "reference", "uri": a.ref_video})
+        conds.append({"type": "video", "role": "reference",
+                      "uri": material_uri(a.ref_video, a.inline)})
     if a.ref_audio:
-        conds.append({"type": "audio", "role": "reference", "uri": a.ref_audio})
+        conds.append({"type": "audio", "role": "reference",
+                      "uri": material_uri(a.ref_audio, a.inline)})
     if not conds:
         sys.exit("ref2va needs at least one of --image / --ref-video / --ref-audio")
     return conds
+
+
+def redacted(payload):
+    """Copy of the payload with inlined base64 payloads shortened, for the saved request json."""
+    out = dict(payload)
+    conds = []
+    for cond in out.get("conditions") or []:
+        uri = cond.get("uri", "")
+        if isinstance(uri, str) and uri.startswith(("data:", "base64://")):
+            head = uri[:uri.find(",") + 1] if "," in uri[:4096] else uri[:64]
+            cond = {**cond, "uri": f"{head}<{len(uri) - len(head)} base64 chars elided>"}
+        conds.append(cond)
+    if conds:
+        out["conditions"] = conds
+    return out
 
 
 def call(url, data=None):
@@ -251,14 +320,15 @@ def main():
         payload["seconds"] = int(a.duration)
 
     with open(out + "_request.json", "w") as f:
-        json.dump(payload, f, indent=2)
+        # An inlined condition is megabytes of base64; keep the saved copy readable.
+        json.dump(redacted(payload), f, indent=2)
     t0 = time.time()
-    resp = call(f"http://127.0.0.1:{a.port}/v1/videos", payload)
+    resp = call(f"http://{a.host}:{a.port}/v1/videos", payload)
     vid = resp["id"]
     print(f"job {vid}  task={a.task} asked={pw}x{ph} wire={wire} target={json.dumps(target)} "
           f"steps={a.steps}", flush=True)
     while True:
-        st = call(f"http://127.0.0.1:{a.port}/v1/videos/{vid}")
+        st = call(f"http://{a.host}:{a.port}/v1/videos/{vid}")
         if st.get("status") == "completed":
             break
         if st.get("status") == "failed":
@@ -273,7 +343,7 @@ def main():
 
     size = ""
     if not a.no_download:
-        urllib.request.urlretrieve(f"http://127.0.0.1:{a.port}/v1/videos/{vid}/content",
+        urllib.request.urlretrieve(f"http://{a.host}:{a.port}/v1/videos/{vid}/content",
                                    out + ".mp4")
         size = f" mp4={os.path.getsize(out + '.mp4') / 1e6:.2f}MB"
     print(f"RESULT task={a.task} asked={pw}x{ph} wire={wire} steps={a.steps} "

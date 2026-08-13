@@ -129,15 +129,39 @@ python3 h3gen.py --width 864 --height 480 --steps 16 --duration 10
 python3 h3gen.py --short-edge 480 --aspect 21:9 --steps 20 --duration 10
 
 # fl2va: first frame (last frame optional)
-python3 h3gen.py --task fl2va --image /out/first.png --steps 16 --duration 10
+python3 h3gen.py --task fl2va --image assets/first.png --inline --steps 16 --duration 10
 
 # ref2va: reference video (its audio track comes along) -- note the port
-python3 h3gen.py --task ref2va --ref-video /out/ref.mp4 --steps 8 --port 30030
+python3 h3gen.py --task ref2va --ref-video assets/ref.mp4 --inline --steps 8 --port 30030
 ```
 
 **The two geometry groups are mutually exclusive**, matching the customer's "pick one of the two
 groups" requirement, and that is how the server validates them too (see 1.6). `--duration` is bound
 by the model's own **4–15 s** range; a 10 s clip is really **243 frames @ 24 fps = 10.125 s**.
+
+**How a condition file reaches the server.** The `uri` string in each condition is resolved *by the
+server* (`minimax_h3_localize_material_uri`, `.../minimax_h3/material_io.py:761`), which accepts
+four useful schemes:
+
+| `uri` | server behaviour | use it when |
+|---|---|---|
+| `data:image/png;base64,…`, `base64://…` | decodes the payload out of the request body | **the normal case** — `h3gen.py --inline` builds this |
+| `http://…`, `https://…` | the **server** fetches the URL | the material already lives in object storage / a CDN |
+| `/path/to/x.png`, `file:///…` | read in place, no copy | client and server share a filesystem |
+| `tar+offset://`, `tar+b64header://` | member of a local tar | batch pipelines |
+
+`s3://` raises `NotImplementedError` unless an artifact resolver is configured. Two properties are
+worth knowing before this is exposed to real callers:
+
+- **The HTTP fetch is deliberately unguarded.** The comment at `material_io.py:719` states it skips
+  the shared SSRF policy and has no cumulative deadline, so the server will fetch whatever URL a
+  caller sends, including link-local metadata addresses. **Put your own allowlist in front of it**
+  if untrusted clients can reach the API.
+- **Both base64 alphabets work** — standard `+/` and URL-safe `-_` (`_BASE64_ALPHABET`, line 33) —
+  and whitespace plus percent-escapes are tolerated, so ordinary `base64.b64encode` output is fine.
+
+Sample materials are in `assets/` (`first.png`, `last.png`, `ref.mp4` 10.125 s, `ref5s.mp4` 5.04 s,
+`refaudio.wav`). They are just fixtures cut by `mkmat.sh` out of an earlier generated clip.
 
 ### 0.4 Where the videos land
 

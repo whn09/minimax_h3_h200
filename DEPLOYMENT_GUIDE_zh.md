@@ -120,15 +120,37 @@ python3 h3gen.py --width 864 --height 480 --steps 16 --duration 10
 python3 h3gen.py --short-edge 480 --aspect 21:9 --steps 20 --duration 10
 
 # fl2va：首帧（可选末帧）
-python3 h3gen.py --task fl2va --image /out/first.png --steps 16 --duration 10
+python3 h3gen.py --task fl2va --image assets/first.png --inline --steps 16 --duration 10
 
 # ref2va：参考视频（连带它的音轨）→ 注意端口
-python3 h3gen.py --task ref2va --ref-video /out/ref.mp4 --steps 8 --port 30030
+python3 h3gen.py --task ref2va --ref-video assets/ref.mp4 --inline --steps 8 --port 30030
 ```
 
 **两组几何参数是互斥的**，与客户"这两组参数二选一"的要求一致，服务端也是这么校验的
 （见 1.6）。`--duration` 的合法范围是模型自己的 **4~15 秒**；10 秒片长实际出的是 **243 帧
 @ 24 fps = 10.125 s**。
+
+**素材是怎么传到服务端的。** 每个 condition 里的 `uri` 字符串是**服务端自己解析**的
+（`minimax_h3_localize_material_uri`，`.../minimax_h3/material_io.py:761`），支持四种有用的形式：
+
+| `uri` | 服务端行为 | 什么时候用 |
+|---|---|---|
+| `data:image/png;base64,…`、`base64://…` | 从请求体里解出 payload | **常规做法** —— `h3gen.py --inline` 生成的就是这个 |
+| `http://…`、`https://…` | **服务端自己**去拉这个 URL | 素材已经在对象存储 / CDN 上 |
+| `/path/to/x.png`、`file:///…` | 原地读，不拷贝 | 客户端和服务端共享文件系统 |
+| `tar+offset://`、`tar+b64header://` | 本地 tar 里的成员 | 批处理流水线 |
+
+`s3://` 会直接 `NotImplementedError`（除非配了 artifact resolver）。在把这个接口暴露给真实调用方
+之前，有两点必须知道：
+
+- **HTTP 那条路是故意不做防护的。** `material_io.py:719` 的注释写明它跳过了共享的 SSRF 策略、也
+  没有累计超时，所以服务端会去拉调用方给的任何 URL，包括 link-local 的元数据地址。
+  **如果不可信客户端能访问这个 API，必须自己在前面加白名单。**
+- **两套 base64 字母表都能用** —— 标准的 `+/` 和 URL-safe 的 `-_`（`_BASE64_ALPHABET`，第 33 行），
+  空白字符和百分号转义也都容忍，所以普通 `base64.b64encode` 的输出直接可用。
+
+示例素材在 `assets/`（`first.png`、`last.png`、`ref.mp4` 10.125 s、`ref5s.mp4` 5.04 s、
+`refaudio.wav`），都只是 `mkmat.sh` 从之前生成的一条片子里切出来的测试素材。
 
 ### 0.4 视频落在哪里
 

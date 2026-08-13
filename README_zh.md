@@ -138,12 +138,18 @@ CUDA_VISIBLE_DEVICES=<单张卡> SGLANG_MINIMAX_H3_EXTRA_SHORT_EDGES=480 sglang 
 ```bash
 python3 h3gen.py --width 864 --height 480 --steps 16 --duration 10        # t2va，10 秒片长
 python3 h3gen.py --short-edge 480 --aspect 21:9 --steps 20                # 另一组几何参数
-python3 h3gen.py --task fl2va --image /out/first.png --steps 16           # 首帧（可选末帧）
-python3 h3gen.py --task ref2va --ref-video /out/ref.mp4 --steps 8 --port 30030
+python3 h3gen.py --task fl2va --image assets/first.png --inline --steps 16   # 首帧（可选末帧）
+python3 h3gen.py --task ref2va --ref-video assets/ref.mp4 --inline --steps 8 --port 30030
+python3 h3gen.py --host <机器> --task fl2va --image assets/first.png --inline   # 从笔记本发
 ```
 
 它会打印实际用的线上表达形式（`wire=ratio|literal|exact`），所以不会发生"我要 864x480、
 服务器悄悄给了别的"。**两组几何参数互斥**，与客户要求一致。
+
+**素材的字节是靠 `--inline` 过去的。** condition 里的 `uri` 是服务端自己解析的，所以裸路径是
+**在服务端**读；`--inline` 会把文件作为 `data:` URI 放进请求体，而 `http(s)://` 则是让服务端自己去拉。
+示例素材在 `assets/`。注意那条 HTTP 拉取是故意跳过 SGLang 的 SSRF 防护的
+（`material_io.py:719`），不可信调用方能访问时必须自己加白名单——详见指南 0.3。
 
 想"一条 URL 直接出视频"（演示/调试）用 `h3get.py`——sglang 的接口是异步三段式
 （`POST /v1/videos` → 轮询 → `GET /{id}/content`），**没有任何 GET 生成接口**，这个 sidecar
@@ -173,6 +179,7 @@ python3 h3req.py 480 40 5 u8_480p_40
 | `serve.sh` | 起/停/状态，三种部署模式（已在真机验证） |
 | `fill_ref2va.sh` | 补齐 Ref2VA 权重：只下 transformer，其余 16 个文件硬链 FL2VA，省 73 GiB |
 | `h3gen.py` | 通用提交脚本：三种任务 / 两组几何参数 / 任意步数片长 |
+| `assets/` | 示例素材：`first.png`、`last.png`、`ref.mp4`（10.125 s）、`ref5s.mp4`（5.04 s）、`refaudio.wav` |
 | `h3get.py` | 一条 GET URL 直接返回 mp4 的 sidecar（演示用） |
 | `h3req.py` | 早期的 t2va 轮询式提交脚本 |
 | `launch_replicas.sh` / `launch_mixed.sh` / `serve_topo.sh` | 多副本与拓扑扫描脚本 |

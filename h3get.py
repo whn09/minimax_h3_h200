@@ -56,7 +56,10 @@ other parameters:
   json=1                     return job metadata instead of the video
   download=1                 force download instead of inline playback
 
-Paths are read by the SERVER, so they must be paths inside its container (e.g. /out/first.png).
+Condition values are forwarded as the `uri` the SERVER resolves, so a plain path must exist inside
+its container (e.g. /out/first.png). An `http(s)://` URL works too and is fetched by the server --
+prefer that here, since a GET query string is the wrong place for a megabyte of base64. To send
+local bytes, use `h3gen.py --inline` instead.
 """
 
 # Query parameters that are forwarded as-is to h3gen's geometry/conditions logic. Anything else in
