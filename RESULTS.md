@@ -55,6 +55,25 @@ ref2va's `duration_seconds` is **derived from the reference material** and canno
 request (it is rejected), so "control the ref2va output length" means "supply a reference of a
 different length". `h3gen.py` already handles it that way.
 
+### Condition materials: inline base64 verified, and the keyframe is provably used
+
+Every earlier fl2va/ref2va run passed a path the *server* could see, which left the remote-client
+route untested. Paired test on the 4-GPU fl2va replica, using a host path deliberately **not**
+mounted into the container:
+
+| request | result |
+|---|---|
+| plain path, server cannot see it | **HTTP 500** — `FileNotFoundError: MiniMax H3 material source does not exist or is not a file` (`material_io.py:209`, via `:798`) |
+| same path with `--inline` (344,381 B → 459,176 base64 chars in the body) | **completed in 5.15 s**, 864x480x124 h264 + aac |
+
+Note the failure is a 500, not a 4xx — an unreachable material path reads as a server error.
+
+And the inlined bytes are actually *used*, not merely accepted. Frame 0 of the output vs the
+conditioning image, SSIM **0.775**; the control — same prompt, same seed, same 8 steps, **no
+image** — is **0.306**. (0.775 rather than ~1.0 is expected: the keyframe goes through the VAE and
+this is an 8-step sample. `first.png` vs `last.png` is 0.917, so two frames of this static-camera
+scene are inherently similar and that number is not a comparable floor.)
+
 ## Mode 3: two co-resident replicas do not slow each other down
 
 `./serve.sh both` (fl2va on GPUs 0-3 / :30010, ref2va on GPUs 4-7 / :30030):
