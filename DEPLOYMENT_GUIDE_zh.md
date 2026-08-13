@@ -26,7 +26,7 @@ sglang 从来不读的 diffusers 扁平布局。按任务下：
 ```bash
 pip install -U "huggingface_hub[cli]"
 export HF_HOME=/opt/dlami/nvme/hf                     # 别放 / 盘，会满
-D=/opt/dlami/nvme/h3-fl2va                            # 宿主机上叫什么都行，见 0.2 第三条注
+D=/opt/dlami/nvme/h3                                  # 宿主机上叫什么都行，见 0.2 第三条注
 
 # (1) t2va + fl2va 需要的分区：134 GiB
 hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
@@ -93,8 +93,9 @@ task 'ref2va' is not served by MiniMax H3 partition 'fl2va'; supported tasks: ['
   （30100/5700 与 30120/5720），不用手填。
 - **本地权重目录名必须以 `MiniMax-H3` 结尾**：`registry.py:1199` 拿 `--model-path` 的 basename
   找 pipeline 类。`serve.sh` 把 `$WEIGHTS` 挂成容器里的 `/models/MiniMax-H3`，所以宿主机上叫
-  什么都行——自己写 docker 命令时才要注意。（默认目录叫 `h3-fl2va` 只是历史名字，它里面
-  FL2VA 和 Ref2VA 两个分区都有。）
+  什么都行——自己写 docker 命令时才要注意。（`serve.sh` 默认用 `/opt/dlami/nvme/h3`，按模型命名
+  而不是按分区命名，因为**这一个目录里 FL2VA 和 Ref2VA 两个分区都有**；老机器上如果还叫
+  `h3-fl2va`，脚本会自动回退到那个名字。）
 
 ### 0.3 发请求：所有参数都是参数
 
@@ -224,7 +225,7 @@ python3 h3req.py 768 12 5 my768 # 需要时再覆盖：[短边 [步数 [片长 [
 
 ```bash
 docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
-  -v /opt/dlami/nvme/h3-fl2va:/models/MiniMax-H3:ro \
+  -v /opt/dlami/nvme/h3:/models/MiniMax-H3:ro \
   -v $PWD/patches/minimax-h3-short-edge.patch:/patch.patch:ro \
   -v /opt/dlami/nvme/out:/out \
   lmsysorg/sglang:dev bash -lc '

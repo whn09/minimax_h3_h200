@@ -110,11 +110,17 @@ WARMUP=${WARMUP:-"864x480"}
 SHORT_EDGES=${SHORT_EDGES-480}
 
 # Local weights dir on the host (mounted as /models/MiniMax-H3), or an HF repo id via MODEL=.
-# For VARIANT=ref2va or `both`, this dir must also contain Ref2VA/ -- see fill_ref2va.sh, which
-# downloads only Ref2VA/transformer (62 GiB) and hardlinks the other 16 files, which are
-# bit-identical to FL2VA's. The default dir name says fl2va for historical reasons only; it holds
-# both partitions. Renaming it would break the existing container's mount, so it stays.
-WEIGHTS=${WEIGHTS:-/opt/dlami/nvme/h3-fl2va}
+# It holds BOTH partitions -- FL2VA/ (serves t2va and fl2va) and Ref2VA/ -- so it is named for the
+# model, not for one partition. For VARIANT=ref2va or `both` the Ref2VA/ side must be filled in;
+# see fill_ref2va.sh, which downloads only Ref2VA/transformer (62 GiB) and hardlinks the other 16
+# files, which are bit-identical to FL2VA's.
+# Falls back to the old h3-fl2va name so a box provisioned before the rename keeps working; the
+# container's bind mount is created from whichever path wins here.
+WEIGHTS=${WEIGHTS:-/opt/dlami/nvme/h3}
+if [ ! -d "$WEIGHTS" ] && [ -d /opt/dlami/nvme/h3-fl2va ]; then
+  WEIGHTS=/opt/dlami/nvme/h3-fl2va
+  echo "== note: using legacy weights dir $WEIGHTS (rename it to /opt/dlami/nvme/h3 when idle)"
+fi
 OUTDIR=${OUTDIR:-/opt/dlami/nvme/out}
 # Where the server persists finished videos. Without this it writes to a relative `outputs/` INSIDE
 # the container, which is not mounted, so every generated video dies with the container. Pointing

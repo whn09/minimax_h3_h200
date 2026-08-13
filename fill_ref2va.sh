@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# fill_ref2va.sh [checkpoint_root]   (default /opt/dlami/nvme/h3-fl2va)
+# fill_ref2va.sh [checkpoint_root]   (default /opt/dlami/nvme/h3, or h3-fl2va if that is what exists)
 #
 # The MiniMax-H3 repo ships two weight partitions, FL2VA/ and Ref2VA/, and `--model-variant
 # ref2va` needs the second one. A `snapshot_download` that was scoped to FL2VA leaves Ref2VA/ as
@@ -15,7 +15,8 @@
 # equal file sizes. So they are hardlinked, which costs no disk and no download -- 74 GB of each
 # saved. Hardlinks are safe here because the checkpoint is mounted read-only into the container.
 set -euo pipefail
-ROOT=${1:-/opt/dlami/nvme/h3-fl2va}
+ROOT=${1:-/opt/dlami/nvme/h3}
+[ -d "$ROOT" ] || [ -n "${1:-}" ] || ROOT=/opt/dlami/nvme/h3-fl2va
 SRC=$ROOT/FL2VA
 DST=$ROOT/Ref2VA
 

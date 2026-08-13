@@ -30,7 +30,7 @@ of it — it also carries a flat diffusers layout that sglang never reads. Downl
 ```bash
 pip install -U "huggingface_hub[cli]"
 export HF_HOME=/opt/dlami/nvme/hf                     # not on /, it will fill up
-D=/opt/dlami/nvme/h3-fl2va                            # any host name works, see note 3 in 0.2
+D=/opt/dlami/nvme/h3                                  # any host name works, see note 3 in 0.2
 
 # (1) the partition t2va + fl2va need: 134 GiB
 hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
@@ -101,8 +101,9 @@ Three things to watch:
 - **A local weights directory must be *named* `MiniMax-H3`**: `registry.py:1199` resolves the
   pipeline class from the basename of `--model-path`. `serve.sh` mounts `$WEIGHTS` as
   `/models/MiniMax-H3` inside the container, so the host name is free — this only matters if you
-  write the docker command yourself. (The default `h3-fl2va` name is historical; that directory
-  holds both the FL2VA and Ref2VA partitions.)
+  write the docker command yourself. (`serve.sh` defaults to `/opt/dlami/nvme/h3`, named for the
+  model because that one directory holds **both** the FL2VA and Ref2VA partitions. It still falls
+  back to the older `h3-fl2va` name if that is what a box already has.)
 
 ### 0.3 Sending requests: everything is a parameter
 
@@ -247,7 +248,7 @@ If you would rather drive Docker yourself, mount the patch read-only and apply i
 
 ```bash
 docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
-  -v /opt/dlami/nvme/h3-fl2va:/models/MiniMax-H3:ro \
+  -v /opt/dlami/nvme/h3:/models/MiniMax-H3:ro \
   -v $PWD/patches/minimax-h3-short-edge.patch:/patch.patch:ro \
   -v /opt/dlami/nvme/out:/out \
   lmsysorg/sglang:dev bash -lc '
