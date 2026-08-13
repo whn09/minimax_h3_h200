@@ -1,11 +1,162 @@
 # MiniMax-H3 部署最佳实践：H200 与 g7e（RTX PRO 6000）
 
-面向客户的部署建议。所有数字都是在 `p5e.48xlarge`（8xH200）上实测的，测试条件统一为
-**864x480 / 124 帧 / 40 步 / t2va / seed 1101**，口径是客户端 wall clock（POST 到
-`status: completed`）。完整实验记录见 `RESULTS_zh.md`，补丁在 `patches/`。
+面向客户的部署建议。所有数字都是在 `p5e.48xlarge`（8xH200）上实测的，口径是客户端 wall clock
+（POST 到 `status: completed`）。完整实验记录见 `RESULTS_zh.md`，补丁在 `patches/`。
+
+两套基准条件，别混用：**拓扑/显存那些表用 864x480 / 124 帧（5 秒片长）/ 40 步 / t2va /
+seed 1101**；**三种任务与容量规划（第三章）用 864x480 / 243 帧（10 秒片长）/ 16 步**，
+因为客户确认"10 秒"指的是**视频时长**而不是出片延迟。
+
+**三种任务（t2va / fl2va / ref2va）全部已在真机跑通**，一台机器就能同时服务，见 0.2。
 
 结论先行：**H200 上有两个便宜的并行旋钮（Ulysses 与 TP），g7e 上两个都不能用**，所以两个平台
 的最佳形态完全不同，不要把 H200 的命令直接搬到 g7e。
+
+---
+
+## 零、快速开始（当前推荐流程）
+
+四步：下权重 → 起服务 → 发请求 → 取视频。全部在 `p5e.48xlarge` 上实测过。
+
+### 0.1 下载权重
+
+`serve.sh` **不会**自动下模型。整个 HF 仓库是 **464 GiB**，但没必要全下——里面还有一套
+sglang 从来不读的 diffusers 扁平布局。按任务下：
+
+```bash
+pip install -U "huggingface_hub[cli]"
+export HF_HOME=/opt/dlami/nvme/hf                     # 别放 / 盘，会满
+D=/opt/dlami/nvme/h3-fl2va                            # 宿主机上叫什么都行，见 0.2 第三条注
+
+# (1) t2va + fl2va 需要的分区：134 GiB
+hf download MiniMaxAI/MiniMax-H3 --include "FL2VA/*" --local-dir $D
+
+# (2) 还要 ref2va 的话：先拉它的 config/index（约 29 MB），再让脚本补权重
+hf download MiniMaxAI/MiniMax-H3 --include "Ref2VA/*" \
+  --exclude "Ref2VA/transformer/*.safetensors" --local-dir $D
+bash fill_ref2va.sh $D        # 自动下 Ref2VA/transformer（62 GiB）+ 硬链其余 16 个文件
+```
+
+`fill_ref2va.sh` 是省 74 GiB 的关键：**Ref2VA 除 transformer 外的 16 个 LFS 文件与 FL2VA
+逐个 oid 相同**（用 HF tree API 对过 oid，不是"看文件大小一样就当一样"），所以硬链接即可。
+不补齐会在加载时死在
+`ValueError: no safetensors files found in .../Ref2VA/transformer`。
+
+最终磁盘占用 **196 GiB**（对比全量 464 GiB）。
+
+### 0.2 三种部署模式
+
+`serve.sh` 就是这三种，其它都不用记：
+
+```bash
+# 模式 1：fl2va（服务 t2va + fl2va），端口 30010
+./serve.sh                                   # 全部 8 卡 —— H200 推荐配置
+GPUS=4 ./serve.sh                            # 只用 4 卡
+CUDA_VISIBLE_DEVICES=0,1,2,3 ./serve.sh      # 指定就是这 4 卡（卡数自动推出来）
+
+# 模式 2：ref2va（只服务 ref2va），端口 30030
+VARIANT=ref2va ./serve.sh
+VARIANT=ref2va CUDA_VISIBLE_DEVICES=4,5,6,7 ./serve.sh
+
+# 模式 3：两个一起上（三种任务全覆盖），靠 CUDA_VISIBLE_DEVICES 互相隔离
+./serve.sh both                              # 4 + 4
+GPUS_A=2 GPUS_B=6 ./serve.sh both            # 不均分：ref2va 每步贵 3.3 倍，可以多给它卡
+
+# 任何一条前面加 DRYRUN=1 只打印解析结果，不动 GPU
+DRYRUN=1 ./serve.sh both
+./serve.sh status | logs | stop               # 不带 VARIANT 时作用于全部副本
+```
+
+**为什么必须两个进程：`--model-variant` 决定加载哪一份 DiT，而任务到分区的映射是硬闸门。**
+
+| `--model-variant` | 能服务的任务 | 默认端口 |
+|---|---|---|
+| `fl2va`（默认） | `t2va`、`fl2va` | 30010 |
+| `ref2va` | `ref2va` | 30030 |
+
+拿 ref2va 去问 fl2va 服务会被明确拒掉：
+
+```
+task 'ref2va' is not served by MiniMax H3 partition 'fl2va'; supported tasks: ['t2va', 'fl2va']
+```
+
+所以**客户端要按任务路由**：t2va/fl2va → 30010，ref2va → 30030。
+
+模式 3 已实测：两副本各 90 秒就绪（串行起，共约 180 秒），每卡 103 GiB（fl2va）/ 104 GiB
+（ref2va），同时各发一个请求时 8 张卡全部 100% 利用率，且 **ref2va 的耗时与它独占时一致
+（32.25 s vs 32.17 s）——同机共驻不互相拖慢**，因为两组卡不重叠。
+
+三个注意点：
+
+- **`--base-gpu-id` 不管用**（会被静默忽略），隔离只能靠 `CUDA_VISIBLE_DEVICES`。
+- **两个副本的 `--master-port` / `--scheduler-port` 必须分开**，`serve.sh` 已按 variant 预置
+  （30100/5700 与 30120/5720），不用手填。
+- **本地权重目录名必须以 `MiniMax-H3` 结尾**：`registry.py:1199` 拿 `--model-path` 的 basename
+  找 pipeline 类。`serve.sh` 把 `$WEIGHTS` 挂成容器里的 `/models/MiniMax-H3`，所以宿主机上叫
+  什么都行——自己写 docker 命令时才要注意。（默认目录叫 `h3-fl2va` 只是历史名字，它里面
+  FL2VA 和 Ref2VA 两个分区都有。）
+
+### 0.3 发请求：所有参数都是参数
+
+`h3gen.py` 覆盖三种任务、任意几何、任意步数、任意片长：
+
+```bash
+# t2va：10 秒片长、16 步、864x480
+python3 h3gen.py --width 864 --height 480 --steps 16 --duration 10
+
+# 另一组几何参数（与 width/height 二选一）
+python3 h3gen.py --short-edge 480 --aspect 21:9 --steps 20 --duration 10
+
+# fl2va：首帧（可选末帧）
+python3 h3gen.py --task fl2va --image /out/first.png --steps 16 --duration 10
+
+# ref2va：参考视频（连带它的音轨）→ 注意端口
+python3 h3gen.py --task ref2va --ref-video /out/ref.mp4 --steps 8 --port 30030
+```
+
+**两组几何参数是互斥的**，与客户"这两组参数二选一"的要求一致，服务端也是这么校验的
+（见 1.6）。`--duration` 的合法范围是模型自己的 **4~15 秒**；10 秒片长实际出的是 **243 帧
+@ 24 fps = 10.125 s**。
+
+### 0.4 视频落在哪里
+
+`serve.sh` 会传 `--output-path /out/videos`，而 `/out` 就是挂进去的 `$OUTDIR`，所以
+**宿主机上在 `/opt/dlami/nvme/out/videos/<video_id>.mp4`**。
+
+**不传这个参数是个坑**：服务端默认写容器内的相对路径 `outputs/`，那个目录没被挂载，
+视频跟容器一起消失。想彻底不落盘就 `OUTPATH= ./serve.sh`，只走 HTTP 取。
+
+另外，状态 JSON 里带 `file_paths`，所以同机调用方**不必再走一次 HTTP** 下载视频：
+
+```json
+{"status": "completed", "file_paths": ["/out/videos/<id>.mp4"], "inference_time_s": 4.26}
+```
+
+### 0.5 API 是异步的三段式（以及怎么变成一条 GET URL）
+
+sglang 的视频接口只能这么用——`video_api.py` 的 POST handler 结尾就写着
+`# Enqueue the job asynchronously and return immediately`：
+
+```
+POST /v1/videos              -> {"id": ..., "status": "queued"}   立即返回，还没开始算
+GET  /v1/videos/{id}         -> "status": "completed"             轮询
+GET  /v1/videos/{id}/content -> mp4 字节
+```
+
+**没有任何 GET 生成接口，也没有让 POST 阻塞等结果的参数**（整个 `runtime/entrypoints/` 查过）。
+需要"一条 URL 直接出视频"（演示、调试）的话，用本目录的 `h3get.py`——它是个 sidecar，
+不改 sglang，内部替你走完那三步，直接把 mp4 字节返回：
+
+```bash
+python3 h3get.py --ref2va-port 30030 &        # 监听 8080
+curl "http://127.0.0.1:8080/gen?prompt=three+cats+playing+brass+instruments\
+&width=864&height=480&steps=16&duration=10" -o v.mp4     # 实测 10.07 s
+```
+
+浏览器直接粘贴就能播。它按 `task=` 自动分流到两个副本，参数名和 `h3gen.py` 一致
+（`prompt/task/width/height/short_edge/aspect/steps/duration/seed/image/ref_video/...`），
+加 `&json=1` 返回 job 元数据。**它会占住连接 10~60 秒，生产别用**，生产走 POST + 轮询。
+也别把它暴露到公网——URL 里的路径是服务端读的。
 
 ---
 
@@ -21,7 +172,8 @@
 （`Editable project location: /sgl-workspace/sglang/python`），所以 `git apply` 改
 `/sgl-workspace/sglang` 的源码后，下次启动 server 进程就直接生效。
 
-最省事的是本目录里的封装脚本，它负责挂载 patch、幂等地 apply、后台起服务、等 `/health`：
+最省事的是本目录里的封装脚本，它负责挂载 patch、幂等地 apply、后台起服务、等 `/health`
+（三种部署模式见 0.2）：
 
 ```bash
 cd h3_h200_baseline
@@ -37,8 +189,27 @@ SHORT_EDGES= ./serve.sh         # 保持发布的 768-only 策略，patch 保持
 它建的是常驻的 `sleep infinity` 容器、patch 打在容器里，所以之后换参数重启既不会重新 pull 镜像
 也不会重复打 patch；`stop` 只杀 server 进程、保留容器，打好的源码不会丢。
 
-`patches/` 下的**两个 patch 都会被应用**：short-edge 那个开 480p，cpu-offload 那个在
-`OFFLOAD=1` 时是必须的（见 2.3）。无条件都打是安全的——不传 offload flag 时后者是 no-op。
+`patches/` 下的**三个 patch 全部会被应用，而且顺序是固定的**：
+
+| 顺序 | patch | 作用 | 不打的后果 |
+|---|---|---|---|
+| 1 | `minimax-h3-cpu-offload-inplace.patch` | 一行，允许 CPU offload | `OFFLOAD=1` 在预热时崩（见 2.3） |
+| 2 | `minimax-h3-short-edge.patch` | 开非 768 短边（480p） | `SGLANG_..._EXTRA_SHORT_EDGES` 完全无效 |
+| 3 | `minimax-h3-target-width-height.patch` | 收 `target.width/height`（见 1.6） | 只能用 6 个发布的 aspect 字符串 |
+
+**第 3 个是对着"已打完第 2 个"的树 diff 出来的**，因为两者都改
+`request_validation.py::_validate_target`。所以顺序不是字母序的巧合，`serve.sh` 里是显式列表；
+要重新生成用 `patches/make_patch.sh`（它会先反打第 3 个、临时提交、再正打，保证 diff 干净）。
+
+不传 offload flag 时第 1 个是 no-op，不设环境变量时第 2 个惰性，不发 width/height 时第 3 个惰性
+——所以无条件全打是安全的。
+
+**幂等性用 stamp 文件而不是 `git apply -R --check`。** 后者作为"是否已打过"的判据在这里是坏的：
+第 3 个 patch 改了第 2 个的 hunk 上下文，于是在一棵已经打好三个 patch 的树上，
+反打检查会对第 2 个失败，脚本就会误报 `DOES_NOT_APPLY`。现在的做法是先试 `git apply --check`
+（能打就打并落 stamp），打不上再看 `/sgl-workspace/.h3-patches/` 里有没有 stamp：有就是
+`ALREADY`，没有才是真的不适用并退出。stamp 和被改的源码同生共死（都在容器文件系统里），
+所以不会出现"stamp 在但源码没打"。已验证：全新容器三行 `APPLIED`，再跑一次三行 `ALREADY`。
 
 起完服务发一个推荐请求（同样不需要参数）：
 
@@ -69,7 +240,7 @@ docker run -d --name h3 --gpus all --ipc=host --network host --shm-size 32g \
 **10.05 s / 请求，6.2 视频/分钟，每卡 95.9 GiB。**
 
 注意 `git apply` **不是幂等的**，跑第二次会失败。所以这种一次性写法只适合用完就删的容器；要反复
-重启就用 `serve.sh`（它用 `--check` 和 `-R --check` 区分"还没打"和"已经打过"）。
+重启就用 `serve.sh`（它用 `--check` + stamp 文件区分"还没打"和"已经打过"，见 1.1）。
 
 验证 patch 真的生效了——**不要用"预热成功"当证据**，因为 `--warmup-resolutions` 吃原始 `WxH`、
 绕过短边校验器，不打 patch 也能预热：
@@ -133,6 +304,42 @@ cookbook 的选择器只列了 3 个模式，实际有 **4 个**：`auto | fold 
 - **`dp` 模式对 H3 是死代码**：它要求 `batch_size > 1`，而 H3 硬性 `batching_max_size=1`。
 - **1 卡副本永远不会折叠**：`server_args.py:669` 要求 `replica_size > tp_size`，所以 8x1 形态
   要背满 47.97 GB，这正是它 132.2 GiB 的主要来源。
+
+### 1.6 长宽作为参数：`target.width/height`（本轮新增 patch）
+
+**发布版的线上契约里没有 `width`/`height`**，只有 `{short_edge, aspect_ratio, duration_seconds}`，
+而且有两道各自独立的过滤：`configs/sample/minimax_h3.py::_validate` 会把 `target` **投影**到那
+三个键（多传的 width/height 被静默丢掉，不报错），`request_validation.py::_validate_target`
+也只认那三个。更麻烦的是 **`aspect_ratio` 是字符串成员检查**，只认
+`21:9 / 16:9 / 4:3 / 1:1 / 3:4 / 9:16` 这 6 个字面量——所以 `"640:480"` 会被拒，**尽管它就是 4:3**。
+（例外：`fl2va` 不受这个白名单约束，任意 `"W:H"` 都收。）
+
+`patches/minimax-h3-target-width-height.patch` 补上了第二组参数，并且**与客户的要求一致：
+两组互斥**。设计上是"宁可拒绝也不悄悄改数"：
+
+- 两组都给 → 拒绝：`target accepts either width+height or short_edge+aspect_ratio, not both`
+- 只给一个 → 拒绝（缺的那个报 `must be an integer`）
+- 不是 32 的倍数 → 拒绝，**不四舍五入**：`must be a positive multiple of 32, got 481`
+- 超过面积上限 `768*1344 = 1032192` px → 拒绝，**不缩放**（ratio 那条路是会缩放的）
+- `min(w,h)` 必须在允许的短边列表里（`SGLANG_..._EXTRA_SHORT_EDGES` + 768）
+- 比例超出 1:4~4:1 → 由 resolver 干净地拒掉，不是 worker 崩溃
+
+实测通过的 10 个边界用例见 `RESULTS_zh.md`。正例：`target: {"width": 800, "height": 480}`
+（5:3，**不是**发布的 6 个比例之一）出来的 mp4 ffprobe 是 `800,480,124` + aac。回归证据：
+`640:480` 仍然被原文案拒掉，说明 ratio 那条路没被动过。
+
+`h3gen.py` 会自动选最可移植的表达方式，并把选了哪种打印出来（`wire=`），所以不会发生
+"我要 864x480，服务器悄悄给了别的"：
+
+| `wire` | 线上形式 | 需要什么 |
+|---|---|---|
+| `ratio` | `short_edge` + 6 个发布比例之一 | 什么都不用打，原版镜像就行 |
+| `literal` | `short_edge` + 任意 `"W:H"` | 仅 `fl2va`，也不用打 patch |
+| `exact` | `target.width` + `target.height` | 需要本节这个 patch |
+
+选择依据是**画布比较而不是比例比较**，这个区别很重要：`864x480` 的比例是 **1.8 而不是
+16:9 的 1.7778**（它是 `round32(480 × 16/9)`），所以约分永远得不到 `"16:9"`；正确的问法是
+"16:9 在短边 480 上落到的画布是不是正好 864x480"。
 
 ---
 
@@ -214,7 +421,47 @@ g7e 达不到，除非降到很少的步数（见 `RESULTS_zh.md` 的步数表�
 
 ---
 
-## 三、两个平台共同的坑
+## 三、三种任务的成本差异与 1 QPS 容量规划
+
+### 3.1 ref2va 每步贵 3.3 倍（10 秒片长，864x480，4 卡）
+
+| 任务 | 每步 | 实测点 |
+|---|---|---|
+| t2va / fl2va | **1.045 s/step** | 16 步 19.11 s |
+| ref2va | **3.489 s/step** | 8 步 32.17 s / 16 步 60.24 s / 32 步 115.91 s |
+
+ref2va 的拟合是 `wall = 4.26 + 3.489 × steps`，三个点都落在线上（8 步复测 32.17 / 32.25 s，
+差 0.08 s）。**斜率差 3.34 倍说明这不是"编码参考视频"的一次性开销，而是每步都要付的代价**——
+如果是一次性开销，它只会抬高截距 4.26 s。做容量规划时不能用 t2va 的数字推 ref2va。
+
+### 3.2 1 QPS 需要多少台
+
+H3 **永不合批**（`stop_reason=dynamic_disabled`，见第四章第 5 条），所以
+
+```
+QPS = 副本数 / 单请求延迟
+```
+
+并发只会排队。按 10 秒片长 / 16 步 / 864x480 算：
+
+| 任务 | 形态 | 单请求 | 每台 p5e QPS | 1 QPS 需要 |
+|---|---|---|---|---|
+| t2va / fl2va | 2 副本 × 4 卡 | 19.11 s | 0.105 | **10 台** |
+| t2va / fl2va | 1 副本 × 8 卡 | 10.58 s | 0.095 | 11 台 |
+| ref2va | 2 副本 × 4 卡 | 60.24 s | 0.033 | **30 台** |
+
+两点值得跟客户说清：
+
+- **4 卡副本的吞吐比 8 卡副本略高**（0.105 vs 0.095 QPS/台），因为 Ulysses 8 卡的并行效率是
+  76%。要低延迟就 8 卡，要吞吐就 4 卡，1 QPS 这个目标下 4 卡更省机器。
+- **步数是唯一的大杠杆**：同样 1 QPS，t2va 从 16 步降到 8 步，延迟 19.11 → ~10.6 s，机器数直接
+  减半。画质与步数的关系见 `RESULTS_zh.md` 的 SSIM 表（40 步 0.9682 / 20 步 0.8691）。
+
+如果 ref2va 的实际占比不高，**按任务混合部署**（模式 3，不均分）比全部按最贵的任务堆机器便宜
+得多：比如 ref2va 只占 10% 的流量，`GPUS_A=4 GPUS_B=4` 一台就能同时承担两种流量，
+不需要为 ref2va 单独开一批机器。
+
+## 四、两个平台共同的坑
 
 1. **`--warmup-resolutions` 必须传，且要覆盖所有会用到的分辨率**。不传的话首个请求要多付约
    10 秒。它吃原始 `WxH`，所以 `864x480` 即使不打补丁也认。
@@ -232,7 +479,7 @@ g7e 达不到，除非降到很少的步数（见 `RESULTS_zh.md` 的步数表�
    输出 mp4 逐字节相同。
 7. **NVSwitch 机型重启后要检查 Fabric Manager**（见下节），否则 CUDA 直接起不来。
 
-## 四、Fabric Manager 恢复步骤（p5e 等 NVSwitch 机型）
+## 五、Fabric Manager 恢复步骤（p5e 等 NVSwitch 机型）
 
 主机重启后如果服务报 `Error 802: system not yet initialized` / `cudaGetDeviceCount()` 失败，
 先看 `systemctl status nvidia-fabricmanager`。典型原因是 FM 版本和驱动不一致：
@@ -264,7 +511,7 @@ python3 -c "import torch; print(torch.cuda.device_count(), torch.cuda.can_device
 P2P 不通的话 `auto` 会退回 `replicate`，白多吃 39.7 GiB/卡。这种情况下要显式传
 `--encoder-parallel fold` 强制折叠（`encoders/base.py` 的注释说"拓扑是调用方自己的判断"）。
 
-## 五、不要浪费时间的方向
+## 六、不要浪费时间的方向
 
 以下都实测/读码确认过是死路，客户如果问可以直接答：
 
@@ -279,7 +526,7 @@ P2P 不通的话 `auto` 会退回 `replicate`，白多吃 39.7 GiB/卡。这种�
 - **`--vae-config.parallel-decode-mode spatial` / `spatial_shard`**：H3 明确拒绝。
 - **`--use-fsdp-inference`**：只切 DiT，且和上面的 TP 旋钮目标重叠，没有额外好处。
 
-## 六、验收命令
+## 七、验收命令
 
 ```bash
 # 起服务后确认组件驻留大小与折叠决策
