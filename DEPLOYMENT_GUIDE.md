@@ -586,8 +586,11 @@ cheaper than sizing the whole fleet for the most expensive task: at, say, 10% re
    does nothing: `base.py:405` returns True only for `T2I`/`T2V`, while `minimax_h3.py:48`
    declares `TI2V` with no override. Logs show `stop_reason=dynamic_disabled`. **Plan capacity in
    replicas** — concurrent requests queue, they never merge.
-6. **Cache-DiT is a no-op on H3.** The cookbook's own manual recipe registers and then skips
-   **zero** blocks; the output mp4 is byte-identical.
+6. **Cache-DiT is image-dependent.** On `c7c03ec53b` the cookbook's own manual recipe registers and
+   then skips **zero** blocks (output mp4 byte-identical); on
+   `nightly-dev-20260818-c0b6474b` it works and is worth **1.94–2.40×** (`RESULTS_QUANT.md`).
+   Always read back the `cache-dit enabled on transformer (... rdt=...)` line — it is printed
+   during warmup, not at request time.
 7. **On NVSwitch boxes, check Fabric Manager after any host reboot** (next section) or CUDA will
    not initialize at all.
 
@@ -635,7 +638,7 @@ All confirmed by measurement or by reading the code:
   upstream changes — see `SRT_ENCODER_PR_ASSESSMENT.md`. And most of the benefit is already
   captured by default encoder folding.
 - **Using concurrency for throughput.** See trap 5; H3 does not batch.
-- **Cache-DiT / `quality: "high"`.** The former is a no-op; the latter's gate
+- **`quality: "high"`.** Its gate
   (`release_metadata.py::_MINIMAX_H3_QUALITY_WORKLOAD`) pins 1344x768 / 50 steps and rejects any
   change of resolution or step count.
 - **`--vae-config.parallel-decode-mode spatial` / `spatial_shard`.** H3 rejects both.

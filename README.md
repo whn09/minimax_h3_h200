@@ -9,6 +9,11 @@ tasks (t2va / fl2va / ref2va) are required**. All of that is implemented and val
 **To deploy, go straight to section 0 "Quick start" of `DEPLOYMENT_GUIDE.md`**: download weights →
 start the server → send a request → collect the video.
 
+There are **two measurement rounds** in this repo, on two sglang images. `RESULTS.md` is the BF16
+latency round (image `c7c03ec53b`) — how to get a request under 10 s. **`RESULTS_QUANT.md` is the
+cost round** (image `nightly-dev-20260818-c0b6474b`) — FP8 / SageAttention / Cache-DiT and dollars
+per second of finished video. Where they disagree (Cache-DiT), the newer round wins.
+
 ## Deliverables
 
 1. **`patches/` — three patches, in a fixed order**
@@ -37,10 +42,19 @@ start the server → send a request → collect the video.
 3. **`RESULTS.md`** (and `RESULTS_zh.md`) — the measured latency/quality tables at 4 and 8 GPUs, the
    full replica sweep (1x8 / 2x4 / 4x2 / 8x1), the TP/encoder-parallel sweep, what Ulysses and TP
    cost without NVLink, the verified 96 GB verdict, the per-task step sweeps, the 11 width/height
-   boundary cases, and the two negative results (Cache-DiT is a no-op on H3; `quality: "high"` is
-   gated on 1344x768 *and* 50 steps).
+   boundary cases, and the two negative results (Cache-DiT is a no-op **on image `c7c03ec53b`** —
+   superseded, see below; `quality: "high"` is gated on 1344x768 *and* 50 steps).
 
-4. **Scripts**: `serve.sh` (start/stop/status, three deployment modes), `fill_ref2va.sh` (fills in
+4. **`RESULTS_QUANT.md`** (and `RESULTS_QUANT_zh.md`) — **the cost round**, measured on a newer
+   sglang (`nightly-dev-20260818-c0b6474b`) on `p5en.48xlarge`: BF16 → FP8 → +SageAttention →
+   +Cache-DiT × 1/2/4/8 GPUs × four geometries, the Ulysses 1→8 curve at 88–90% efficiency, dollars
+   per second of finished video on two price bases, the 1 QPS fleet, the SSIM/motion quality table,
+   and the g7e comparison. Headline: **single-GPU FP8 is the delivery config** (1.13–1.19× over
+   BF16, 78.8 → 48.1 GB), sage is worth +5.8% at 768p but is a **regression at 480p**, and
+   **Cache-DiT works on this image** (1.94–2.40×), which reverses `RESULTS.md`'s negative result.
+   Its `Dockerfile` bakes the delivery image instead of patching the container at run time.
+
+5. **Scripts**: `serve.sh` (start/stop/status, three deployment modes), `fill_ref2va.sh` (fills in
    the Ref2VA weights for 73 GiB less disk), `h3gen.py` (submitter covering all three tasks),
    `h3get.py` (a sidecar that turns one GET URL into an mp4), `h3req.py` (the original polling
    submitter).
@@ -191,7 +205,13 @@ python3 h3req.py 480 40 5 u8_480p_40
 | path | what |
 |---|---|
 | `DEPLOYMENT_GUIDE.md` / `DEPLOYMENT_GUIDE_zh.md` | **deployment best practice (EN/ZH) — start here** |
-| `RESULTS.md` / `RESULTS_zh.md` | measured results (EN/ZH) |
+| `RESULTS.md` / `RESULTS_zh.md` | measured results, BF16 round on `c7c03ec53b` (EN/ZH) |
+| `RESULTS_QUANT.md` / `RESULTS_QUANT_zh.md` | measured results, quantization/cost round on `c0b6474b` (EN/ZH) |
+| `Dockerfile` / `build_image.sh` / `.dockerignore` | bakes the delivery image (sm_90 SageAttention + patches) |
+| `h200_bringup.sh` | bare-metal prep: disable auto-upgrades, venv, weights, image pull |
+| `h200_grid.sh` | the 4-arm x GPU-count x geometry driver behind `RESULTS_QUANT.md` |
+| `quality_pair.sh` / `quality_pair_local.sh` | SSIM + inter-frame motion energy against a reference clip |
+| `pull_results_loop.sh` | keeps pulling artifacts off a spot box while it runs |
 | `patches/` | the three delivered patches + `make_patch.sh` for re-diffing |
 | `serve.sh` | start/stop/status, three deployment modes (validated on hardware) |
 | `fill_ref2va.sh` | fills in Ref2VA: downloads only the transformer, hardlinks the other 16 files from FL2VA, saving 73 GiB |

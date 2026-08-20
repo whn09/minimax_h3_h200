@@ -422,11 +422,16 @@ inference tensor 是非法的。改成非原地即可，对不开 offload 的路
 
 ## 两个负面结论
 
-**Cache-DiT 在 H3 上是 no-op。** cookbook 自己的手动配方
+**Cache-DiT 在 H3 上是 no-op —— 仅限镜像 `c7c03ec53b`（已被更新的镜像推翻）。**
+
+> 在 `nightly-dev-20260818-c0b6474b` 上 Cache-DiT 正常工作，值 **1.94–2.40×**，见
+> `RESULTS_QUANT_zh.md`。下面这段对 `c7c03ec53b` 仍然成立，但结论不要往后带。
+
+cookbook 自己的手动配方
 `SGLANG_CACHE_DIT_ENABLED=true FN=1 BN=0 WARMUP=4 RDT=0.12 MC=2`，以及更激进的
 `RDT=0.50 MC=6`，都只是注册成功
 （`Cache-DiT] Collected Context Config: DBCache_F1B0_W4I1M0MC2_R0.12_N49`）然后**跳过 0 个
-block**：12.09 s vs 12.05 s，输出 mp4 与不开时**逐字节相同**。不是可用旋钮。
+block**：12.09 s vs 12.05 s，输出 mp4 与不开时**逐字节相同**。在**这个镜像上**不是可用旋钮。
 
 **`quality: "high"` 也不能用。** 它的门控
 （`release_metadata.py::_MINIMAX_H3_QUALITY_WORKLOAD`）同时钉死 width 1344 / height 768 /

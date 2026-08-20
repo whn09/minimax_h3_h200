@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Flexible MiniMax-H3 client: all three tasks, free geometry, free step count.
 
-Everything the customer asked to be a parameter is one:
+Everything the deliverable requires to be a parameter is one:
 
   --width/--height   exact output geometry (or --short-edge + --aspect)
   --steps            denoise steps
@@ -34,7 +34,7 @@ Condition files reach the server three ways, and the server resolves the `uri` s
 `--inline` (bytes in the request body), an http(s):// URL the SERVER fetches, or a plain path that
 only works when the server can see it.  Sample materials are in `assets/`.
 
-Geometry note: the two parameter groups are mutually exclusive, exactly as the customer asked.
+Geometry note: the two parameter groups are mutually exclusive, by design.
 `--short-edge/--aspect` is the released wire contract.  `--width/--height` is not natively a wire
 field, so this script picks the most portable form that expresses it (see `geometry()` for the
 ladder) and prints which one it used, so a silent substitution is never possible:
@@ -130,6 +130,20 @@ def parse_args():
     p.add_argument("--seed", type=int, default=1101)
     p.add_argument("--flow-shift", type=float, default=12.0)
     p.add_argument("--audio-flow-shift", type=float, default=3.0)
+    # Sending `quality` at all switches H3's cache-dit gate off the generic (env-driven) path:
+    # the stage requires "quality" NOT to be an explicit field before it will mount the env
+    # config, so `--quality lossless` is the per-request "no cache" control on a cache-enabled
+    # server. `high` picks the built-in preset, which is gated to 1344x768 @ 50 steps.
+    p.add_argument("--quality", choices=["lossless", "high"],
+                   help="omit to leave the server's cache-dit env config in charge")
+    # The video request model is pydantic `extra="allow"` and several sampling params are declared
+    # request fields, so anything in SamplingParams can be driven per request without restarting
+    # the server. The one that matters here is the torch profiler:
+    #   --extra profile=true --extra num_profiled_timesteps=2
+    # (which also needs SGLANG_DIFFUSION_TORCH_PROFILER_DIR in the server's env).
+    p.add_argument("--extra", action="append", default=[], metavar="KEY=VALUE",
+                   help="extra top-level request field; JSON-parsed when possible, else a string. "
+                        "Repeatable.")
     c = p.add_argument_group("conditions")
     c.add_argument("--image", help="fl2va: first-frame image, or ref2va: subject image")
     c.add_argument("--last-image", help="fl2va: last-frame image")
@@ -318,6 +332,16 @@ def main():
     }
     if not derive_duration:
         payload["seconds"] = int(a.duration)
+    if a.quality:
+        payload["quality"] = a.quality
+    for kv in a.extra:
+        if "=" not in kv:
+            sys.exit(f"--extra wants KEY=VALUE, got {kv!r}")
+        k, v = kv.split("=", 1)
+        try:
+            payload[k] = json.loads(v)
+        except json.JSONDecodeError:
+            payload[k] = v
 
     with open(out + "_request.json", "w") as f:
         # An inlined condition is megabytes of base64; keep the saved copy readable.

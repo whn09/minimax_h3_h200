@@ -438,13 +438,17 @@ Worth noting for anyone reading the cookbook: it flags only `dp` as "not bitwise
 `fold` is not bitwise-identical either (0.9376 vs `replicate`). Sharding the encoder's linear
 layers reorders reductions just as much. That is a documentation gap, not a bug.
 
-## Cache-DiT is a no-op on H3
+## Cache-DiT is a no-op on H3 — on image `c7c03ec53b` only (superseded)
+
+> **Superseded on a newer image.** On `nightly-dev-20260818-c0b6474b` Cache-DiT works and is worth
+> **1.94–2.40×** — see `RESULTS_QUANT.md`. The measurement below stands for `c7c03ec53b`; do not
+> carry the conclusion forward.
 
 `SGLANG_CACHE_DIT_ENABLED=true FN=1 BN=0 WARMUP=4 RDT=0.12 MC=2` (the cookbook's own manual
 recipe) and an aggressive `RDT=0.50 MC=6` both register
 (`Cache-DiT] Collected Context Config: DBCache_F1B0_W4I1M0MC2_R0.12_N49`) and then skip **zero**
 blocks: 12.09 s vs 12.05 s, and the output mp4 is **byte-identical** to the run without it. Not a
-usable lever here. `quality: "high"` is not an alternative — its gate
+usable lever *on this image*. `quality: "high"` is not an alternative — its gate
 (`release_metadata.py::_MINIMAX_H3_QUALITY_WORKLOAD`) pins width 1344 / height 768 / 50 steps, so
 it rejects both a non-768 resolution and any step change.
 

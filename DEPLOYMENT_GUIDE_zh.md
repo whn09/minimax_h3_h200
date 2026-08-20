@@ -538,8 +538,10 @@ QPS = 副本数 / 单请求延迟
 5. **动态 batching 对 H3 永远关闭**，`--batching-max-size 4` 传了也不生效：
    `base.py:405` 只对 `T2I`/`T2V` 返回 True，而 `minimax_h3.py:48` 声明 `TI2V` 且没有 override。
    日志里是 `stop_reason=dynamic_disabled`。**容量必须按副本规划**，并发只会排队不会合批。
-6. **Cache-DiT 在 H3 上是 no-op**。cookbook 自己的手工配方会注册成功然后跳过 **0** 个 block，
-   输出 mp4 逐字节相同。
+6. **Cache-DiT 的效果和镜像版本有关**。在 `c7c03ec53b` 上 cookbook 自己的手工配方会注册成功然后
+   跳过 **0** 个 block，输出 mp4 逐字节相同；在 `nightly-dev-20260818-c0b6474b` 上它正常工作，
+   值 **1.94–2.40×**（见 `RESULTS_QUANT_zh.md`）。一定要回读
+   `cache-dit enabled on transformer (... rdt=...)` 那行日志 —— 它是 warmup 时打的，不是请求时打的。
 7. **NVSwitch 机型重启后要检查 Fabric Manager**（见下节），否则 CUDA 直接起不来。
 
 ## 五、Fabric Manager 恢复步骤（p5e 等 NVSwitch 机型）
@@ -583,7 +585,7 @@ P2P 不通的话 `auto` 会退回 `replicate`，白多吃 39.7 GiB/卡。这种�
   `--srt-encoder-url` 只给 GLM-Image 接了线。要打开需要改上游，评估见
   `SRT_ENCODER_PR_ASSESSMENT.md`。而且真正的收益已经被默认的 encoder 折叠拿走了。
 - **靠并发提吞吐**：见上面第 5 条，H3 不合批。
-- **Cache-DiT / `quality: "high"`**：前者 no-op；后者的 gate
+- **`quality: "high"`**：它的 gate
   （`release_metadata.py::_MINIMAX_H3_QUALITY_WORKLOAD`）把 1344x768/50 步写死，改分辨率或步数
   都会被拒。
 - **`--vae-config.parallel-decode-mode spatial` / `spatial_shard`**：H3 明确拒绝。

@@ -8,6 +8,11 @@
 **要开始部署，直接看 `DEPLOYMENT_GUIDE_zh.md` 的第零章「快速开始」**：下权重 → 起服务 →
 发请求 → 取视频，四步。
 
+这个库里有**两轮实测**，跑在两个 sglang 镜像上。`RESULTS_zh.md` 是 BF16 延迟那一轮
+（镜像 `c7c03ec53b`），回答「怎么把一条请求压到 10 s 内」；**`RESULTS_QUANT_zh.md` 是性价比那一轮**
+（镜像 `nightly-dev-20260818-c0b6474b`），量 FP8 / SageAttention / Cache-DiT 与每成片秒的钱。
+两轮结论冲突的地方（Cache-DiT）以新的那轮为准。
+
 ## 交付件
 
 1. **`patches/`（三个 patch，顺序固定）**
@@ -30,10 +35,18 @@
 
 3. **`RESULTS_zh.md`** —— 全部实测记录：4/8 卡延迟与画质、副本切分全曲线（1×8 / 2×4 / 4×2 /
    8×1）、TP 与 encoder-parallel 扫描、无 NVLink 时 Ulysses 与 TP 的代价、96 GB 卡可行性验证、
-   三种任务的步数扫描、长宽参数的 11 个边界用例、两个负面结论（Cache-DiT 在 H3 上是 no-op；
-   `quality: "high"` 同时钉死 1344×768 **和** 50 步）。
+   三种任务的步数扫描、长宽参数的 11 个边界用例、两个负面结论（Cache-DiT 在**镜像 `c7c03ec53b`
+   上**是 no-op —— 已被下面那一轮推翻；`quality: "high"` 同时钉死 1344×768 **和** 50 步）。
 
-4. **脚本**：`serve.sh`（起/停/状态，三种部署模式）、`fill_ref2va.sh`（省 73 GiB 补齐 Ref2VA
+4. **`RESULTS_QUANT_zh.md`** —— **性价比那一轮**，用更新的 sglang
+   （`nightly-dev-20260818-c0b6474b`）在 `p5en.48xlarge` 上量：BF16 → FP8 → +SageAttention →
+   +Cache-DiT × 1/2/4/8 卡 × 四个几何、Ulysses 1→8 的 88–90% 效率曲线、两个价格口径下的每成片秒
+   成本、1 QPS 机队、SSIM/运动能量画质表，以及和 g7e 的对比。结论：**交付方案是单卡 FP8**
+   （对 BF16 快 1.13–1.19×，显存 78.8 → 48.1 GB），sage 在 768p 值 +5.8% 但在 **480p 是负收益**，
+   而 **Cache-DiT 在这个镜像上是有效的**（1.94–2.40×），推翻了 `RESULTS_zh.md` 里的负面结论。
+   配套的 `Dockerfile` 把交付镜像烤出来，不再在容器里做运行时改动。
+
+5. **脚本**：`serve.sh`（起/停/状态，三种部署模式）、`fill_ref2va.sh`（省 73 GiB 补齐 Ref2VA
    权重）、`h3gen.py`（三种任务的通用提交脚本）、`h3get.py`（一条 GET URL 直接出 mp4 的
    sidecar）、`h3req.py`（最早的轮询式提交脚本）。
 
@@ -174,7 +187,13 @@ python3 h3req.py 480 40 5 u8_480p_40
 | 路径 | 内容 |
 |---|---|
 | `DEPLOYMENT_GUIDE_zh.md` / `DEPLOYMENT_GUIDE.md` | **部署最佳实践（中/英），从这里开始** |
-| `RESULTS_zh.md` / `RESULTS.md` | 实测结果（中/英） |
+| `RESULTS_zh.md` / `RESULTS.md` | 实测结果，`c7c03ec53b` 上的 BF16 那一轮（中/英） |
+| `RESULTS_QUANT_zh.md` / `RESULTS_QUANT.md` | 实测结果，`c0b6474b` 上的量化/性价比那一轮（中/英） |
+| `Dockerfile` / `build_image.sh` / `.dockerignore` | 烤交付镜像（sm_90 SageAttention + 补丁） |
+| `h200_bringup.sh` | 裸机准备：关自动升级、建 venv、下权重、拉镜像 |
+| `h200_grid.sh` | `RESULTS_QUANT_zh.md` 背后的四臂 × 卡数 × 几何驱动脚本 |
+| `quality_pair.sh` / `quality_pair_local.sh` | 对参考片算 SSIM + 帧间运动能量 |
+| `pull_results_loop.sh` | spot 机器边跑边把产物拉回本地 |
 | `patches/` | 三个交付 patch + `make_patch.sh`（重新 diff 用） |
 | `serve.sh` | 起/停/状态，三种部署模式（已在真机验证） |
 | `fill_ref2va.sh` | 补齐 Ref2VA 权重：只下 transformer，其余 16 个文件硬链 FL2VA，省 73 GiB |
