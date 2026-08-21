@@ -593,6 +593,31 @@ cheaper than sizing the whole fleet for the most expensive task: at, say, 10% re
    during warmup, not at request time.
 7. **On NVSwitch boxes, check Fabric Manager after any host reboot** (next section) or CUDA will
    not initialize at all.
+8. **The DLAMI's auto-upgrade reboots the box on its own, and breaks Fabric Manager while doing it.**
+   Seen twice: once around 20 minutes after boot (upgrading docker flips the docker.sock permissions,
+   so an in-flight timed request fails with `permission denied while trying to connect to the docker
+   API` and the box reboots a minute later — the spot request is still fulfilled and the instance
+   still running, so it **looks like a reclaim but is not**), and once four hours after boot (it
+   bumped `nvidia-fabricmanager` 595.91.07 → 610.57.04; after the reboot FM refused to start and
+   NVLink was gone).
+
+   **`disable` alone is not enough**: a package upgrade/reconfigure re-enables it, and the unit that
+   actually does the work is `apt-daily-upgrade.service`, not `unattended-upgrades.service`. The
+   DLAMI holds the versioned `libnvidia-nscq-595` but **not** the unversioned
+   `nvidia-fabricmanager` / `libnvidia-nscq` / `libnvsdm`, so those three slip through. Do this
+   first thing after boot (`h200_bringup.sh` already does):
+
+   ```bash
+   sudo systemctl disable --now unattended-upgrades apt-daily.timer apt-daily-upgrade.timer
+   sudo systemctl mask unattended-upgrades apt-daily.timer apt-daily-upgrade.timer \
+     apt-daily.service apt-daily-upgrade.service
+   printf 'APT::Periodic::Unattended-Upgrade "0";\nAPT::Periodic::Update-Package-Lists "0";\n' \
+     | sudo tee /etc/apt/apt.conf.d/99-no-auto-upgrade
+   sudo apt-mark hold nvidia-fabricmanager libnvidia-nscq libnvsdm
+   ```
+
+   To confirm after the fact: compare the `Start-Date` in `/var/log/apt/history.log` with the kernel
+   boot time from `dmesg -T | head`. A few minutes apart means this is what happened.
 
 ## 5. Fabric Manager recovery (p5e and other NVSwitch boxes)
 
@@ -609,15 +634,21 @@ fabric manager NVIDIA GPU driver interface version 610.57.04
 
 ```bash
 # note: nvidia-fabricmanager-595 is a virtual package and will not install; pin the full version
+# if an auto-upgrade raised FM, the other two packages went with it — downgrade all three (trap 8)
 sudo apt-get install -y --allow-downgrades --allow-change-held-packages \
-  nvidia-fabricmanager=595.71.05-1ubuntu1
+  nvidia-fabricmanager=595.71.05-1ubuntu1 \
+  libnvidia-nscq=595.71.05-1ubuntu1 libnvsdm=595.71.05-1ubuntu1
 sudo nvidia-smi -r                              # reset all GPUs and NVSwitches
 sudo systemctl restart nvidia-fabricmanager     # FM must be restarted after the reset
 nvidia-smi -q | grep -A2 "Fabric"               # want State: Completed / Status: Success
+sudo apt-mark hold nvidia-fabricmanager libnvidia-nscq libnvsdm   # do not let it happen again
 ```
 
 **Order matters**: installing the package without the reset leaves `Fabric State: In Progress` and
-CUDA still broken. Verify with:
+CUDA still broken. Exception: **right after a reboot, with no process on the GPUs, `nvidia-smi -r`
+refuses** (`In use by another client`) — in that case, once the versions match, a plain
+`systemctl restart nvidia-fabricmanager` is enough and `Fabric State` goes straight to `Completed`.
+Verify with:
 
 ```bash
 python3 -c "import torch; print(torch.cuda.device_count(), torch.cuda.can_device_access_peer(0,1))"

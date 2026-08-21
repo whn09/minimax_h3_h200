@@ -31,10 +31,22 @@ sudo apt-get install -y -qq python3-venv ffmpeg
 # **先关掉 unattended-upgrades。** DLAMI 会在开机 20 分钟左右自己升包并重启：升 docker 时
 # docker.sock 权限翻掉 → 正在计时的 arm 报 "permission denied while trying to connect to the
 # docker API"，1 分钟后真重启。spot 请求还是 fulfilled、实例还是 running，**看起来像被回收但不是**。
+#
+# ⚠️ **`disable` 不够，必须 `mask` 到 timer 和 service 两层，而且必须 hold 住 FM 三个包。**
+# 2026-08-21 00:02 实测：只 `disable` timer + 只 `mask unattended-upgrades.service` 的机器，
+# 在开机 4 小时后又自己升了一轮并重启 —— `disable` 会被包自身的升级/reconfigure 重新 enable 回去，
+# 而真正干活的 unit 是 `apt-daily-upgrade.service`（不是 `unattended-upgrades.service`）。
+# 那一轮把 `nvidia-fabricmanager` 从 595.91.07 升到 610.57.04，重启后 FM 起不来
+# （"fabric manager NVIDIA GPU driver interface version 610.57.04 don't match with driver
+# version 595.91.07"），NVLink 直接没了。DLAMI 自己 hold 的是带版本号的
+# `libnvidia-nscq-595`，**没 hold 不带版本号的 `nvidia-fabricmanager` / `libnvidia-nscq` /
+# `libnvsdm`**，所以这三个是漏网的。恢复配方见 DEPLOYMENT_GUIDE 的坑那节。
 sudo systemctl disable --now unattended-upgrades apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
-sudo systemctl mask unattended-upgrades 2>/dev/null || true
-printf 'APT::Periodic::Unattended-Upgrade "0";\nAPT::Periodic::Update-Package-Lists "0";\n' \
+sudo systemctl mask unattended-upgrades apt-daily.timer apt-daily-upgrade.timer \
+  apt-daily.service apt-daily-upgrade.service 2>/dev/null || true
+printf 'APT::Periodic::Unattended-Upgrade "0";\nAPT::Periodic::Update-Package-Lists "0";\nAPT::Periodic::Download-Upgradeable-Packages "0";\n' \
   | sudo tee /etc/apt/apt.conf.d/99-no-auto-upgrade >/dev/null
+sudo apt-mark hold nvidia-fabricmanager libnvidia-nscq libnvsdm 2>/dev/null || true
 sudo rm -f /var/run/reboot-required /var/run/reboot-required.pkgs
 
 [ -x "$VENV/bin/hf" ] || { rm -rf "$VENV"; python3 -m venv "$VENV"; \

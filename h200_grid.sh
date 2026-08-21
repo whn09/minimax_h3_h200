@@ -34,6 +34,10 @@ RDT=${RDT:-0.24}
 # 追加到 tag 末尾。**扫 RDT 时必须传**（例如 TAGSUF=_R16）—— tag 里没有 RDT，不传就静默覆盖
 # 同名 mp4 和 status.json，只剩最后一档的画质。
 TAGSUF=${TAGSUF:-}
+# 换 transformer 权重（LoRA 合并后的 bf16 目录）。空 = 用 checkpoint 自带的那份。
+# H200 上这个目录是 **bf16**：`--quantization fp8` 是在线量化，量的就是这份权重，
+# 所以不需要像 g7e 那样再离线量化一次。见 h200_turbo.sh。
+CKPT=${CKPT:-}
 IMG=${IMG:-$([ -f assets/input_cat.jpg ] && echo assets/input_cat.jpg || echo assets/first.png)}
 mkdir -p "$OUT"
 . assets/prompts.sh
@@ -50,7 +54,7 @@ esac
 # 一个臂 = 一套 EXTRA/ENVX。sage 一开就必须把 text_encoder / 两个 VAE 摘出去走 torch_sdpa：
 # `--attention-backend` 是**全局**的（issue #35743），不摘会让 sage 去处理它接不了的形状。
 arm_flags() {  # arm_flags <arm> -> 打印 "EXTRA\tENVX"
-  local base_extra="--layerwise-offload-components text_encoder"
+  local base_extra="--layerwise-offload-components text_encoder${CKPT:+ --transformer-weights-path $CKPT}"
   local sage_extra="--attention-backend sage_attn --component-attention-backends text_encoder=torch_sdpa,audio_vae=torch_sdpa,video_vae=torch_sdpa"
   local envx="SGLANG_USE_RUNAI_MODEL_STREAMER=0 $REFENV"
   case $1 in

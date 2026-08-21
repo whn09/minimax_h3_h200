@@ -8,10 +8,12 @@
 **要开始部署，直接看 `DEPLOYMENT_GUIDE_zh.md` 的第零章「快速开始」**：下权重 → 起服务 →
 发请求 → 取视频，四步。
 
-这个库里有**两轮实测**，跑在两个 sglang 镜像上。`RESULTS_zh.md` 是 BF16 延迟那一轮
-（镜像 `c7c03ec53b`），回答「怎么把一条请求压到 10 s 内」；**`RESULTS_QUANT_zh.md` 是性价比那一轮**
-（镜像 `nightly-dev-20260818-c0b6474b`），量 FP8 / SageAttention / Cache-DiT 与每成片秒的钱。
-两轮结论冲突的地方（Cache-DiT）以新的那轮为准。
+这个库里有**三轮实测**。`RESULTS_zh.md` 是 BF16 延迟那一轮（镜像 `c7c03ec53b`），回答「怎么把
+一条请求压到 10 s 内」；**`RESULTS_QUANT_zh.md` 是性价比那一轮**（镜像
+`nightly-dev-20260818-c0b6474b`），量 FP8 / SageAttention / Cache-DiT 与每成片秒的钱；
+**`RESULTS_TURBO_zh.md` 换的是权重本身**（Turbo LoRA 蒸馏，20 步 → 8 步），是最省也是延迟最低的
+一档（2.47–2.79×，8 卡 480p 2.010 s / 768p 5.136 s），代价是画质从 SSIM 0.94 档降到 0.91 档。
+结论冲突的地方（Cache-DiT、480p 的 `RDT`）以更新的那轮为准。
 
 ## 交付件
 
@@ -46,9 +48,17 @@
    而 **Cache-DiT 在这个镜像上是有效的**（1.94–2.40×），推翻了 `RESULTS_zh.md` 里的负面结论。
    配套的 `Dockerfile` 把交付镜像烤出来，不再在容器里做运行时改动。
 
-5. **脚本**：`serve.sh`（起/停/状态，三种部署模式）、`fill_ref2va.sh`（省 73 GiB 补齐 Ref2VA
+5. **`RESULTS_TURBO_zh.md`** —— **Turbo LoRA 那一轮**（20 步 → 8 步蒸馏权重）：步数曲线
+   （4/6/8 步）、turbo 之上的 Cache-DiT `RDT` 扫描、1/2/4/8 卡曲线、fl2va 与 ref2va 两个口径、
+   画质（SSIM + 运动能量 + 目视）、和 g7e turbo 档的对比。结论：**8 步 + `RDT=0.24`** 对
+   stock 20 步快 **2.47×/2.79×**，每成片秒省 **59%/64%**，8 卡下 480p **2.010 s** / 768p
+   **5.136 s**；`RDT=0.16` 在 8 步上一次都不触发（**推翻 `RESULTS_QUANT_zh.md` 给 480p 推荐的
+   0.16**）。**「这份蒸馏 LoRA 画质很差」的说法在这里复现不出来**（目视与 stock 20 步无差别）。
+
+6. **脚本**：`serve.sh`（起/停/状态，三种部署模式）、`fill_ref2va.sh`（省 73 GiB 补齐 Ref2VA
    权重）、`h3gen.py`（三种任务的通用提交脚本）、`h3get.py`（一条 GET URL 直接出 mp4 的
-   sidecar）、`h3req.py`（最早的轮询式提交脚本）。
+   sidecar）、`h3req.py`（最早的轮询式提交脚本）、`h200_grid.sh` / `h200_turbo.sh`（两轮网格的
+   驱动脚本）、`lora_merge_transformer.py`（把 LoRA 离线合进 bf16 transformer）。
 
 结论一句话：**8 卡、`--ulysses-degree 8`、864×480 → 5 秒片长 40 步 10.05 秒；
 10 秒片长 16 步 10.58 秒。** 4→8 卡近线性加速（1.9×），代价只有 +9% GPU-秒，正是这部分加速
@@ -189,9 +199,12 @@ python3 h3req.py 480 40 5 u8_480p_40
 | `DEPLOYMENT_GUIDE_zh.md` / `DEPLOYMENT_GUIDE.md` | **部署最佳实践（中/英），从这里开始** |
 | `RESULTS_zh.md` / `RESULTS.md` | 实测结果，`c7c03ec53b` 上的 BF16 那一轮（中/英） |
 | `RESULTS_QUANT_zh.md` / `RESULTS_QUANT.md` | 实测结果，`c0b6474b` 上的量化/性价比那一轮（中/英） |
+| `RESULTS_TURBO_zh.md` / `RESULTS_TURBO.md` | 实测结果，`c0b6474b` 上的 Turbo LoRA（8 步）那一轮（中/英） |
 | `Dockerfile` / `build_image.sh` / `.dockerignore` | 烤交付镜像（sm_90 SageAttention + 补丁） |
 | `h200_bringup.sh` | 裸机准备：关自动升级、建 venv、下权重、拉镜像 |
 | `h200_grid.sh` | `RESULTS_QUANT_zh.md` 背后的四臂 × 卡数 × 几何驱动脚本 |
+| `h200_turbo.sh` | `RESULTS_TURBO_zh.md` 背后的五个 phase（参考 / 步数曲线 / RDT / 加卡 / ref2va） |
+| `lora_merge_transformer.py` | 把 LoRA 离线合进 bf16 transformer（259/259 模块必须全命中） |
 | `quality_pair.sh` / `quality_pair_local.sh` | 对参考片算 SSIM + 帧间运动能量 |
 | `pull_results_loop.sh` | spot 机器边跑边把产物拉回本地 |
 | `patches/` | 三个交付 patch + `make_patch.sh`（重新 diff 用） |

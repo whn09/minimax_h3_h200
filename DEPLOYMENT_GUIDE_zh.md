@@ -543,6 +543,28 @@ QPS = 副本数 / 单请求延迟
    值 **1.94–2.40×**（见 `RESULTS_QUANT_zh.md`）。一定要回读
    `cache-dit enabled on transformer (... rdt=...)` 那行日志 —— 它是 warmup 时打的，不是请求时打的。
 7. **NVSwitch 机型重启后要检查 Fabric Manager**（见下节），否则 CUDA 直接起不来。
+8. **DLAMI 的自动升级会自己重启机器，而且会把 Fabric Manager 升坏。** 实测两次：一次在开机 20
+   分钟左右（升 docker 时 docker.sock 权限翻掉，正在计时的请求报 `permission denied while trying
+   to connect to the docker API`，1 分钟后真重启；spot 请求还是 fulfilled、实例还是 running，
+   **看起来像被回收但不是**），一次在开机 4 小时后（把 `nvidia-fabricmanager` 从 595.91.07 升到
+   610.57.04，重启后 FM 起不来、NVLink 直接没了）。
+
+   **只 `disable` 不够**：包自身的升级/reconfigure 会把它 enable 回去，而且真正干活的 unit 是
+   `apt-daily-upgrade.service` 不是 `unattended-upgrades.service`。DLAMI 自己 hold 的是带版本号的
+   `libnvidia-nscq-595`，**没 hold 不带版本号的 `nvidia-fabricmanager` / `libnvidia-nscq` /
+   `libnvsdm`**，所以这三个是漏网的。开机第一件事（`h200_bringup.sh` 已经做了）：
+
+   ```bash
+   sudo systemctl disable --now unattended-upgrades apt-daily.timer apt-daily-upgrade.timer
+   sudo systemctl mask unattended-upgrades apt-daily.timer apt-daily-upgrade.timer \
+     apt-daily.service apt-daily-upgrade.service
+   printf 'APT::Periodic::Unattended-Upgrade "0";\nAPT::Periodic::Update-Package-Lists "0";\n' \
+     | sudo tee /etc/apt/apt.conf.d/99-no-auto-upgrade
+   sudo apt-mark hold nvidia-fabricmanager libnvidia-nscq libnvsdm
+   ```
+
+   事后确认是不是它干的：`/var/log/apt/history.log` 里那条 `Start-Date` 加 `dmesg -T | head`
+   的内核启动时间，两者差几分钟就是。
 
 ## 五、Fabric Manager 恢复步骤（p5e 等 NVSwitch 机型）
 
@@ -558,14 +580,20 @@ fabric manager NVIDIA GPU driver interface version 610.57.04
 
 ```bash
 # 注意：nvidia-fabricmanager-595 是虚拟包，装不上，必须写全版本号
+# 是自动升级把 FM 升上去的话，另外两个包也一起被升了，要一起降回来（见坑 8）
 sudo apt-get install -y --allow-downgrades --allow-change-held-packages \
-  nvidia-fabricmanager=595.71.05-1ubuntu1
+  nvidia-fabricmanager=595.71.05-1ubuntu1 \
+  libnvidia-nscq=595.71.05-1ubuntu1 libnvsdm=595.71.05-1ubuntu1
 sudo nvidia-smi -r                              # 复位所有 GPU 与 NVSwitch
 sudo systemctl restart nvidia-fabricmanager     # 复位后必须重启 FM
 nvidia-smi -q | grep -A2 "Fabric"               # 要看到 State: Completed / Status: Success
+sudo apt-mark hold nvidia-fabricmanager libnvidia-nscq libnvsdm   # 别让它再升一次
 ```
 
-**顺序很关键**：只装包不复位的话 `Fabric State` 会卡在 `In Progress`，CUDA 仍然不可用。验证：
+**顺序很关键**：只装包不复位的话 `Fabric State` 会卡在 `In Progress`，CUDA 仍然不可用。
+例外：**如果是刚重启、GPU 上还没有任何进程，`nvidia-smi -r` 会拒绝**（`In use by another
+client`）—— 这种情况下版本一对上，只 `systemctl restart nvidia-fabricmanager` 就够了，
+`Fabric State` 会直接到 `Completed`。验证：
 
 ```bash
 python3 -c "import torch; print(torch.cuda.device_count(), torch.cuda.can_device_access_peer(0,1))"

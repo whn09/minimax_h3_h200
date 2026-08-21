@@ -9,10 +9,13 @@ tasks (t2va / fl2va / ref2va) are required**. All of that is implemented and val
 **To deploy, go straight to section 0 "Quick start" of `DEPLOYMENT_GUIDE.md`**: download weights →
 start the server → send a request → collect the video.
 
-There are **two measurement rounds** in this repo, on two sglang images. `RESULTS.md` is the BF16
-latency round (image `c7c03ec53b`) — how to get a request under 10 s. **`RESULTS_QUANT.md` is the
-cost round** (image `nightly-dev-20260818-c0b6474b`) — FP8 / SageAttention / Cache-DiT and dollars
-per second of finished video. Where they disagree (Cache-DiT), the newer round wins.
+There are **three measurement rounds** in this repo. `RESULTS.md` is the BF16 latency round (image
+`c7c03ec53b`) — how to get a request under 10 s. **`RESULTS_QUANT.md` is the cost round** (image
+`nightly-dev-20260818-c0b6474b`) — FP8 / SageAttention / Cache-DiT and dollars per second of finished
+video. **`RESULTS_TURBO.md` changes the weights themselves** (Turbo LoRA distillation, 20 steps → 8):
+the cheapest and lowest-latency tier (2.47–2.79×; 8 GPU 480p 2.010 s / 768p 5.136 s), at the cost of
+dropping from the SSIM-0.94 band to the 0.91 band. Where rounds disagree (Cache-DiT, the 480p `RDT`),
+the newer round wins.
 
 ## Deliverables
 
@@ -54,10 +57,20 @@ per second of finished video. Where they disagree (Cache-DiT), the newer round w
    **Cache-DiT works on this image** (1.94–2.40×), which reverses `RESULTS.md`'s negative result.
    Its `Dockerfile` bakes the delivery image instead of patching the container at run time.
 
-5. **Scripts**: `serve.sh` (start/stop/status, three deployment modes), `fill_ref2va.sh` (fills in
+5. **`RESULTS_TURBO.md`** (and `RESULTS_TURBO_zh.md`) — **the Turbo LoRA round** (20 steps → 8-step
+   distilled weights): the step curve (4/6/8), the Cache-DiT `RDT` sweep on top of turbo, the
+   1/2/4/8-GPU curve, both fl2va and ref2va, quality (SSIM + motion energy + visual), and the
+   comparison against g7e's turbo tier. Conclusion: **8 steps + `RDT=0.24`** is **2.47×/2.79×**
+   faster than stock 20 steps and **59%/64%** cheaper per video-second, reaching **2.010 s** (480p) /
+   **5.136 s** (768p) on 8 GPUs; `RDT=0.16` never fires at 8 steps, which **reverses the 0.16 that
+   `RESULTS_QUANT.md` recommends for 480p**. **Reports that "this distilled LoRA looks terrible" do not
+   reproduce here** (visually indistinguishable from stock 20 steps).
+
+6. **Scripts**: `serve.sh` (start/stop/status, three deployment modes), `fill_ref2va.sh` (fills in
    the Ref2VA weights for 73 GiB less disk), `h3gen.py` (submitter covering all three tasks),
    `h3get.py` (a sidecar that turns one GET URL into an mp4), `h3req.py` (the original polling
-   submitter).
+   submitter), `h200_grid.sh` / `h200_turbo.sh` (the drivers behind the last two rounds),
+   `lora_merge_transformer.py` (merges a LoRA into the bf16 transformer offline).
 
 Headline: **8 GPUs, `--ulysses-degree 8`, 864x480 → 10.05 s for a 5 s clip at 40 steps, 10.58 s for
 a 10 s clip at 16 steps.** 4 → 8 GPUs scales near-linearly (1.9x) for +9% GPU-seconds, which is what
@@ -207,9 +220,12 @@ python3 h3req.py 480 40 5 u8_480p_40
 | `DEPLOYMENT_GUIDE.md` / `DEPLOYMENT_GUIDE_zh.md` | **deployment best practice (EN/ZH) — start here** |
 | `RESULTS.md` / `RESULTS_zh.md` | measured results, BF16 round on `c7c03ec53b` (EN/ZH) |
 | `RESULTS_QUANT.md` / `RESULTS_QUANT_zh.md` | measured results, quantization/cost round on `c0b6474b` (EN/ZH) |
+| `RESULTS_TURBO.md` / `RESULTS_TURBO_zh.md` | measured results, Turbo LoRA (8-step) round on `c0b6474b` (EN/ZH) |
 | `Dockerfile` / `build_image.sh` / `.dockerignore` | bakes the delivery image (sm_90 SageAttention + patches) |
 | `h200_bringup.sh` | bare-metal prep: disable auto-upgrades, venv, weights, image pull |
 | `h200_grid.sh` | the 4-arm x GPU-count x geometry driver behind `RESULTS_QUANT.md` |
+| `h200_turbo.sh` | the 5-phase driver behind `RESULTS_TURBO.md` (reference / step curve / RDT / scale-out / ref2va) |
+| `lora_merge_transformer.py` | merges a LoRA into the bf16 transformer offline (259/259 modules must hit) |
 | `quality_pair.sh` / `quality_pair_local.sh` | SSIM + inter-frame motion energy against a reference clip |
 | `pull_results_loop.sh` | keeps pulling artifacts off a spot box while it runs |
 | `patches/` | the three delivered patches + `make_patch.sh` for re-diffing |
