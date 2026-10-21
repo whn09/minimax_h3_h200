@@ -1,0 +1,12 @@
+# Swap only the NCCL wheel in a vllm-omni image, to test whether the 0.29 -> 0.31 DiT slowdown
+# (Ulysses all-to-all) follows NCCL 2.29.7 -> 2.30.7. torch is pinned so pip cannot touch it; the
+# build checks the version string inside the libnccl.so.2 torch loads at runtime (torch.cuda.nccl.version()
+# reports torch's compile-time NCCL, 2.29.7 in every one of these images, so it cannot be used).
+#   docker build -f Dockerfile.nccl --build-arg BASE=vllm/vllm-omni:latest --build-arg NCCL=2.29.7 -t h3-vomni:0.31-nccl2.29.7 .
+ARG BASE
+FROM ${BASE}
+ARG NCCL
+RUN echo "torch==2.13.0" > /tmp/c.txt \
+ && pip install --no-cache-dir --no-deps -c /tmp/c.txt "nvidia-nccl-cu13==${NCCL}" \
+ && grep -aqF "NCCL version ${NCCL}+" /usr/local/lib/python3.12/dist-packages/nvidia/nccl/lib/libnccl.so.2 \
+ && echo "libnccl.so.2 is ${NCCL}"

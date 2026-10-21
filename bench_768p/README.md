@@ -13,6 +13,7 @@ Reference config, no patches / quantization / cache: `lmsysorg/sglang:dev`, 8 GP
 | `bench_matrix.sh` / `req_matrix.py` / `summarize_matrix.py` | sglang arms × tasks with per-stage breakdown |
 | `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni images side by side; per-component `stage_durations` |
 | `Dockerfile.vomni029` | `v0.29.0rc1` image made startable (matching vllm 0.29.0) |
+| `Dockerfile.nccl` | swap only the NCCL wheel in a vllm-omni image (NCCL A/B) |
 | `results_20261021_034117/` | the run below (one mp4 kept; all 5 fixed-prompt mp4s are md5-identical) |
 
 ## Result (2026-10-21, p5en.48xlarge, driver 595.91.07, sglang `c1c287a42`, image `sha256:b0473834…`)
@@ -102,8 +103,13 @@ of the same prompt 1.7 ms. Either way it is <0.4% of the request.
   0.31 is ~1.0 s (2.4%) slower, all in the DiT. Output is the same trajectory (0.29 vs nightly SSIM
   0.951, closer than 0.31 vs nightly 0.929; identical composition), so 0.29 is not skipping work.
   The H3 block code (incl. the fused modulation kernels) is identical; torch / triton / cuDNN / FA3
-  are identical; the one DiT-relevant difference is NCCL 2.29.7 (0.29) vs 2.30.7 (0.31, nightly),
-  which carries the per-layer Ulysses all-to-all — a suspect, not yet tested. All vllm-omni versions
+  are identical; NCCL is **ruled out**: swapping only the NCCL wheel (`Dockerfile.nccl`; the library torch loads
+  at runtime is the pip `nvidia-nccl-cu13` one — `torch.cuda.nccl.version()` reports the compile-time
+  2.29.7 everywhere) gives 0.31 + NCCL 2.29.7 = DiT 41.94 s and 0.29 + NCCL 2.30.7 = DiT 40.95 s
+  (`vomni_*nccl*/`): both ~1% faster than their baselines (an environment drift, run 30 min later),
+  and the 0.29–0.31 gap stays 0.99 s. The gap follows the vllm-omni/vllm version, i.e. code changed
+  between 0.29 and 0.31 (attention backends, `attention/layer.py`, `hooks/sequence_parallel.py`,
+  `packed_sequence.py` all differ) — not bisected further. All vllm-omni versions
   are 4–7% behind sglang's 41.11–41.38 s.
 - The stock `vllm/vllm-omni:v0.29.0rc1` image does not start: it ships vllm 0.28.0 while its
   vllm-omni CLI imports `vllm.entrypoints.launchers` (vllm 0.29), so `vllm serve` dies at import
@@ -136,6 +142,7 @@ Reproduce: sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`; vllm-om
 | `bench_matrix.sh` / `req_matrix.py` / `summarize_matrix.py` | sglang 各档 × 场景，带分阶段耗时 |
 | `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni 各镜像对比；分组件 `stage_durations` |
 | `Dockerfile.vomni029` | 让 `v0.29.0rc1` 镜像能起（补对应的 vllm 0.29.0） |
+| `Dockerfile.nccl` | 只换 vllm-omni 镜像里的 NCCL wheel（NCCL A/B） |
 | `results_20261021_034117/` | 下面这轮的原始结果（只留一份 mp4；5 次固定 prompt 输出 md5 完全相同） |
 
 ## 结果（2026-10-21，p5en.48xlarge，驱动 595.91.07，sglang `c1c287a42`，镜像 `sha256:b0473834…`）
@@ -218,7 +225,11 @@ MP4 编码。text encoder TP 不改变延迟，但把显存摊平：rank 0 从 1
   （DiT 41.29–41.51 s），0.31 = 43.79 / 43.96 / 44.01 s（DiT 42.41–42.43 s），区间不重叠 —— 0.31 稳定慢约 1.0 s
   （2.4%），全在 DiT。输出是同一条轨迹（0.29 vs nightly SSIM 0.951，比 0.31 vs nightly 的 0.929 还近；构图一致），
   0.29 没有少算。H3 block 代码（含融合 modulation kernel）相同；torch / triton / cuDNN / FA3 相同；唯一与 DiT 相关的
-  差异是 NCCL 2.29.7（0.29）vs 2.30.7（0.31、nightly），它承载每层的 Ulysses all-to-all —— 嫌疑项，尚未实测。
+  NCCL **已排除**：只换 NCCL wheel（`Dockerfile.nccl`；torch 运行时加载的是 pip 的 `nvidia-nccl-cu13`，
+  `torch.cuda.nccl.version()` 处处报编译时的 2.29.7，不能用来判断），0.31 + NCCL 2.29.7 = DiT 41.94 s，
+  0.29 + NCCL 2.30.7 = DiT 40.95 s（`vomni_*nccl*/`）：两者都比各自基线快约 1%（晚 30 分钟的环境漂移），而 0.29 与 0.31
+  的差距仍是 0.99 s。差距跟着 vllm-omni/vllm 版本走，即 0.29 → 0.31 之间的代码改动（attention 后端、
+  `attention/layer.py`、`hooks/sequence_parallel.py`、`packed_sequence.py` 都有改）—— 未进一步二分。
   所有 vllm-omni 版本都比 sglang 的 41.11–41.38 s 慢 4–7%。
 - 原版 `vllm/vllm-omni:v0.29.0rc1` 镜像起不来：里面是 vllm 0.28.0，而 vllm-omni CLI 要 import
   `vllm.entrypoints.launchers`（vllm 0.29 才有），`vllm serve` 在 import 时就死（`vomni_v0_29_0rc1_stock_broken/`）。

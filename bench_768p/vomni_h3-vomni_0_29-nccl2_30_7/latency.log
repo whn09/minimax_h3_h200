@@ -1,0 +1,4 @@
+t2va-warmup1 wall=46.193963s md5=9a62c2d9eed5 engine_ms=23137.866 mp4_ms=397.45 encode_prompt=0.603868s diffuse=44.037781s decode=0.758249s forward=45.406341s 
+t2va-run1 wall=42.435435s md5=9a62c2d9eed5 encode_prompt=0.045700s diffuse=40.821562s decode=0.777293s forward=41.649234s engine_ms=42068.941 mp4_ms=360.87 
+t2va-run2 wall=42.608474s md5=9a62c2d9eed5 encode_prompt=0.043826s diffuse=40.999628s decode=0.764611s forward=41.813578s engine_ms=42234.801 mp4_ms=366.61 
+t2va-run3 wall=42.560936s md5=9a62c2d9eed5 encode_prompt=0.041621s diffuse=40.932246s decode=0.776563s forward=41.755044s engine_ms=42181.788 mp4_ms=372.25 
