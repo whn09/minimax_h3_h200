@@ -1,0 +1,164 @@
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 13.0.3
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+[10-21 04:50:37] Applying performance_mode=speed
+[10-21 04:50:37] performance_mode=speed keeps torch.compile disabled for this model (pass --enable-torch-compile true to opt in)
+[10-21 04:50:37] Proposed encoder parallel folding (mode=world) for ServerArgs (tp=1 sp=8 cfg=1 replica=8); the loader keeps it for encoders wide enough to benefit.
+[10-21 04:50:37] server_args: {"model_path": "MiniMaxAI/MiniMax-H3", "model_subfolder": null, "model_variant": "fl2va", "model_id": null, "served_model_name": "MiniMaxAI/MiniMax-H3", "backend": "auto", "attention_backend": null, "enable_attention_backend_autotune": false, "attention_backend_config": {}, "component_attention_backends": {}, "component_attention_backend_roles": {}, "cache_dit_config": null, "nccl_port": null, "enable_nccl_nvls": false, "trust_remote_code": false, "revision": null, "num_gpus": 8, "performance_mode": "speed", "base_gpu_id": 0, "gpu_ids": null, "numa_node": null, "nnodes": 1, "node_rank": 0, "dist_init_addr": null, "tp_size": 1, "sp_degree": 8, "ulysses_degree": 8, "ring_degree": 1, "kv_gather_degree": 1, "sp_split_auto": false, "dp_size": 1, "enable_cfg_parallel": false, "cfg_parallel_degree": 1, "encoder_parallel": "auto", "hsdp_replicate_dim": 1, "hsdp_shard_dim": 8, "dist_timeout": 3600, "scheduler_rpc_timeout": null, "pipeline_class_name": null, "lora_path": null, "lora_nickname": "default", "lora_scale": 1.0, "lora_alpha": null, "lora_merge_mode": "auto", "lora_weight_name": null, "component_paths": {}, "component_weights_paths": {}, "component_direct_gpu_weight_loading": {}, "component_quantizations": {}, "component_precisions": {}, "component_quantization_ignored_layers": {}, "load_diffusion_decoder": false, "transformer_weights_path": null, "minimax_h3_adaln_cache_path": null, "minimax_h3_adaln_online": false, "minimax_h3_adaln_plan_width": 4, "minimax_h3_adaln_host_cache_gb": 8.0, "quantization": null, "quantization_ignored_layers": null, "lora_target_modules": null, "component_residency": null, "cpu_offload_components": null, "dit_cpu_offload": false, "direct_gpu_weight_loading": false, "dit_layerwise_offload": false, "layerwise_offload_components": null, "dit_offload_prefetch_size": 0.0, "dit_layerwise_resident_layers": 0.0, "dit_layerwise_residency_policy": "leading", "dit_layerwise_residency_lifetime": "forward", "layerwise_prefetch_size": {}, "layerwise_resident_layers": {}, "layerwise_residency_policy": {}, "layerwise_residency_lifetime": {}, "offload_during_compile": true, "text_encoder_cpu_offload": false, "image_encoder_cpu_offload": false, "vae_cpu_offload": false, "use_fsdp_inference": false, "pin_cpu_memory": true, "ltx2_two_stage_device_mode": null, "comfyui_mode": false, "enable_torch_compile": false, "regional_compile": false, "allow_cudnn_tf32": true, "allow_bf16_reduced_precision_reduction": true, "enable_breakable_cuda_graph": false, "bcg_text_buckets": null, "enable_layerwise_nvtx_marker": false, "warmup_mode": "server", "warmup_resolutions": null, "warmup_num_frames": null, "warmup_steps": 1, "warmup_sampling_params": null, "disable_autocast": false, "master_port": 30005, "host": "0.0.0.0", "port": 30010, "enable_metrics": false, "webui": false, "webui_port": 12312, "scheduler_port": 5610, "scheduler_ports": [5610], "batching_mode": "dynamic", "batching_max_size": 1, "batching_delay_ms": 0.0, "batching_config": null, "enable_batching_metrics": false, "async_output_save": false, "strict_ports": false, "output_path": "outputs/", "input_save_path": "inputs/uploads", "prompt_file_path": null, "model_paths": {}, "model_loaded": {"transformer": true, "vae": true, "video_vae": true, "audio_vae": true, "video_dit": true, "audio_dit": true, "dual_tower_bridge": true}, "boundary_ratio": null, "disagg_role": "monolithic", "disagg_timeout": 3600, "disagg_downstream_wait_timeout": 1800, "disagg_dispatch_policy": "round_robin", "disagg_mode": false, "disagg_instance_id": 0, "disagg_max_slots_per_instance": 8, "disagg_transfer_redundancy": 1.25, "disagg_role_device": "auto", "disagg_transfer_backend": "auto", "disagg_transfer_pool_size": 268435456, "disagg_transfer_pin_memory": "auto", "disagg_p2p_hostname": "127.0.0.1", "disagg_ib_device": null, "disagg_server_addr": null, "encoder_urls": null, "denoiser_urls": null, "decoder_urls": null, "encoder_tp": null, "denoiser_tp": null, "denoiser_sp": null, "denoiser_ulysses": null, "denoiser_ring": null, "decoder_sp": null, "pool_work_endpoint": null, "pool_result_endpoint": null, "log_level": "info", "log_requests": false, "log_requests_level": 2, "log_requests_format": "text", "log_requests_target": null, "uvicorn_access_log_exclude_prefixes": [], "enable_cache_report": false, "disable_conditioning_cache": false, "conditioning_cache_max_size_mb": 512.0, "enable_trace": false, "otlp_traces_endpoint": "localhost:4317", "otlp_service_name": null, "srt_encoder_url": null, "srt_encoder_connect_timeout": 3.05, "srt_encoder_timeout": 100, "pe_server_url": null, "prompt_enhancer_config": null}
+[10-21 04:50:37] Starting server...
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+[10-21 04:50:52] NUMA memory policy not permitted; binding CPUs only to NUMA node 0. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:52] GPU 2 worker bound to NUMA node 0
+[10-21 04:50:53] NUMA memory policy not permitted; binding CPUs only to NUMA node 1. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:53] GPU 7 worker bound to NUMA node 1
+[10-21 04:50:53] NUMA memory policy not permitted; binding CPUs only to NUMA node 1. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:53] GPU 5 worker bound to NUMA node 1
+[10-21 04:50:53] NUMA memory policy not permitted; binding CPUs only to NUMA node 0. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:53] GPU 1 worker bound to NUMA node 0
+[10-21 04:50:53] NUMA memory policy not permitted; binding CPUs only to NUMA node 0. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:53] GPU 0 worker bound to NUMA node 0
+[10-21 04:50:53] NUMA memory policy not permitted; binding CPUs only to NUMA node 1. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:53] GPU 4 worker bound to NUMA node 1
+[10-21 04:50:53] NUMA memory policy not permitted; binding CPUs only to NUMA node 1. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:53] GPU 6 worker bound to NUMA node 1
+[10-21 04:50:53] Scheduler (dp replica 0) bind at endpoint: tcp://127.0.0.1:5610
+[10-21 04:50:56] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:50:57] NUMA memory policy not permitted; binding CPUs only to NUMA node 0. If using docker, --cap-add SYS_NICE also binds host memory.
+[10-21 04:50:57] GPU 3 worker bound to NUMA node 0
+[10-21 04:50:57] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:50:57] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:50:57] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:50:57] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:50:57] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:50:57] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:50:57] torch.compile cache: TORCHINDUCTOR_CACHE_DIR=/root/.cache/sgl_diffusion/torch_compile_cache/inductor TRITON_CACHE_DIR=/root/.cache/sgl_diffusion/torch_compile_cache/triton
+[10-21 04:50:57] Initializing distributed environment with world_size=8, device=cuda:0, timeout=3600
+[10-21 04:50:57] Setting distributed timeout to 3600 seconds
+[10-21 04:50:57] Numerics policy: cudnn TF32 and bf16 reduced-precision reduction enabled. These lower precision below the reference, so quality='exact' is bit-reproducible on this server but not free of approximate library defaults. Pass --allow-cudnn-tf32 false --allow-bf16-reduced-precision-reduction false for the strict contract (slower fp32 convolutions).
+[10-21 04:51:00] Found nccl from library libnccl.so.2
+[10-21 04:51:00] sglang-diffusion is using nccl==2.30.7
+[10-21 04:51:01] Found nccl from library libnccl.so.2
+[10-21 04:51:01] sglang-diffusion is using nccl==2.30.7
+[10-21 04:51:03] Found nccl from library libnccl.so.2
+[10-21 04:51:03] sglang-diffusion is using nccl==2.30.7
+[10-21 04:51:04] No pipeline_class_name specified, using model_index.json
+[10-21 04:51:05] Using pipeline from model_index.json: MiniMaxH3Pipeline
+[10-21 04:51:05] Loading pipeline modules...
+[10-21 04:51:05] Checking for cached model in Hugging Face Hub cache for MiniMaxAI/MiniMax-H3...
+[10-21 04:51:05] Model path: /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[10-21 04:51:05] Diffusers version: 0.32.2
+[10-21 04:51:05] Loading pipeline modules from config: {'_class_name': 'MiniMaxH3Pipeline', '_diffusers_version': '0.32.2', 'text_encoder': ['transformers', 'MiniMaxH3Qwen3VLHFEncoder'], 'tokenizer': ['transformers', 'Qwen2TokenizerFast'], 'video_vae': ['diffusers', 'MiniMaxH3VideoVAE'], 'audio_vae': ['diffusers', 'MiniMaxH3AudioVAE'], 'scheduler': None, 'transformer': ['diffusers', 'MiniMaxH3DiTModel'], 'processor': ['transformers', 'Qwen3VLProcessor'], '_minimax_h3': {'schema_version': 1, 'partition': 'fl2va', 'tasks': ['t2va', 'fl2va'], 'task_aliases': {}, 'sigma_shift_scales': {'video': 12.0, 'audio': 3.0}}}
+[10-21 04:51:05] Loading required components: ['processor', 'text_encoder', 'tokenizer', 'video_vae', 'audio_vae', 'transformer']
+[10-21 04:51:05] Memory-aware component load order: ['text_encoder', 'transformer', 'audio_vae', 'video_vae', 'processor', 'tokenizer']
+[10-21 04:51:05] Loading text_encoder from /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA/text_encoder. avail mem: 135.90 GB
+[10-21 04:51:05] Cannot use FlashAttention backend for head size 72.
+Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]Loading required modules:   0%|          | 0/6 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards: 0%|          | 0/12[A
+Loading safetensors checkpoint shards: 8%|▊         | 1/12[A
+Loading safetensors checkpoint shards: 17%|█▋        | 2/12[A
+Loading safetensors checkpoint shards: 25%|██▌       | 3/12[A
+Loading safetensors checkpoint shards: 33%|███▎      | 4/12[A
+Loading safetensors checkpoint shards: 42%|████▏     | 5/12[A
+Loading safetensors checkpoint shards: 50%|█████     | 6/12[A
+Loading safetensors checkpoint shards: 58%|█████▊    | 7/12[A
+Loading safetensors checkpoint shards: 67%|██████▋   | 8/12[A
+Loading safetensors checkpoint shards: 75%|███████▌  | 9/12[A
+Loading safetensors checkpoint shards: 83%|████████▎ | 10/12[A
+Loading safetensors checkpoint shards: 92%|█████████▏| 11/12[A
+Loading safetensors checkpoint shards: 100%|██████████| 12/12[ALoading safetensors checkpoint shards: 100%|██████████| 12/12
+[10-21 04:51:18] Attention backends for text_encoder: torch_sdpa, fa
+[10-21 04:51:19] Loaded text_encoder: MiniMaxH3Qwen3VLEncoder (sgl-diffusion version). model size: 7.4 GB, vram: 7.40 GB. avail GPU mem: 128.37 GB
+[10-21 04:51:19] Loading transformer from /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA/transformer. avail mem: 128.37 GB
+[10-21 04:51:19] Loading MiniMaxH3DiTModel from 13 safetensors file(s) , param_dtype: torch.bfloat16
+Loading required modules:  17%|█▋        | 1/6 [00:13<01:09, 13.82s/it]Loading required modules:  17%|█▋        | 1/6 [00:13<01:09, 13.82s/it]Loading required modules:  17%|█▋        | 1/6 [00:13<01:09, 13.82s/it]Loading required modules:  17%|█▋        | 1/6 [00:13<01:08, 13.72s/it]Loading required modules:  17%|█▋        | 1/6 [00:14<01:12, 14.53s/it]Loading required modules:  17%|█▋        | 1/6 [00:14<01:12, 14.54s/it]Loading required modules:  17%|█▋        | 1/6 [00:14<01:12, 14.53s/it]Loading required modules:  17%|█▋        | 1/6 [00:14<01:12, 14.50s/it]
+Loading safetensors checkpoint shards: 0%|          | 0/13[ALoading safetensors checkpoint shards: 100%|██████████| 13/13
+[10-21 04:51:35] Loaded transformer: MiniMaxH3DiTModel (sgl-diffusion version). model size: 61.73 GB, vram: 61.73 GB. avail GPU mem: 63.77 GB
+[10-21 04:51:35] Loading audio_vae from /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA/audio_vae. avail mem: 63.77 GB
+Loading required modules:  33%|███▎      | 2/6 [00:30<01:02, 15.63s/it]Loading required modules:  33%|███▎      | 2/6 [00:30<01:02, 15.63s/it]Loading required modules:  33%|███▎      | 2/6 [00:30<01:02, 15.59s/it]Loading required modules:  33%|███▎      | 2/6 [00:30<01:02, 15.63s/it]/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[10-21 04:51:36] Attention backends for audio_vae: torch_sdpa
+[10-21 04:51:36] Loaded audio_vae: MiniMaxH3AudioVAE (sgl-diffusion version). model size: 0.56 GB, vram: 0.56 GB. avail GPU mem: 63.75 GB
+[10-21 04:51:36] Loading video_vae from /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA/video_vae. avail mem: 63.75 GB
+Loading required modules:  50%|█████     | 3/6 [00:31<00:26,  8.68s/it]Loading required modules:  50%|█████     | 3/6 [00:31<00:25,  8.65s/it]Loading required modules:  50%|█████     | 3/6 [00:31<00:26,  8.68s/it]Loading required modules:  50%|█████     | 3/6 [00:31<00:26,  8.68s/it]Loading required modules:  33%|███▎      | 2/6 [00:34<01:11, 17.76s/it]Loading required modules:  33%|███▎      | 2/6 [00:34<01:11, 17.75s/it]Loading required modules:  33%|███▎      | 2/6 [00:34<01:11, 17.75s/it]Loading required modules:  33%|███▎      | 2/6 [00:34<01:10, 17.74s/it]/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/opt/sglang/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[93m[10-21 04:51:40] VAE: could not re-home video_vae decode-dtype weights to /root/.cache/sgl_diffusion/decode_dtype_store/350c002442bb6a19.safetensors (existing decode-dtype store does not match the module); keeping in-memory copies[0;0m
+[10-21 04:51:40] VAE: video_vae holds 144 decoder weights in torch.float16 from load (anonymous host memory)
+[10-21 04:51:40] MiniMax-H3 VAE: installed quality-gated fast path (36 QK RMSNorm+RoPE fusions, cuDNN SDPA).
+[10-21 04:51:40] Attention backends for video_vae: torch_sdpa
+[10-21 04:51:40] Loaded video_vae: MiniMaxH3VideoVAE (sgl-diffusion version). model size: 5.2 GB, vram: 5.20 GB. avail GPU mem: 59.15 GB
+[10-21 04:51:40] Loading processor from /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA/processor. avail mem: 59.15 GB
+[10-21 04:51:40] Loaded processor: Qwen3VLProcessor (sgl-diffusion version). model size: NA GB, weights: none. avail GPU mem: 59.15 GB
+[10-21 04:51:40] Loading tokenizer from /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA/tokenizer. avail mem: 59.15 GB
+Loading required modules:  50%|█████     | 3/6 [00:34<00:29,  9.82s/it]Loading required modules:  50%|█████     | 3/6 [00:34<00:29,  9.81s/it]Loading required modules:  50%|█████     | 3/6 [00:34<00:29,  9.84s/it]Loading required modules:  50%|█████     | 3/6 [00:35<00:29,  9.86s/it]Loading required modules:  67%|██████▋   | 4/6 [00:35<00:13,  6.87s/it]Loading required modules:  67%|██████▋   | 4/6 [00:35<00:13,  6.89s/it]Loading required modules:  67%|██████▋   | 4/6 [00:35<00:13,  6.90s/it]Loading required modules:  67%|██████▋   | 4/6 [00:35<00:13,  6.88s/it]Loading required modules:  83%|████████▎ | 5/6 [00:35<00:04,  4.54s/it]Loading required modules:  83%|████████▎ | 5/6 [00:35<00:04,  4.53s/it]Loading required modules:  83%|████████▎ | 5/6 [00:35<00:04,  4.53s/it]Loading required modules:  83%|████████▎ | 5/6 [00:35<00:04,  4.53s/it]Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  3.08s/it]Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  5.98s/it]
+Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  3.07s/it]Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  5.98s/it]
+[10-21 04:51:41] Loaded tokenizer: Qwen2Tokenizer (sgl-diffusion version). model size: NA GB, weights: none. avail GPU mem: 59.15 GB
+Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  3.07s/it]Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  5.98s/it]
+[10-21 04:51:41] Creating pipeline stages...
+Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  3.07s/it]Loading required modules: 100%|██████████| 6/6 [00:35<00:00,  5.96s/it]
+[10-21 04:51:41] Using fa attention backend
+[10-21 04:51:41] Pipeline instantiated
+[10-21 04:51:41] Worker 0: Initialized device, model, and distributed environment.
+[10-21 04:51:41] Worker 0: Scheduler loop started.
+Loading required modules:  67%|██████▋   | 4/6 [00:39<00:15,  7.74s/it]Loading required modules:  67%|██████▋   | 4/6 [00:39<00:15,  7.73s/it]Loading required modules:  67%|██████▋   | 4/6 [00:39<00:15,  7.74s/it]Loading required modules:  67%|██████▋   | 4/6 [00:39<00:15,  7.74s/it]Loading required modules:  83%|████████▎ | 5/6 [00:39<00:05,  5.08s/it]Loading required modules:  83%|████████▎ | 5/6 [00:39<00:05,  5.07s/it]Loading required modules:  83%|████████▎ | 5/6 [00:39<00:05,  5.08s/it]Loading required modules:  83%|████████▎ | 5/6 [00:39<00:05,  5.08s/it]Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  3.43s/it]Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  6.68s/it]
+Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  3.43s/it]Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  6.68s/it]
+Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  3.43s/it]Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  6.67s/it]
+Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  3.43s/it]Loading required modules: 100%|██████████| 6/6 [00:40<00:00,  6.68s/it]
+[10-21 04:51:45] [server-load] workers_ready_monotonic_ns=5559840098653
+[10-21 04:51:45] Starting FastAPI server.
+[2026-10-21 04:51:45] [32mINFO[0m:     Started server process [[36m1[0m]
+[2026-10-21 04:51:45] [32mINFO[0m:     Waiting for application startup.
+[10-21 04:51:45] ZMQ Broker is listening for offline jobs on tcp://127.0.0.1:30011
+[2026-10-21 04:51:45] [32mINFO[0m:     Application startup complete.
+[2026-10-21 04:51:45] [32mINFO[0m:     Uvicorn running on [1mhttp://0.0.0.0:30010[0m (Press CTRL+C to quit)
+[2026-10-21 04:51:46] [32mINFO[0m:     127.0.0.1:50450 - "[1mGET /liveness HTTP/1.1[0m" [32m200 OK[0m
+[2026-10-21 04:51:54] [32mINFO[0m:     172.17.0.1:49658 - "[1mGET /health HTTP/1.1[0m" [91m503 Service Unavailable[0m
+[2026-10-21 04:52:04] [32mINFO[0m:     172.17.0.1:44864 - "[1mGET /health HTTP/1.1[0m" [91m503 Service Unavailable[0m
+[2026-10-21 04:52:14] [32mINFO[0m:     172.17.0.1:44950 - "[1mGET /health HTTP/1.1[0m" [91m503 Service Unavailable[0m
+[2026-10-21 04:52:24] [32mINFO[0m:     172.17.0.1:39620 - "[1mGET /health HTTP/1.1[0m" [91m503 Service Unavailable[0m
+[2026-10-21 04:52:34] [32mINFO[0m:     172.17.0.1:36626 - "[1mGET /health HTTP/1.1[0m" [91m503 Service Unavailable[0m
+[10-21 04:52:38] MiniMax H3 video VAE decoder fuses each scaled residual add into the next RMSNorm
+[2026-10-21 04:52:44] [32mINFO[0m:     172.17.0.1:51602 - "[1mGET /health HTTP/1.1[0m" [91m503 Service Unavailable[0m
+Warmup requests:   0%|          | 0/1 [00:00<?, ?req/s]Warmup requests: 100%|██████████| 1/1 [01:07<00:00, 67.48s/req, server warmup req (1344x768x124f, 2/50 steps), last=67.48s]Warmup requests: 100%|██████████| 1/1 [01:07<00:00, 67.48s/req, server warmup req (1344x768x124f, 2/50 steps), last=67.48s]
+[10-21 04:52:54] The server is fired up and ready to roll!
+[2026-10-21 04:52:54] [32mINFO[0m:     172.17.0.1:39642 - "[1mGET /health HTTP/1.1[0m" [32m200 OK[0m

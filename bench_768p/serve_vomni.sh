@@ -7,6 +7,9 @@
 #   ./serve_vomni.sh                  # FL2VA, port 8000
 #   PART=Ref2VA ./serve_vomni.sh
 #   EXTRA="--text-encoder-tp-size 8" ./serve_vomni.sh
+# Newer images (vllm/vllm-omni:nightly / :latest) take the repo id and pick the partition with
+# --task-type; loading both DiTs (the default "combined" service) does not fit 2x62 GB + encoder:
+#   IMAGE=vllm/vllm-omni:nightly MODEL=MiniMaxAI/MiniMax-H3 EXTRA="--task-type fl2va" ./serve_vomni.sh
 set -euo pipefail
 IMAGE=${IMAGE:-vllm/vllm-omni:minimax-h3}
 HF_CACHE=${HF_CACHE:-/opt/dlami/nvme/hf}
@@ -15,7 +18,7 @@ PART=${PART:-FL2VA}
 NGPU=${NGPU:-8}
 NAME=${NAME:-h3-vomni}
 PORT=${PORT:-8000}
-MODEL=/root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/$SNAP/$PART
+MODEL=${MODEL:-/root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/$SNAP/$PART}
 
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 docker run -d --name "$NAME" --gpus all \
@@ -23,6 +26,7 @@ docker run -d --name "$NAME" --gpus all \
   -v "$HF_CACHE:/root/.cache/huggingface" \
   -e VLLM_WORKER_MULTIPROC_METHOD=spawn \
   -e VLLM_OMNI_VIDEO_SYNC_TIMEOUT=1800 \
+  -e HF_HUB_OFFLINE=1 \
   ${ENVS:-} \
   "$IMAGE" \
   vllm serve "$MODEL" \

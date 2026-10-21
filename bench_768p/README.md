@@ -10,6 +10,8 @@ Reference config, no patches / quantization / cache: `lmsysorg/sglang:dev`, 8 GP
 | `bench_stock.sh` | (1) reference `bench_serving` cmd with N vbench prompts, (2) reference curl payload N times |
 | `req_768p.py` | the reference curl payload, polled to completion, N back-to-back runs |
 | `serve_vomni.sh` / `req_vomni.sh` | vllm-omni server (8-GPU) and the reference `/v1/videos/sync` request ×N |
+| `bench_matrix.sh` / `req_matrix.py` / `summarize_matrix.py` | sglang arms × tasks with per-stage breakdown |
+| `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni images side by side; per-component `stage_durations` |
 | `results_20261021_034117/` | the run below (one mp4 kept; all 5 fixed-prompt mp4s are md5-identical) |
 
 ## Result (2026-10-21, p5en.48xlarge, driver 595.91.07, sglang `c1c287a42`, image `sha256:b0473834…`)
@@ -65,6 +67,41 @@ reductions rounding differently), and the first (compile) request's output diffe
 Reproduce: `./serve_vomni.sh` (or `EXTRA="--text-encoder-tp-size 8 --enable-diffusion-pipeline-profiler"
 ./serve_vomni.sh`) → `/health` 200 (~90 s) → `N=5 WARM=1 ./req_vomni.sh`.
 
+## T2VA per-component breakdown + vllm-omni versions (2026-10-21)
+
+Same box, same 8-GPU shape, T2VA only, all after warmup. sglang rows: `bench_matrix.sh` with
+`ARMS="exact lossless"` (stage times from `SGLANG_DIFFUSION_STAGE_LOGGING=1` +
+`SGLANG_DIFFUSION_SYNC_STAGE_PROFILING=1`, raw rows in `matrix_lossless/*/requests.jsonl`). vllm-omni
+rows: the reference flags scaled to 8 GPUs + `--enable-diffusion-pipeline-profiler`; breakdown is the
+job's `stage_durations` from the async API (`req_vomni_async.py`; nightly no longer logs the
+profiler lines), end-to-end is the sync client wall (`req_vomni.sh`, includes MP4 encoding).
+
+| stack / version | E2E | text enc | DiT, 50 steps | s/step | VAE decode | MP4 encode |
+|---|---|---|---|---|---|---|
+| sglang `dev` (`c1c287a42`), `quality: exact` | **41.38 s** (inference_time_s) | ~0.002 s* | 40.32 s | 0.806 | 1.04 s | in decode |
+| sglang `dev`, `quality: lossless` + `--warmup-resolutions 1344x768` | **41.11 s** | ~0.002 s* | 40.15 s | 0.803 | 0.93 s | in decode |
+| vllm-omni nightly (`0.32.0rc2.dev5+g7b316e3ae`, vllm 0.32.0) | **44.22 s** | 0.043 s | 42.39 s | 0.848 | 0.81 s | 0.37 s |
+| vllm-omni latest (`v0.31.0rc1`) | pending | | | | | |
+| vllm-omni `v0.29.0rc1` (the Trn2 version) | pending | | | | | |
+| vllm-omni `minimax-h3` (`0.1.dev2381+g310b4b477`, 2026-08-02, vllm 0.26.0) | 49.38 s | 0.06 s (TP8) | 43.35 s | 0.867 | 1.17 s | 2.88 s |
+
+\* sglang caches the prompt embedding: the first request with a prompt costs 0.08–0.14 s, repeats
+of the same prompt 1.7 ms. Either way it is <0.4% of the request.
+
+- The DiT is ≥96% of every request on both stacks; encoder + decoder is ~1 s.
+- `lossless` vs `exact` is worth 0.65% (mostly VAE decode 1.04 → 0.93 s); both are bit-stable
+  run to run (one md5 per cell).
+- The new vllm-omni is 10.4% faster than the `minimax-h3` image, but 2.5 s of that is MP4
+  encoding (2.88 → 0.37 s); its DiT is only 2% faster. It still trails sglang by 7.6%, almost all
+  in the DiT (0.848 vs 0.803 s/step).
+- Two nightly bring-up traps (handled in the scripts): pass the `FL2VA/` subdirectory, not the
+  repo id — the official repo root carries `modular_model_index.json`, which nightly takes as a
+  FastH3 release and then dies looking for `fastvideo_inference.json`; and t2va requests must now
+  carry `aspect_ratio=16:9`.
+
+Reproduce: sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`; vllm-omni
+`TAGS="nightly latest v0.29.0rc1" ./bench_vomni_versions.sh`.
+
 <details><summary>中文</summary>
 
 # 官方 SGLang 768p 稳态基线（8×H200）——用于和 Trainium2 对比
@@ -79,6 +116,8 @@ Reproduce: `./serve_vomni.sh` (or `EXTRA="--text-encoder-tp-size 8 --enable-diff
 | `bench_stock.sh` | (1) 参考 `bench_serving` 命令跑 N 个 vbench prompt；(2) 参考 curl 请求跑 N 次 |
 | `req_768p.py` | 参考 curl 请求体，轮询到完成，连续跑 N 次 |
 | `serve_vomni.sh` / `req_vomni.sh` | vllm-omni 8 卡 server 与参考 `/v1/videos/sync` 请求 ×N |
+| `bench_matrix.sh` / `req_matrix.py` / `summarize_matrix.py` | sglang 各档 × 场景，带分阶段耗时 |
+| `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni 各镜像对比；分组件 `stage_durations` |
 | `results_20261021_034117/` | 下面这轮的原始结果（只留一份 mp4；5 次固定 prompt 输出 md5 完全相同） |
 
 ## 结果（2026-10-21，p5en.48xlarge，驱动 595.91.07，sglang `c1c287a42`，镜像 `sha256:b0473834…`）
@@ -130,5 +169,37 @@ MP4 编码。text encoder TP 不改变延迟，但把显存摊平：rank 0 从 1
 
 复现：`./serve_vomni.sh`（或 `EXTRA="--text-encoder-tp-size 8 --enable-diffusion-pipeline-profiler"
 ./serve_vomni.sh`）→ `/health` 200（约 90 s）→ `N=5 WARM=1 ./req_vomni.sh`。
+
+## T2VA 分组件耗时 + vllm-omni 各版本（2026-10-21）
+
+同一台机器、同样 8 卡、只测 T2VA，全部是 warmup 之后。sglang 行：`bench_matrix.sh`
+`ARMS="exact lossless"`（阶段时间来自 `SGLANG_DIFFUSION_STAGE_LOGGING=1` +
+`SGLANG_DIFFUSION_SYNC_STAGE_PROFILING=1`，原始数据在 `matrix_lossless/*/requests.jsonl`）。vllm-omni
+行：参考 flag 扩到 8 卡 + `--enable-diffusion-pipeline-profiler`；拆分取异步接口返回的
+`stage_durations`（`req_vomni_async.py`；nightly 不再把 profiler 打进日志），端到端是同步接口的客户端
+墙钟（`req_vomni.sh`，含 MP4 编码）。
+
+| 栈 / 版本 | 端到端 | text enc | DiT 50 步 | s/step | VAE decode | MP4 编码 |
+|---|---|---|---|---|---|---|
+| sglang `dev`（`c1c287a42`），`quality: exact` | **41.38 s**（inference_time_s） | ~0.002 s* | 40.32 s | 0.806 | 1.04 s | 含在 decode |
+| sglang `dev`，`quality: lossless` + `--warmup-resolutions 1344x768` | **41.11 s** | ~0.002 s* | 40.15 s | 0.803 | 0.93 s | 含在 decode |
+| vllm-omni nightly（`0.32.0rc2.dev5+g7b316e3ae`，vllm 0.32.0） | **44.22 s** | 0.043 s | 42.39 s | 0.848 | 0.81 s | 0.37 s |
+| vllm-omni latest（`v0.31.0rc1`） | 待补 | | | | | |
+| vllm-omni `v0.29.0rc1`（Trn2 上的版本） | 待补 | | | | | |
+| vllm-omni `minimax-h3`（`0.1.dev2381+g310b4b477`，2026-08-02，vllm 0.26.0） | 49.38 s | 0.06 s（TP8） | 43.35 s | 0.867 | 1.17 s | 2.88 s |
+
+\* sglang 会缓存 prompt embedding：某个 prompt 第一次请求 0.08–0.14 s，重复请求 1.7 ms。怎么算都不到
+请求的 0.4%。
+
+- 两个栈 DiT 都占每个请求的 96% 以上；encoder + decoder 合计约 1 s。
+- `lossless` 比 `exact` 快 0.65%（主要是 VAE decode 1.04 → 0.93 s）；两档都逐次逐位稳定（每格一个 md5）。
+- 新版 vllm-omni 比 `minimax-h3` 镜像快 10.4%，但其中 2.5 s 是 MP4 编码（2.88 → 0.37 s），DiT 只快 2%。
+  仍比 sglang 慢 7.6%，几乎全在 DiT（0.848 vs 0.803 s/step）。
+- nightly 起服务的两个坑（脚本里已处理）：要传 `FL2VA/` 子目录而不是 repo id —— 官方仓库根目录有
+  `modular_model_index.json`，nightly 会把它当成 FastH3 发布，然后因找不到 `fastvideo_inference.json`
+  崩掉；以及 t2va 请求现在必须带 `aspect_ratio=16:9`。
+
+复现：sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`；vllm-omni
+`TAGS="nightly latest v0.29.0rc1" ./bench_vomni_versions.sh`。
 
 </details>

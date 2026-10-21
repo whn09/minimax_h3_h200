@@ -1,0 +1,8 @@
+== 04:45:15 fl2va/exact image=lmsysorg/sglang:dev quality=exact extra=[] envs=[]
+fl2va/exact SUMMARY t2va n=3 wall=41.49s inf=41.38s (min 41.28 max 41.48) peak=82460MB distinct_md5=1
+fl2va/exact SUMMARY fl2va n=3 wall=45.23s inf=45.16s (min 45.12 max 45.20) peak=82638MB distinct_md5=1
+== 04:58:49 fl2va/lossless image=lmsysorg/sglang:dev quality=lossless extra=[--warmup-resolutions 1344x768] envs=[]
+fl2va/lossless SUMMARY t2va n=3 wall=41.21s inf=41.11s (min 41.03 max 41.17) peak=82460MB distinct_md5=1
+fl2va/lossless SUMMARY fl2va n=3 wall=45.04s inf=44.89s (min 44.85 max 44.97) peak=82638MB distinct_md5=1
+== 05:07:44 ref2va/exact image=lmsysorg/sglang:dev quality=exact extra=[] envs=[]
+ref2va/exact SUMMARY ref2va_image n=3 wall=69.70s inf=69.60s (min 69.49 max 69.67) peak=83244MB distinct_md5=1

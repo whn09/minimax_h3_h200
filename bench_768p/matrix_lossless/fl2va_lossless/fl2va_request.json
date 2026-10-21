@@ -1,0 +1,25 @@
+{
+  "model": "MiniMaxAI/MiniMax-H3",
+  "prompt": "A dim bedroom at night. Three kittens keep tumbling and batting at each other on the patterned rug in front of the radiator, tails flicking, while the person in the bed stays asleep under the blanket. The bedside lamp keeps its steady warm glow, the tall curtains stir faintly, night sky outside the windows. Warm low-key lamp light, static cinematic camera, quiet room tone with soft paw pats and faint fabric rustle.",
+  "seconds": 5,
+  "task": "fl2va",
+  "conditions": [
+    {
+      "type": "image",
+      "uri": "file:///data/minimax-h3/first.png",
+      "role": "keyframe",
+      "frame_index": 0
+    }
+  ],
+  "target": {
+    "short_edge": 768,
+    "aspect_ratio": "16:9",
+    "duration_seconds": 5.0
+  },
+  "num_outputs_per_prompt": 1,
+  "num_inference_steps": 50,
+  "flow_shift": 12.0,
+  "audio_flow_shift": 3.0,
+  "seed": 2101,
+  "quality": "lossless"
+}

@@ -1,0 +1,12 @@
+      1 Attention backends for audio_vae: torch_sdpa
+      1 Attention backends for text_encoder: torch_sdpa, fa
+      1 Attention backends for video_vae: torch_sdpa
+      1 Using fa attention backend
+      2 performance_mode=speed
+      1 quantization": null
+      1 quantization_ignored_layers": null
+      1 quantization_ignored_layers": {}
+      1 quantizations": {}
+      1 torch.compile cache: TORCHINDUCTOR_CACHE_DIR=/root/.cache/sgl_diffusion/t
+      1 torch.compile disabled for this model (pass --enable-torch-compile true t
+      8 torch.compile` or `torch.export`.
