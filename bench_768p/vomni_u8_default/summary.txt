@@ -1,0 +1,1 @@
+n=5 mean=49.38s min=49.04s max=49.59s stdev=0.196s

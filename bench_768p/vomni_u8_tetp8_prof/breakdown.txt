@@ -1,0 +1,9 @@
+# --enable-diffusion-pipeline-profiler, measured request run2 (2026-10-21 04:16:52-04:17:41 UTC),
+# copied from the server log (identical on all 8 ranks to <1 ms). Server: --text-encoder-tp-size 8.
+MiniMaxH3Pipeline.encode_prompt   0.061 s
+MiniMaxH3Pipeline.diffuse        43.349 s   (0.867 s/step over 50 steps)
+MiniMaxH3Pipeline.decode          1.172 s
+MiniMaxH3Pipeline.forward        44.583 s   (encode + diffuse + decode + ~0.0 s glue)
+engine e2e (OmniTiming)          46.256 s   (forward + 1.67 s request/stage overhead)
+Video response encoding (MP4)     2.875 s   (serving_video.py, after the engine returns)
+client wall (curl time_total)    49.215 s
