@@ -1,0 +1,15 @@
+# vllm/vllm-omni:v0.29.0rc1 ships vllm 0.28.0, but its vllm-omni 0.29.0rc1 CLI imports
+# vllm.entrypoints.launchers (added in vllm 0.29), so `vllm serve` dies at import. The only change
+# here is the matching vllm 0.29.0 (which pins torch==2.13.0, the torch already in the image; the
+# constraint keeps pip from touching it). PyPI has no vllm-omni 0.29.0 final, only 0.29.0rc1.
+# vllm 0.29.0 lifts flashinfer-python to 0.6.18 while the image's flashinfer-cubin stays 0.6.16.post3
+# (no 0.6.18 cubin on PyPI), and flashinfer refuses to import on a mismatch. H3's DiT attention is
+# FlashAttention, not flashinfer, so skip the check -- the same env the vllm-omni H3 recipe sets.
+#   docker build -f Dockerfile.vomni029 -t h3-vomni:0.29.0rc1-vllm0.29.0 .
+FROM vllm/vllm-omni:v0.29.0rc1
+ENV FLASHINFER_DISABLE_VERSION_CHECK=1
+RUN echo "torch==2.13.0" > /tmp/c.txt \
+ && pip install --no-cache-dir -c /tmp/c.txt "vllm==0.29.0" \
+ && FLASHINFER_DISABLE_VERSION_CHECK=1 python3 -c "import flashinfer; print('flashinfer', flashinfer.__version__)" \
+ && python3 -c "import vllm, vllm.entrypoints.launchers.cli_args, torch; print('vllm', vllm.__version__, 'torch', torch.__version__)" \
+ && pip show vllm-omni | grep ^Version

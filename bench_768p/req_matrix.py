@@ -90,7 +90,7 @@ def main():
     ap.add_argument("--quality", default="exact", choices=["exact", "lossless", "none"])
     ap.add_argument("--tag", default="")
     ap.add_argument("--port", type=int, default=30010)
-    ap.add_argument("--container", default="h3-stock")
+    ap.add_argument("--container", default="h3-sglang")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     base = f"http://127.0.0.1:{a.port}/v1/videos"

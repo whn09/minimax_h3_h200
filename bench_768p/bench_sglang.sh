@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Steady-state 768p (1344x768) / 124-frame / 50-step benchmark against serve_stock.sh.
+# Steady-state 768p (1344x768) / 124-frame / 50-step benchmark against serve_sglang.sh.
 #   (1) the reference bench_serving command: 1 warmup at 50 steps, then N vbench prompts, conc=1
 #   (2) the reference curl payload (fixed prompt, seed 1101) N times back to back
 # Results land in ./results_<timestamp>/ on the host.
-#   N=5 ./bench_stock.sh
+#   N=5 ./bench_sglang.sh
 set -euo pipefail
-NAME=${NAME:-h3-stock}
+NAME=${NAME:-h3-sglang}
 N=${N:-5}
 HERE=$(cd "$(dirname "$0")" && pwd)
 RES=${RES:-$HERE/results_$(date +%Y%m%d_%H%M%S)}

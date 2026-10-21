@@ -3,14 +3,14 @@
 # Exactly the reference command (lmsysorg/sglang:dev, 8 GPUs, Ulysses=8, fl2va, --performance-mode
 # speed) -- no patches, no quantization, no cache. Only the HF cache path is adapted: weights live on
 # the instance NVMe, mounted at the container's default HF cache.
-#   HF_CACHE=/opt/dlami/nvme/hf ./serve_stock.sh        # then: docker logs -f h3-stock
+#   HF_CACHE=/opt/dlami/nvme/hf ./serve_sglang.sh        # then: docker logs -f h3-sglang
 # Defaults reproduce the reference command exactly. bench_matrix.sh overrides VARIANT (fl2va|ref2va),
 # EXTRA (extra serve flags), ENVS (extra `-e K=V` docker args); ASSETS is mounted read-only at
 # /data/minimax-h3 so conditioned requests can use file:// URIs.
 set -euo pipefail
 IMAGE=${IMAGE:-lmsysorg/sglang:dev}
 HF_CACHE=${HF_CACHE:-/opt/dlami/nvme/hf}
-NAME=${NAME:-h3-stock}
+NAME=${NAME:-h3-sglang}
 PORT=${PORT:-30010}
 VARIANT=${VARIANT:-fl2va}
 ASSETS=${ASSETS:-/opt/dlami/nvme/assets}

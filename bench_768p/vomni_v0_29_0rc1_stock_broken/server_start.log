@@ -1,0 +1,19 @@
+/usr/local/lib/python3.12/dist-packages/vllm_omni/version.py:55: RuntimeWarning: vLLM and vLLM-Omni appear to have mismatched major/minor versions:
+ --> vLLM-Omni version 0.29.0rc1
+ --> vLLM version 0.28.0
+This will likely cause compatibility issues.
+  warn_if_misaligned_vllm_version()
+INFO 10-21 05:52:38 [patch.py:252] NVFP4 W4A4 weight_scale NaN-clamp: installed.
+INFO 10-21 05:52:39 [patch.py:503] inductor factorable-divisibility patch: installed.
+INFO 10-21 05:52:39 [patch.py:568] [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+Traceback (most recent call last):
+  File "/usr/local/bin/vllm", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/cli/main.py", line 52, in main
+    from vllm_omni.entrypoints.cli.main import main as omni_main
+  File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/cli/__init__.py", line 15, in <module>
+    from .serve import OmniServeCommand
+  File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/cli/serve.py", line 21, in <module>
+    from vllm.entrypoints.launchers.cli_args import make_arg_parser, validate_parsed_serve_args
+ModuleNotFoundError: No module named 'vllm.entrypoints.launchers'

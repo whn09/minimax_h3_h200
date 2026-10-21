@@ -6,12 +6,13 @@ Reference config, no patches / quantization / cache: `lmsysorg/sglang:dev`, 8 GP
 
 | file | what |
 |---|---|
-| `serve_stock.sh` | the reference `docker run ... sglang serve` (only the HF cache path is adapted) |
-| `bench_stock.sh` | (1) reference `bench_serving` cmd with N vbench prompts, (2) reference curl payload N times |
+| `serve_sglang.sh` | the reference `docker run ... sglang serve` (only the HF cache path is adapted) |
+| `bench_sglang.sh` | (1) reference `bench_serving` cmd with N vbench prompts, (2) reference curl payload N times |
 | `req_768p.py` | the reference curl payload, polled to completion, N back-to-back runs |
 | `serve_vomni.sh` / `req_vomni.sh` | vllm-omni server (8-GPU) and the reference `/v1/videos/sync` request ×N |
 | `bench_matrix.sh` / `req_matrix.py` / `summarize_matrix.py` | sglang arms × tasks with per-stage breakdown |
 | `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni images side by side; per-component `stage_durations` |
+| `Dockerfile.vomni029` | `v0.29.0rc1` image made startable (matching vllm 0.29.0) |
 | `results_20261021_034117/` | the run below (one mp4 kept; all 5 fixed-prompt mp4s are md5-identical) |
 
 ## Result (2026-10-21, p5en.48xlarge, driver 595.91.07, sglang `c1c287a42`, image `sha256:b0473834…`)
@@ -31,7 +32,7 @@ All numbers after warmup (server startup warmup of 2 steps + one 50-step warmup 
 - Denoise drifts slowly upward over back-to-back requests (39.03 → 39.98 s, +2.4% over ~7 min), so
   quote the mean, not the first run.
 
-Reproduce: `./serve_stock.sh` → wait for `/health` 200 (~3 min) → `N=5 ./bench_stock.sh`.
+Reproduce: `./serve_sglang.sh` → wait for `/health` 200 (~3 min) → `N=5 ./bench_sglang.sh`.
 
 ## vllm-omni on the same box (`vllm/vllm-omni:minimax-h3`, `sha256:e930db8e…`, vllm-omni `310b4b477`)
 
@@ -81,8 +82,8 @@ profiler lines), end-to-end is the sync client wall (`req_vomni.sh`, includes MP
 | sglang `dev` (`c1c287a42`), `quality: exact` | **41.38 s** (inference_time_s) | ~0.002 s* | 40.32 s | 0.806 | 1.04 s | in decode |
 | sglang `dev`, `quality: lossless` + `--warmup-resolutions 1344x768` | **41.11 s** | ~0.002 s* | 40.15 s | 0.803 | 0.93 s | in decode |
 | vllm-omni nightly (`0.32.0rc2.dev5+g7b316e3ae`, vllm 0.32.0) | **44.22 s** | 0.043 s | 42.39 s | 0.848 | 0.81 s | 0.37 s |
-| vllm-omni latest (`v0.31.0rc1`) | pending | | | | | |
-| vllm-omni `v0.29.0rc1` (the Trn2 version) | pending | | | | | |
+| vllm-omni latest (`v0.31.0rc1`, vllm 0.31.0) | **44.01 s** | 0.043 s | 42.41 s | 0.848 | 0.83 s | not logged |
+| vllm-omni `v0.29.0rc1` + vllm 0.29.0 (the Trn2 major version; `Dockerfile.vomni029`) | **42.96 s** | 0.044 s | 41.51 s | 0.830 | 0.79 s | 0.38 s |
 | vllm-omni `minimax-h3` (`0.1.dev2381+g310b4b477`, 2026-08-02, vllm 0.26.0) | 49.38 s | 0.06 s (TP8) | 43.35 s | 0.867 | 1.17 s | 2.88 s |
 
 \* sglang caches the prompt embedding: the first request with a prompt costs 0.08–0.14 s, repeats
@@ -94,13 +95,22 @@ of the same prompt 1.7 ms. Either way it is <0.4% of the request.
 - The new vllm-omni is 10.4% faster than the `minimax-h3` image, but 2.5 s of that is MP4
   encoding (2.88 → 0.37 s); its DiT is only 2% faster. It still trails sglang by 7.6%, almost all
   in the DiT (0.848 vs 0.803 s/step).
+- Across vllm-omni releases the steady state is flat: 0.29 / 0.31 / nightly = 42.96 / 44.01 /
+  44.22 s (within 1.3 s of each other); 0.29's DiT is 2% faster per step (0.830 vs 0.848). Each number is one server start (stdev ≤0.16 s within it), so a 2% gap is within what a
+  restart can move. All of them are 7–11% behind sglang's 41.11–41.38 s.
+- The stock `vllm/vllm-omni:v0.29.0rc1` image does not start: it ships vllm 0.28.0 while its
+  vllm-omni CLI imports `vllm.entrypoints.launchers` (vllm 0.29), so `vllm serve` dies at import
+  (`vomni_v0_29_0rc1_stock_broken/`). `Dockerfile.vomni029` adds only vllm 0.29.0 (torch 2.13.0
+  unchanged) plus `FLASHINFER_DISABLE_VERSION_CHECK=1`, because vllm 0.29.0 lifts flashinfer-python
+  to 0.6.18 and there is no matching flashinfer-cubin; H3's DiT attention is FlashAttention. PyPI has
+  no vllm-omni 0.29.0 final.
 - Two nightly bring-up traps (handled in the scripts): pass the `FL2VA/` subdirectory, not the
   repo id — the official repo root carries `modular_model_index.json`, which nightly takes as a
   FastH3 release and then dies looking for `fastvideo_inference.json`; and t2va requests must now
   carry `aspect_ratio=16:9`.
 
 Reproduce: sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`; vllm-omni
-`TAGS="nightly latest v0.29.0rc1" ./bench_vomni_versions.sh`.
+`TAGS="nightly latest h3-vomni:0.29.0rc1-vllm0.29.0" ./bench_vomni_versions.sh`.
 
 <details><summary>中文</summary>
 
@@ -112,12 +122,13 @@ Reproduce: sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`; vllm-om
 
 | 文件 | 作用 |
 |---|---|
-| `serve_stock.sh` | 参考的 `docker run ... sglang serve`（只改了 HF cache 路径） |
-| `bench_stock.sh` | (1) 参考 `bench_serving` 命令跑 N 个 vbench prompt；(2) 参考 curl 请求跑 N 次 |
+| `serve_sglang.sh` | 参考的 `docker run ... sglang serve`（只改了 HF cache 路径） |
+| `bench_sglang.sh` | (1) 参考 `bench_serving` 命令跑 N 个 vbench prompt；(2) 参考 curl 请求跑 N 次 |
 | `req_768p.py` | 参考 curl 请求体，轮询到完成，连续跑 N 次 |
 | `serve_vomni.sh` / `req_vomni.sh` | vllm-omni 8 卡 server 与参考 `/v1/videos/sync` 请求 ×N |
 | `bench_matrix.sh` / `req_matrix.py` / `summarize_matrix.py` | sglang 各档 × 场景，带分阶段耗时 |
 | `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni 各镜像对比；分组件 `stage_durations` |
+| `Dockerfile.vomni029` | 让 `v0.29.0rc1` 镜像能起（补对应的 vllm 0.29.0） |
 | `results_20261021_034117/` | 下面这轮的原始结果（只留一份 mp4；5 次固定 prompt 输出 md5 完全相同） |
 
 ## 结果（2026-10-21，p5en.48xlarge，驱动 595.91.07，sglang `c1c287a42`，镜像 `sha256:b0473834…`）
@@ -136,7 +147,7 @@ Reproduce: sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`; vllm-om
 - 输出 1344×768、124 视频帧、163 音频帧；固定 prompt 多次运行逐位相同。
 - 连续请求下 denoise 缓慢变慢（39.03 → 39.98 s，约 7 分钟内 +2.4%），报数用均值而不是第一次。
 
-复现：`./serve_stock.sh` → 等 `/health` 返回 200（约 3 分钟）→ `N=5 ./bench_stock.sh`。
+复现：`./serve_sglang.sh` → 等 `/health` 返回 200（约 3 分钟）→ `N=5 ./bench_sglang.sh`。
 
 ## 同一台机器上的 vllm-omni（`vllm/vllm-omni:minimax-h3`，`sha256:e930db8e…`，vllm-omni `310b4b477`）
 
@@ -184,8 +195,8 @@ MP4 编码。text encoder TP 不改变延迟，但把显存摊平：rank 0 从 1
 | sglang `dev`（`c1c287a42`），`quality: exact` | **41.38 s**（inference_time_s） | ~0.002 s* | 40.32 s | 0.806 | 1.04 s | 含在 decode |
 | sglang `dev`，`quality: lossless` + `--warmup-resolutions 1344x768` | **41.11 s** | ~0.002 s* | 40.15 s | 0.803 | 0.93 s | 含在 decode |
 | vllm-omni nightly（`0.32.0rc2.dev5+g7b316e3ae`，vllm 0.32.0） | **44.22 s** | 0.043 s | 42.39 s | 0.848 | 0.81 s | 0.37 s |
-| vllm-omni latest（`v0.31.0rc1`） | 待补 | | | | | |
-| vllm-omni `v0.29.0rc1`（Trn2 上的版本） | 待补 | | | | | |
+| vllm-omni latest（`v0.31.0rc1`，vllm 0.31.0） | **44.01 s** | 0.043 s | 42.41 s | 0.848 | 0.83 s | 未打日志 |
+| vllm-omni `v0.29.0rc1` + vllm 0.29.0（与 Trn2 同大版本；`Dockerfile.vomni029`） | **42.96 s** | 0.044 s | 41.51 s | 0.830 | 0.79 s | 0.38 s |
 | vllm-omni `minimax-h3`（`0.1.dev2381+g310b4b477`，2026-08-02，vllm 0.26.0） | 49.38 s | 0.06 s（TP8） | 43.35 s | 0.867 | 1.17 s | 2.88 s |
 
 \* sglang 会缓存 prompt embedding：某个 prompt 第一次请求 0.08–0.14 s，重复请求 1.7 ms。怎么算都不到
@@ -195,11 +206,19 @@ MP4 编码。text encoder TP 不改变延迟，但把显存摊平：rank 0 从 1
 - `lossless` 比 `exact` 快 0.65%（主要是 VAE decode 1.04 → 0.93 s）；两档都逐次逐位稳定（每格一个 md5）。
 - 新版 vllm-omni 比 `minimax-h3` 镜像快 10.4%，但其中 2.5 s 是 MP4 编码（2.88 → 0.37 s），DiT 只快 2%。
   仍比 sglang 慢 7.6%，几乎全在 DiT（0.848 vs 0.803 s/step）。
+- vllm-omni 各版本稳态基本持平：0.29 / 0.31 / nightly = 42.96 / 44.01 / 44.22 s；0.29 的 DiT 每步快 2%
+  （0.830 vs 0.848）。每个数都是单次起服务（服务内标准差 ≤0.16 s），2% 在重启漂移范围内。全部比 sglang 的
+  41.11–41.38 s 慢 7–11%。
+- 原版 `vllm/vllm-omni:v0.29.0rc1` 镜像起不来：里面是 vllm 0.28.0，而 vllm-omni CLI 要 import
+  `vllm.entrypoints.launchers`（vllm 0.29 才有），`vllm serve` 在 import 时就死（`vomni_v0_29_0rc1_stock_broken/`）。
+  `Dockerfile.vomni029` 只加装 vllm 0.29.0（torch 2.13.0 不动）并设 `FLASHINFER_DISABLE_VERSION_CHECK=1` ——
+  vllm 0.29.0 把 flashinfer-python 拉到 0.6.18 而没有对应的 flashinfer-cubin；H3 的 DiT attention 走
+  FlashAttention。PyPI 上没有 vllm-omni 0.29.0 正式版。
 - nightly 起服务的两个坑（脚本里已处理）：要传 `FL2VA/` 子目录而不是 repo id —— 官方仓库根目录有
   `modular_model_index.json`，nightly 会把它当成 FastH3 发布，然后因找不到 `fastvideo_inference.json`
   崩掉；以及 t2va 请求现在必须带 `aspect_ratio=16:9`。
 
 复现：sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`；vllm-omni
-`TAGS="nightly latest v0.29.0rc1" ./bench_vomni_versions.sh`。
+`TAGS="nightly latest h3-vomni:0.29.0rc1-vllm0.29.0" ./bench_vomni_versions.sh`。
 
 </details>

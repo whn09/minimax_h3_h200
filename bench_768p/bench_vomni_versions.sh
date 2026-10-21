@@ -3,15 +3,18 @@
 # pipeline profiler on), FL2VA partition passed as its subdirectory (the repo root's
 # modular_model_index.json makes nightly misdetect the official checkpoint as a FastH3 release).
 #   TAGS="latest v0.29.0rc1" ./bench_vomni_versions.sh
+#   TAGS="h3-vomni:0.29.0rc1-vllm0.29.0" ...   # an entry with ":" is a full image name (Dockerfile.vomni029)
 # Per image: 1 excluded warmup + N sync requests (client wall incl. MP4 encode), then NA async
 # requests for the per-component stage_durations. Results in vomni_<tag>/.
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 TAGS=${TAGS:-"latest v0.29.0rc1"}; N=${N:-5}; NA=${NA:-3}
 for tag in $TAGS; do
-  out="$HERE/vomni_${tag//./_}"; mkdir -p "$out"
-  echo "== $(date -u +%T) vllm/vllm-omni:$tag" | tee -a "$HERE/vomni_versions.log"
-  IMAGE=vllm/vllm-omni:$tag EXTRA="--task-type fl2va --enable-diffusion-pipeline-profiler" \
+  case $tag in *:*) img=$tag;; *) img=vllm/vllm-omni:$tag;; esac
+  name=${tag//[.:\/]/_}
+  out="$HERE/vomni_$name"; mkdir -p "$out"
+  echo "== $(date -u +%T) $img" | tee -a "$HERE/vomni_versions.log"
+  IMAGE=$img EXTRA="--task-type fl2va --enable-diffusion-pipeline-profiler" \
     "$HERE/serve_vomni.sh" > "$out/image.txt" 2>&1
   ok=0
   for i in $(seq 120); do
@@ -22,7 +25,7 @@ for tag in $TAGS; do
   docker logs h3-vomni > "$out/server_start.log" 2>&1 || true
   if [ $ok != 1 ]; then
     # older CLIs may not know --task-type: retry once without it
-    IMAGE=vllm/vllm-omni:$tag EXTRA="--enable-diffusion-pipeline-profiler" "$HERE/serve_vomni.sh" >> "$out/image.txt" 2>&1
+    IMAGE=$img EXTRA="--enable-diffusion-pipeline-profiler" "$HERE/serve_vomni.sh" >> "$out/image.txt" 2>&1
     for i in $(seq 120); do
       curl -sf localhost:8000/health >/dev/null && { ok=1; break; }
       docker ps -q -f name=h3-vomni | grep -q . || break

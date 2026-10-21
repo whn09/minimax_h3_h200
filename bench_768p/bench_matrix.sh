@@ -48,14 +48,14 @@ for part in $PARTS; do
     IFS='|' read -r image extra envs quality <<<"$(arm "$a")"
     cell="$OUT/${part}_$a"; mkdir -p "$cell"
     echo "== $(date -u +%T) $part/$a image=$image quality=$quality extra=[$extra] envs=[$envs]" | tee -a "$OUT/matrix.log"
-    IMAGE=$image VARIANT=$part EXTRA="$extra" ENVS="$STAGE_ENVS $envs" "$HERE/serve_stock.sh" > "$cell/image.txt"
+    IMAGE=$image VARIANT=$part EXTRA="$extra" ENVS="$STAGE_ENVS $envs" "$HERE/serve_sglang.sh" > "$cell/image.txt"
     ok=0
     for i in $(seq 120); do
       curl -sf localhost:30010/health >/dev/null && { ok=1; break; }
-      docker ps -q -f name=h3-stock | grep -q . || break
+      docker ps -q -f name=h3-sglang | grep -q . || break
       sleep 10
     done
-    docker logs h3-stock > "$cell/server_start.log" 2>&1 || true
+    docker logs h3-sglang > "$cell/server_start.log" 2>&1 || true
     if [ $ok != 1 ]; then echo "SERVER FAILED $part/$a" | tee -a "$OUT/matrix.log"; continue; fi
     # what the server actually resolved -- the arm is only real if these lines say so
     grep -aoiE 'Using [a-z0-9_]+ attention backend|Attention backends for [a-z_]+: [a-z0-9_, ]+|quantiz[a-z]*[^,]{0,60}|cache-dit enabled[^$]{0,80}|torch\.compile[^$]{0,60}|performance_mode=[a-z]+' \
@@ -65,8 +65,8 @@ for part in $PARTS; do
         --tag "$t" 2>&1 | tee -a "$cell/client.log" | grep SUMMARY | sed "s#^#$part/$a #" | tee -a "$OUT/matrix.log" \
         || echo "CLIENT FAILED $part/$a/$t" | tee -a "$OUT/matrix.log"
     done
-    docker logs h3-stock 2>&1 | tr '\r' '\n' | grep -aiE 'cache-dit|cached steps|skipped' | tail -20 > "$cell/cache_dit.log" || true
+    docker logs h3-sglang 2>&1 | tr '\r' '\n' | grep -aiE 'cache-dit|cached steps|skipped' | tail -20 > "$cell/cache_dit.log" || true
   done
 done
-docker rm -f h3-stock >/dev/null 2>&1 || true
+docker rm -f h3-sglang >/dev/null 2>&1 || true
 echo "== done $(date -u +%T) -> $OUT" | tee -a "$OUT/matrix.log"

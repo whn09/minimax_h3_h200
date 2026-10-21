@@ -1,0 +1,36 @@
+The config attributes {'vae_ratio': 16, 'vae_ratio_t': 4} were passed to AutoencoderKLLegacy, but are not expected and will be ignored. Please verify your config.json configuration file.
+Multi-thread loading shards:   0% Completed | 0/13 [00:00<?, ?it/s]
+Multi-thread loading shards:   8% Completed | 1/13 [00:01<00:18,  1.52s/it]
+Multi-thread loading shards:  15% Completed | 2/13 [00:02<00:14,  1.35s/it]
+Multi-thread loading shards:  23% Completed | 3/13 [00:04<00:13,  1.34s/it]
+Multi-thread loading shards:  31% Completed | 4/13 [00:05<00:11,  1.28s/it]
+Multi-thread loading shards:  38% Completed | 5/13 [00:06<00:11,  1.41s/it]
+Multi-thread loading shards:  46% Completed | 6/13 [00:08<00:09,  1.31s/it]
+Multi-thread loading shards:  54% Completed | 7/13 [00:09<00:08,  1.37s/it]
+Multi-thread loading shards:  62% Completed | 8/13 [00:11<00:07,  1.43s/it]
+Multi-thread loading shards:  69% Completed | 9/13 [00:12<00:05,  1.48s/it]
+Multi-thread loading shards:  77% Completed | 10/13 [00:13<00:04,  1.34s/it]
+Multi-thread loading shards:  85% Completed | 11/13 [00:14<00:02,  1.19s/it]
+Multi-thread loading shards:  92% Completed | 12/13 [00:15<00:01,  1.14s/it]
+Multi-thread loading shards: 100% Completed | 13/13 [00:16<00:00,  1.05s/it]
+Multi-thread loading shards: 100% Completed | 13/13 [00:16<00:00,  1.26s/it]
+
+Multi-thread loading shards:   0% Completed | 0/14 [00:00<?, ?it/s]
+Multi-thread loading shards:   7% Completed | 1/14 [00:00<00:11,  1.10it/s]
+Multi-thread loading shards:  14% Completed | 2/14 [00:01<00:09,  1.25it/s]
+Multi-thread loading shards:  21% Completed | 3/14 [00:02<00:09,  1.16it/s]
+Multi-thread loading shards:  29% Completed | 4/14 [00:03<00:08,  1.17it/s]
+Multi-thread loading shards:  36% Completed | 5/14 [00:04<00:07,  1.17it/s]
+Multi-thread loading shards:  43% Completed | 6/14 [00:04<00:06,  1.26it/s]
+Multi-thread loading shards:  50% Completed | 7/14 [00:05<00:05,  1.36it/s]
+Multi-thread loading shards:  57% Completed | 8/14 [00:06<00:04,  1.40it/s]
+Multi-thread loading shards:  64% Completed | 9/14 [00:06<00:03,  1.48it/s]
+Multi-thread loading shards:  71% Completed | 10/14 [00:07<00:02,  1.81it/s]
+Multi-thread loading shards:  79% Completed | 11/14 [00:07<00:01,  1.79it/s]
+Multi-thread loading shards: 100% Completed | 14/14 [00:07<00:00,  3.69it/s]
+Multi-thread loading shards: 100% Completed | 14/14 [00:07<00:00,  1.79it/s]
+
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     172.17.0.1:42346 - "GET /health HTTP/1.1" 200 OK

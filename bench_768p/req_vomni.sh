@@ -35,7 +35,7 @@ for i in $(seq 1 $((WARM + N))); do
   sleep 1
   st=$(docker logs --since "$since" "$NAME" 2>&1 | tr '\r' '\n' \
     | grep -aoE 'MiniMaxH3Pipeline\.[a-z_]+ took [0-9.]+s|e2e_total_ms \| [0-9,.]+|MP4 bytes\): [0-9.]+ ms' \
-    | awk '!seen[$1]++' | sed 's/MiniMaxH3Pipeline\.//; s/ took /=/; s/e2e_total_ms | /engine_ms=/; s/MP4 bytes): /mp4_ms=/; s/ ms$//' | tr '\n' ' ' | tr -d ',')
+    | awk '!seen[$1]++' | sed 's/MiniMaxH3Pipeline\.//; s/ took /=/; s/e2e_total_ms | /engine_ms=/; s/MP4 bytes): /mp4_ms=/; s/ ms$//' | tr '\n' ' ' | tr -d ',' || true)  # stage lines are optional; some images log none
   echo "$tag wall=${t}s md5=$(md5sum < "$OUT/$tag.mp4" | cut -c1-12) $st" | tee -a "$OUT/latency.log"
 done
 docker cp "$OUT/$tag.mp4" "$NAME:/tmp/check.mp4"
