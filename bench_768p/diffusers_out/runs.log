@@ -1,0 +1,15 @@
+== 10:19:01 TP=1 U=8
+[load] 28.7s TP=1 U=8 world=8 attn=default mem/rank0=124.0GiB
+warmup0 text_encoder=0.828 broadcast=0.033 denoise=58.005 video_vae=8.091 audio_vae=0.206 mux=4.654 frames=[124, 768, 1344, 3] total=71.818 s_per_step=1.160
+run0 text_encoder=0.059 broadcast=0.004 denoise=50.438 video_vae=7.807 audio_vae=0.064 mux=4.561 frames=[124, 768, 1344, 3] total=62.932 s_per_step=1.009
+run1 text_encoder=0.059 broadcast=0.004 denoise=50.761 video_vae=7.786 audio_vae=0.064 mux=4.552 frames=[124, 768, 1344, 3] total=63.226 s_per_step=1.015
+== 10:29:36 TP=8 U=1
+[load] 20.7s TP=8 U=1 world=8 attn=default mem/rank0=70.0GiB
+warmup0 text_encoder=0.826 broadcast=0.032 denoise=61.966 video_vae=8.110 audio_vae=0.268 mux=4.641 frames=[124, 768, 1344, 3] total=75.843 s_per_step=1.239
+run0 text_encoder=0.055 broadcast=0.004 denoise=61.406 video_vae=7.832 audio_vae=0.063 mux=4.545 frames=[124, 768, 1344, 3] total=73.905 s_per_step=1.228
+run1 text_encoder=0.056 broadcast=0.004 denoise=61.639 video_vae=7.834 audio_vae=0.064 mux=4.540 frames=[124, 768, 1344, 3] total=74.137 s_per_step=1.233
+== 10:34:06 TP=2 U=4
+[load] 33.9s TP=2 U=4 world=8 attn=default mem/rank0=93.1GiB
+warmup0 text_encoder=0.828 broadcast=0.032 denoise=60.104 video_vae=8.143 audio_vae=0.271 mux=4.582 frames=[124, 768, 1344, 3] total=73.960 s_per_step=1.202
+run0 text_encoder=0.058 broadcast=0.004 denoise=52.741 video_vae=7.813 audio_vae=0.063 mux=4.502 frames=[124, 768, 1344, 3] total=65.181 s_per_step=1.055
+run1 text_encoder=0.057 broadcast=0.003 denoise=52.773 video_vae=7.811 audio_vae=0.064 mux=4.502 frames=[124, 768, 1344, 3] total=65.210 s_per_step=1.055

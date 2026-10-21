@@ -1,0 +1,160 @@
+1b77cd876 local: merge #14725 into #14609 for H200 benchmarking
+W1021 10:46:34.719000 1 torch/distributed/run.py:982] 
+W1021 10:46:34.719000 1 torch/distributed/run.py:982] *****************************************
+W1021 10:46:34.719000 1 torch/distributed/run.py:982] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1021 10:46:34.719000 1 torch/distributed/run.py:982] *****************************************
+Loading checkpoint shards:   0%|          | 0/14 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 14/14 [00:00<00:00, 251.49it/s]
+You are using version 1 of 'kernels-community/flash-attn3', but version 2 is available.
+You are using version 1 of 'kernels-community/flash-attn3', but version 2 is available.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/bench/h3_diffusers_bench.py", line 74, in <module>
+[rank5]:     transformer.set_attention_backend(ATTN)
+[rank5]:   File "/dfx/src/diffusers/models/modeling_utils.py", line 657, in set_attention_backend
+[rank5]:     _maybe_download_kernel_for_backend(backend)
+[rank5]:   File "/dfx/src/diffusers/models/attention_dispatch.py", line 761, in _maybe_download_kernel_for_backend
+[rank5]:     kernel_module = get_kernel(
+[rank5]:                     ^^^^^^^^^^^
+[rank5]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 396, in get_kernel
+[rank5]:     variant_path = install_kernel(
+[rank5]:                    ^^^^^^^^^^^^^^^
+[rank5]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 254, in install_kernel
+[rank5]:     raise FileNotFoundError(
+[rank5]: FileNotFoundError: Cannot find a build variant for this system in kernels-community/flash-attn3 (revision: 7cb368cf8278b583132eb72cbf312d54586df2e2). Available variants: torch210-cxx11-cu128-x86_64-linux, torch211-cxx11-cu128-x86_64-linux, torch-stable-abi29-cu126-x86_64-linux, torch-stable-abi29-cu130-x86_64-linux, torch211-cxx11-cu130-x86_64-linux, torch212-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu126-aarch64-linux, torch210-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu128-x86_64-linux
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/bench/h3_diffusers_bench.py", line 74, in <module>
+[rank4]:     transformer.set_attention_backend(ATTN)
+[rank4]:   File "/dfx/src/diffusers/models/modeling_utils.py", line 657, in set_attention_backend
+[rank4]:     _maybe_download_kernel_for_backend(backend)
+[rank4]:   File "/dfx/src/diffusers/models/attention_dispatch.py", line 761, in _maybe_download_kernel_for_backend
+[rank4]:     kernel_module = get_kernel(
+[rank4]:                     ^^^^^^^^^^^
+[rank4]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 396, in get_kernel
+[rank4]:     variant_path = install_kernel(
+[rank4]:                    ^^^^^^^^^^^^^^^
+[rank4]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 254, in install_kernel
+[rank4]:     raise FileNotFoundError(
+[rank4]: FileNotFoundError: Cannot find a build variant for this system in kernels-community/flash-attn3 (revision: 7cb368cf8278b583132eb72cbf312d54586df2e2). Available variants: torch-stable-abi29-cu126-aarch64-linux, torch212-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu128-x86_64-linux, torch211-cxx11-cu130-x86_64-linux, torch210-cxx11-cu130-x86_64-linux, torch211-cxx11-cu128-x86_64-linux, torch-stable-abi29-cu126-x86_64-linux, torch-stable-abi29-cu130-x86_64-linux, torch210-cxx11-cu128-x86_64-linux
+`enable_parallelism` is an experimental feature. The API may change in the future and breaking changes may be introduced at any time without warning.
+Attention backends are an experimental feature and the API may be subject to change.
+You are using version 1 of 'kernels-community/flash-attn3', but version 2 is available.
+You are using version 1 of 'kernels-community/flash-attn3', but version 2 is available.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/bench/h3_diffusers_bench.py", line 74, in <module>
+[rank2]:     transformer.set_attention_backend(ATTN)
+[rank2]:   File "/dfx/src/diffusers/models/modeling_utils.py", line 657, in set_attention_backend
+[rank2]:     _maybe_download_kernel_for_backend(backend)
+[rank2]:   File "/dfx/src/diffusers/models/attention_dispatch.py", line 761, in _maybe_download_kernel_for_backend
+[rank2]:     kernel_module = get_kernel(
+[rank2]:                     ^^^^^^^^^^^
+[rank2]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 396, in get_kernel
+[rank2]:     variant_path = install_kernel(
+[rank2]:                    ^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 254, in install_kernel
+[rank2]:     raise FileNotFoundError(
+[rank2]: FileNotFoundError: Cannot find a build variant for this system in kernels-community/flash-attn3 (revision: 7cb368cf8278b583132eb72cbf312d54586df2e2). Available variants: torch211-cxx11-cu128-x86_64-linux, torch-stable-abi29-cu128-x86_64-linux, torch210-cxx11-cu130-x86_64-linux, torch211-cxx11-cu130-x86_64-linux, torch212-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu126-aarch64-linux, torch-stable-abi29-cu126-x86_64-linux, torch210-cxx11-cu128-x86_64-linux, torch-stable-abi29-cu130-x86_64-linux
+An error occurred while fetching kernel 'kernels-community/flash-attn3' from the Hub: Cannot find a build variant for this system in kernels-community/flash-attn3 (revision: 7cb368cf8278b583132eb72cbf312d54586df2e2). Available variants: torch-stable-abi29-cu126-aarch64-linux, torch-stable-abi29-cu126-x86_64-linux, torch211-cxx11-cu128-x86_64-linux, torch212-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu128-x86_64-linux, torch211-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu130-x86_64-linux, torch210-cxx11-cu128-x86_64-linux, torch210-cxx11-cu130-x86_64-linux
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/bench/h3_diffusers_bench.py", line 74, in <module>
+[rank0]:     transformer.set_attention_backend(ATTN)
+[rank0]:   File "/dfx/src/diffusers/models/modeling_utils.py", line 657, in set_attention_backend
+[rank0]:     _maybe_download_kernel_for_backend(backend)
+[rank0]:   File "/dfx/src/diffusers/models/attention_dispatch.py", line 761, in _maybe_download_kernel_for_backend
+[rank0]:     kernel_module = get_kernel(
+[rank0]:                     ^^^^^^^^^^^
+[rank0]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 396, in get_kernel
+[rank0]:     variant_path = install_kernel(
+[rank0]:                    ^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/sglang/lib/python3.12/site-packages/kernels/utils.py", line 254, in install_kernel
+[rank0]:     raise FileNotFoundError(
+[rank0]: FileNotFoundError: Cannot find a build variant for this system in kernels-community/flash-attn3 (revision: 7cb368cf8278b583132eb72cbf312d54586df2e2). Available variants: torch-stable-abi29-cu126-aarch64-linux, torch-stable-abi29-cu126-x86_64-linux, torch211-cxx11-cu128-x86_64-linux, torch212-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu128-x86_64-linux, torch211-cxx11-cu130-x86_64-linux, torch-stable-abi29-cu130-x86_64-linux, torch210-cxx11-cu128-x86_64-linux, torch210-cxx11-cu130-x86_64-linux
+You are using version 1 of 'kernels-community/flash-attn3', but version 2 is available.
+W1021 10:47:03.688000 1 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 514 closing signal SIGTERM
+W1021 10:47:03.688000 1 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 515 closing signal SIGTERM
+W1021 10:47:03.688000 1 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 516 closing signal SIGTERM
+W1021 10:47:03.688000 1 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 517 closing signal SIGTERM
+W1021 10:47:03.688000 1 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 518 closing signal SIGTERM
+W1021 10:47:03.689000 1 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 520 closing signal SIGTERM
+W1021 10:47:03.689000 1 torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 521 closing signal SIGTERM
+E1021 10:47:04.668000 1 torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 5 (pid: 519) of binary: /opt/sglang/bin/python
+Traceback (most recent call last):
+  File "/opt/sglang/bin/torchrun", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/sglang/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 380, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/sglang/lib/python3.12/site-packages/torch/distributed/run.py", line 1138, in main
+    run(args)
+  File "/opt/sglang/lib/python3.12/site-packages/torch/distributed/run.py", line 1129, in run
+    elastic_launch(
+  File "/opt/sglang/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 197, in __call__
+    return launch_agent(
+           ^^^^^^^^^^^^^
+  File "/opt/sglang/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 386, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/bench/h3_diffusers_bench.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-10-21_10:47:04
+  host      : b959507adbcf
+  rank      : 0 (local_rank: 0)
+  exitcode  : -15 (pid: 514)  (SIGTERM)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 514
+[2]:
+  time      : 2026-10-21_10:47:04
+  host      : b959507adbcf
+  rank      : 1 (local_rank: 1)
+  exitcode  : -15 (pid: 515)  (SIGTERM)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 515
+[3]:
+  time      : 2026-10-21_10:47:04
+  host      : b959507adbcf
+  rank      : 2 (local_rank: 2)
+  exitcode  : -15 (pid: 516)  (SIGTERM)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 516
+[4]:
+  time      : 2026-10-21_10:47:04
+  host      : b959507adbcf
+  rank      : 3 (local_rank: 3)
+  exitcode  : -15 (pid: 517)  (SIGTERM)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 517
+[5]:
+  time      : 2026-10-21_10:47:04
+  host      : b959507adbcf
+  rank      : 4 (local_rank: 4)
+  exitcode  : 1 (pid: 518) 
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[6]:
+  time      : 2026-10-21_10:47:04
+  host      : b959507adbcf
+  rank      : 6 (local_rank: 6)
+  exitcode  : -15 (pid: 520)  (SIGTERM)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 520
+[7]:
+  time      : 2026-10-21_10:47:04
+  host      : b959507adbcf
+  rank      : 7 (local_rank: 7)
+  exitcode  : -15 (pid: 521)  (SIGTERM)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 521
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-10-21_10:47:03
+  host      : b959507adbcf
+  rank      : 5 (local_rank: 5)
+  exitcode  : 1 (pid: 519) 
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

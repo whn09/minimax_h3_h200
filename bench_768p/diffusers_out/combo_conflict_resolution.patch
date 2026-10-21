@@ -1,0 +1,30 @@
+From 8526d9427f9e93d101488866494d29e4936f6c02 Mon Sep 17 00:00:00 2001
+From: JingyaHuang <huang_jingya@outlook.com>
+Date: Thu, 15 Oct 2026 13:52:21 +0000
+Subject: [PATCH] review: use `config._device` for the Neuron TP device
+
+`config._device` now resolves to the local Neuron core on every rank, so
+the `torch.neuron.current_device()` special case is no longer needed when
+pre-sharding, loading sharded checkpoints and moving buffers.
+---
+ src/diffusers/models/modeling_utils.py | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/src/diffusers/models/modeling_utils.py b/src/diffusers/models/modeling_utils.py
+index 731fb402a..35774a129 100644
+--- a/src/diffusers/models/modeling_utils.py
++++ b/src/diffusers/models/modeling_utils.py
+@@ -1550,9 +1550,7 @@ class ModelMixin(torch.nn.Module, PushToHubMixin):
+ 
+                 # Non-persistent buffers are absent from both the state dict and the checkpoint, and
+                 # `init_empty_weights` leaves them as real CPU tensors, so move them across explicitly.
+-                tp_device = (
+-                    torch.neuron.current_device() if tp_config._mesh.device_type == "neuron" else tp_config._device
+-                )
++                tp_device = tp_config._device
+                 for name, buffer in model.named_buffers():
+                     if buffer.device != tp_device and not isinstance(buffer, DTensor):
+                         module_path, _, buffer_name = name.rpartition(".")
+-- 
+2.53.0
+

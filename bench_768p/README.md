@@ -14,6 +14,7 @@ Reference config, no patches / quantization / cache: `lmsysorg/sglang:dev`, 8 GP
 | `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni images side by side; per-component `stage_durations` |
 | `Dockerfile.vomni029` | `v0.29.0rc1` image made startable (matching vllm 0.29.0) |
 | `Dockerfile.nccl` | swap only the NCCL wheel in a vllm-omni image (NCCL A/B) |
+| `h3_diffusers_bench.py` / `run_diffusers.sh` | diffusers-native H3 under torchrun, TP×Ulysses, per-stage timing |
 | `results_20261021_034117/` | the run below (one mp4 kept; all 5 fixed-prompt mp4s are md5-identical) |
 
 ## Result (2026-10-21, p5en.48xlarge, driver 595.91.07, sglang `c1c287a42`, image `sha256:b0473834…`)
@@ -125,6 +126,30 @@ of the same prompt 1.7 ms. Either way it is <0.4% of the request.
 Reproduce: sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`; vllm-omni
 `TAGS="nightly latest h3-vomni:0.29.0rc1-vllm0.29.0" ./bench_vomni_versions.sh`.
 
+## diffusers native (2026-10-21, same box, T2VA only)
+
+`h3_diffusers_bench.py` under `torchrun --nproc_per_node=8` (`run_diffusers.sh`), in `lmsysorg/sglang:dev`
+(torch 2.14.1+cu130, transformers 5.19) with diffusers installed `--no-deps -e` from PR #14609 head
+`bc35ec2d5` with PR #14725 (`ce1581f0f`, TP+CP in one `ParallelConfig`) merged in — the one source
+conflict in `modeling_utils.py` keeps both sides (`diffusers_out/combo_conflict_resolution.patch`). U8 alone
+is diffusers main's `_cp_plan` path; TP8 is #14609's `_tp_plan`; TP2×U4 needs both PRs. Text encoder on
+rank 0 only (output state broadcast), video + audio VAE run once, natively, on rank 1 (no tile
+parallelism), default attention backend (SDPA). Same prompt/seed as the sglang run; 1 warmup + 2 runs.
+
+| config | E2E | text enc | DiT, 50 steps | s/step | video VAE | audio VAE | MP4 mux | peak rank 0 |
+|---|---|---|---|---|---|---|---|---|
+| Ulysses 8 (main `_cp_plan`) | **63.08 s** | 0.059 s | 50.60 s | 1.012 | 7.80 s | 0.064 s | 4.56 s | 126.0 GiB |
+| TP2 × U4 (#14609 + #14725) | 65.20 s | 0.057 s | 52.76 s | 1.055 | 7.81 s | 0.063 s | 4.50 s | 94.8 GiB |
+| TP8 (#14609) | 74.02 s | 0.056 s | 61.52 s | 1.230 | 7.83 s | 0.064 s | 4.54 s | 73.1 GiB |
+
+- diffusers' best (U8, 63.08 s) is 1.53× sglang (41.11 s): the DiT is 1.26× slower per step (1.012 vs
+  0.803 s) and the native VAE decode + mux cost 12.4 s that sglang/vllm-omni spend ~1 s on.
+- On 8×H200 with NVLink, **TP does not help latency**: each TP step adds per-block all-reduces, so U8 >
+  TP2×U4 > TP8. What #14609's TP buys is memory: rank-0 peak 126 → 95 → 73 GiB (the 62 GB DiT is
+  replicated under pure Ulysses). That is the lever on memory-bound hardware (Trn2 cores), not here.
+- `_flash_3_hub` could not be tried: the hub's `kernels-community/flash-attn3` has no torch 2.14 build
+  (`diffusers_out/tp1_u8_fa3hub_failed.log`).
+
 <details><summary>中文</summary>
 
 # 官方 SGLang 768p 稳态基线（8×H200）——用于和 Trainium2 对比
@@ -143,6 +168,7 @@ Reproduce: sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`; vllm-om
 | `bench_vomni_versions.sh` / `req_vomni_async.py` | vllm-omni 各镜像对比；分组件 `stage_durations` |
 | `Dockerfile.vomni029` | 让 `v0.29.0rc1` 镜像能起（补对应的 vllm 0.29.0） |
 | `Dockerfile.nccl` | 只换 vllm-omni 镜像里的 NCCL wheel（NCCL A/B） |
+| `h3_diffusers_bench.py` / `run_diffusers.sh` | diffusers 原生 H3（torchrun，TP×Ulysses，分阶段计时） |
 | `results_20261021_034117/` | 下面这轮的原始结果（只留一份 mp4；5 次固定 prompt 输出 md5 完全相同） |
 
 ## 结果（2026-10-21，p5en.48xlarge，驱动 595.91.07，sglang `c1c287a42`，镜像 `sha256:b0473834…`）
@@ -242,5 +268,26 @@ MP4 编码。text encoder TP 不改变延迟，但把显存摊平：rank 0 从 1
 
 复现：sglang `ARMS="exact lossless" PARTS=fl2va ./bench_matrix.sh`；vllm-omni
 `TAGS="nightly latest h3-vomni:0.29.0rc1-vllm0.29.0" ./bench_vomni_versions.sh`。
+
+## diffusers 原生（2026-10-21，同一台机器，只测 T2VA）
+
+`h3_diffusers_bench.py` 用 `torchrun --nproc_per_node=8` 跑（`run_diffusers.sh`），环境是 `lmsysorg/sglang:dev`
+（torch 2.14.1+cu130、transformers 5.19），diffusers 以 `--no-deps -e` 装自 PR #14609 head `bc35ec2d5` 合入
+PR #14725（`ce1581f0f`，TP+CP 同一个 `ParallelConfig`）—— `modeling_utils.py` 唯一的源码冲突两边都保留
+（`diffusers_out/combo_conflict_resolution.patch`）。纯 U8 走的是 diffusers main 的 `_cp_plan`；TP8 是 #14609 的
+`_tp_plan`；TP2×U4 两个 PR 都要。text encoder 只在 rank 0（输出 state 广播），视频 + 音频 VAE 在 rank 1 原生跑一次
+（不做 tile 并行），attention 用默认后端（SDPA）。prompt/seed 与 sglang 相同；1 次 warmup + 2 次测量。
+
+| 配置 | 端到端 | text enc | DiT 50 步 | s/step | 视频 VAE | 音频 VAE | MP4 封装 | rank 0 峰值 |
+|---|---|---|---|---|---|---|---|---|
+| Ulysses 8（main `_cp_plan`） | **63.08 s** | 0.059 s | 50.60 s | 1.012 | 7.80 s | 0.064 s | 4.56 s | 126.0 GiB |
+| TP2 × U4（#14609 + #14725） | 65.20 s | 0.057 s | 52.76 s | 1.055 | 7.81 s | 0.063 s | 4.50 s | 94.8 GiB |
+| TP8（#14609） | 74.02 s | 0.056 s | 61.52 s | 1.230 | 7.83 s | 0.064 s | 4.54 s | 73.1 GiB |
+
+- diffusers 最好档（U8，63.08 s）是 sglang（41.11 s）的 1.53×：DiT 每步慢 1.26×（1.012 vs 0.803 s），且原生 VAE 解码 +
+  封装要 12.4 s，而 sglang/vllm-omni 约 1 s。
+- 在带 NVLink 的 8×H200 上，**TP 不帮延迟**：TP 每个 block 多出 all-reduce，所以 U8 > TP2×U4 > TP8。#14609 的 TP 买的是
+  显存：rank 0 峰值 126 → 95 → 73 GiB（纯 Ulysses 下 62 GB 的 DiT 每卡一份）。这是显存受限硬件（Trn2 核）上的杠杆，不是这里。
+- `_flash_3_hub` 没法试：hub 上 `kernels-community/flash-attn3` 没有 torch 2.14 的构建（`diffusers_out/tp1_u8_fa3hub_failed.log`）。
 
 </details>

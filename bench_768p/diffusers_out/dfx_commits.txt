@@ -1,0 +1,5 @@
+1b77cd876 local: merge #14725 into #14609 for H200 benchmarking
+bc35ec2d5 review: explain when to use "rowwise_split_input"
+ed452ef87 review: replace ReplicatedInputRowwiseParallel with a "rowwise_split_input" style
+8526d9427 review: use `config._device` for the Neuron TP device
+ 3 files changed, 126 insertions(+), 19 deletions(-)
