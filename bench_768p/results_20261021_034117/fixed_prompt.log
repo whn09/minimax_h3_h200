@@ -1,0 +1,7 @@
+run 0: wall=41.82s inference_time_s=41.622703938000086 id=9f217654-6f20-4fec-a8ee-a6f7943d0621
+run 1: wall=41.80s inference_time_s=41.62254513700009 id=e319c0d4-bbea-4f83-a959-b99bd0b821c1
+run 2: wall=41.81s inference_time_s=41.70364264 id=ae456426-9752-4083-beba-32f2fc53e2ea
+run 3: wall=41.81s inference_time_s=41.726305494000144 id=83c07199-1899-4f48-9ac0-d84ee3a0c78b
+run 4: wall=41.81s inference_time_s=41.697334972000135 id=71ec27fd-ea5c-4bdf-a65f-9351c3090bf8
+WALL      mean=41.81s median=41.81s min=41.80s max=41.82s stdev=0.008s
+INFERENCE mean=41.67s median=41.70s min=41.62s max=41.73s stdev=0.043s
