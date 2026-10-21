@@ -5,14 +5,15 @@
 #   TAGS="latest v0.29.0rc1" ./bench_vomni_versions.sh
 #   TAGS="h3-vomni:0.29.0rc1-vllm0.29.0" ...   # an entry with ":" is a full image name (Dockerfile.vomni029)
 # Per image: 1 excluded warmup + N sync requests (client wall incl. MP4 encode), then NA async
-# requests for the per-component stage_durations. Results in vomni_<tag>/.
+# requests for the per-component stage_durations. Results in vomni_<tag>${SUF}/ (SUF tells repeated
+# restarts of the same image apart, e.g. SUF=_r2).
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 TAGS=${TAGS:-"latest v0.29.0rc1"}; N=${N:-5}; NA=${NA:-3}
 for tag in $TAGS; do
   case $tag in *:*) img=$tag;; *) img=vllm/vllm-omni:$tag;; esac
   name=${tag//[.:\/]/_}
-  out="$HERE/vomni_$name"; mkdir -p "$out"
+  out="$HERE/vomni_$name${SUF:-}"; mkdir -p "$out"
   echo "== $(date -u +%T) $img" | tee -a "$HERE/vomni_versions.log"
   IMAGE=$img EXTRA="--task-type fl2va --enable-diffusion-pipeline-profiler" \
     "$HERE/serve_vomni.sh" > "$out/image.txt" 2>&1

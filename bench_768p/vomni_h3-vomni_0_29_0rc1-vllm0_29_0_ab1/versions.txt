@@ -1,0 +1,5 @@
+Name: vllm
+Version: 0.29.0
+Name: vllm-omni
+Version: 0.29.0rc1
+aspect_probe http=200 aspect=[16:9]

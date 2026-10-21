@@ -1,0 +1,318 @@
+INFO 10-21 06:33:53 [import_utils.py:478] DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+INFO 10-21 06:33:56 [patch.py:252] NVFP4 W4A4 weight_scale NaN-clamp: installed.
+INFO 10-21 06:33:56 [patch.py:503] inductor factorable-divisibility patch: installed.
+INFO 10-21 06:33:56 [patch.py:568] [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+INFO 10-21 06:34:01 [main.py:54] Delegating entrypoint handling to vllm-omni
+INFO 10-21 06:34:01 [serve.py:210] Detected diffusion model: /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+INFO 10-21 06:34:01 [logo.py:52]        [97m█     █     █▄   ▄█[0m    [34m   ▄▀▀[38;5;208m▀▀▄ [0m[97m█▄   ▄█ █▄    █ ▀█▀ [0m
+INFO 10-21 06:34:01 [logo.py:52]  [38;5;208m▄▄[0m [34m▄█[0m [97m█     █     █ ▀▄▀ █[0m[97m  ▄▄▄ [0m[34m █    [38;5;208m█ [0m[97m█ ▀▄▀ █ █ ▀▄  █  █  [0m
+INFO 10-21 06:34:01 [logo.py:52]   [38;5;208m█[0m[34m▄█▀[0m [97m█     █     █     █[0m[97m      [0m[34m █    [38;5;208m█ [0m[97m█     █ █   ▀▄█  █  [0m
+INFO 10-21 06:34:01 [logo.py:52]    [34m▀▀[0m  [97m▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀[0m      [35m  ▀▀▀▀  [0m[97m▀     ▀ ▀     ▀ ▀▀▀ [0m
+INFO 10-21 06:34:01 [logo.py:52] 
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:34:01 [api_utils.py:347] vLLM server version 0.29.0, serving model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:34:01 [api_utils.py:286] non-default args: {'model_tag': '/root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA', 'host': '0.0.0.0', 'model': '/root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA', 'trust_remote_code': True}
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:34:01 [omni_base.py:207] [AsyncOmni] Initializing with model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:34:01 [async_omni_engine.py:170] [AsyncOmniEngine] Initializing with model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:34:01 [config_factory.py:663] Resolved generic diffusion final_output_type='video' for model_class_name='MiniMaxH3Pipeline'.
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:34:01 [async_omni_engine.py:260] [AsyncOmniEngine] Launching Orchestrator thread with 1 stages
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:34:02 [multiproc_executor.py:318] Starting server...
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:12[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m10-21 06:34:15[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 4 created result MessageQueue
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 1 created result MessageQueue
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 0 created result MessageQueue
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 6 created result MessageQueue
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 5 created result MessageQueue
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 7 created result MessageQueue
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 3 created result MessageQueue
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:17[0m [90m[diffusion_worker.py:1054][0m Worker 2 created result MessageQueue
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 6: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 0: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 4: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 5: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 2: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 3: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 1: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[diffusion_worker.py:335][0m Worker 7: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 0: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[0]
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 7: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[7]
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 5: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[5]
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 2: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[2]
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 4: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[4]
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 6: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[6]
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 3: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[3]
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:18[0m [90m[parallel_state.py:641][0m SP group details for rank 1: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[1]
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:34:19[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:34:20[0m [90m[encoder.py:1133][0m MiniMax H3 Qwen3-VL encoder: 50 retained decoder layers, text_encoder_tp_size=1, vision replicated
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m The config attributes {'vae_ratio': 16, 'vae_ratio_t': 4} were passed to AutoencoderKLLegacy, but are not expected and will be ignored. Please verify your config.json configuration file.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:06[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:07[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:25[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_model_runner.py:339][0m Model loading took 67.5809 GiB and 67.513236 seconds
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_worker.py:416][0m Worker 1: Process-scoped GPU memory after model loading: 68.68 GiB.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:1, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_worker.py:293][0m Worker 1: Initialization complete.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_worker.py:1511][0m Worker 1: Scheduler loop started.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[diffusion_worker.py:1355][0m Worker 1 ready to receive requests via shared memory
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:26[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:27[0m [90m[diffusion_model_runner.py:339][0m Model loading took 67.5809 GiB and 68.750648 seconds
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:27[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:27[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:27[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:27[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:28[0m [90m[diffusion_worker.py:416][0m Worker 6: Process-scoped GPU memory after model loading: 68.68 GiB.
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:28[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:6, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:28[0m [90m[diffusion_worker.py:293][0m Worker 6: Initialization complete.
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:28[0m [90m[diffusion_worker.py:1511][0m Worker 6: Scheduler loop started.
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m10-21 06:35:28[0m [90m[diffusion_worker.py:1355][0m Worker 6 ready to receive requests via shared memory
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:29[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:29[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:   0% Completed | 0/13 [00:00<?, ?it/s]
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:30[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:30[0m [90m[registry.py:524][0m Applying sequence parallelism to MiniMaxH3DiTModel (transformer) (sp_size=8, mode=ulysses, ulysses=8, ring=1)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:   8% Completed | 1/13 [00:01<00:17,  1.42s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  15% Completed | 2/13 [00:02<00:14,  1.28s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  23% Completed | 3/13 [00:03<00:12,  1.26s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  31% Completed | 4/13 [00:05<00:12,  1.37s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  38% Completed | 5/13 [00:07<00:11,  1.48s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  46% Completed | 6/13 [00:08<00:09,  1.42s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  54% Completed | 7/13 [00:09<00:08,  1.48s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  62% Completed | 8/13 [00:11<00:07,  1.55s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  69% Completed | 9/13 [00:12<00:05,  1.43s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  77% Completed | 10/13 [00:14<00:04,  1.41s/it]
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:44[0m [90m[diffusion_model_runner.py:339][0m Model loading took 67.5809 GiB and 85.423044 seconds
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:44[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:44[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:44[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:44[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  85% Completed | 11/13 [00:15<00:02,  1.28s/it]
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:416][0m Worker 5: Process-scoped GPU memory after model loading: 68.68 GiB.
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:5, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:293][0m Worker 5: Initialization complete.
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:1511][0m Worker 5: Scheduler loop started.
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:1355][0m Worker 5 ready to receive requests via shared memory
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_model_runner.py:339][0m Model loading took 67.5809 GiB and 86.506404 seconds
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:416][0m Worker 3: Process-scoped GPU memory after model loading: 68.68 GiB.
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:3, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:293][0m Worker 3: Initialization complete.
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:1511][0m Worker 3: Scheduler loop started.
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m10-21 06:35:45[0m [90m[diffusion_worker.py:1355][0m Worker 3 ready to receive requests via shared memory
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  92% Completed | 12/13 [00:16<00:01,  1.32s/it]
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:46[0m [90m[diffusion_model_runner.py:339][0m Model loading took 67.5809 GiB and 88.186226 seconds
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:46[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards: 100% Completed | 13/13 [00:17<00:00,  1.21s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards: 100% Completed | 13/13 [00:17<00:00,  1.35s/it]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m 
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:   0% Completed | 0/14 [00:00<?, ?it/s]
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:339][0m Model loading took 67.5809 GiB and 88.625203 seconds
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:416][0m Worker 2: Process-scoped GPU memory after model loading: 68.68 GiB.
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:2, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:293][0m Worker 2: Initialization complete.
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:1511][0m Worker 2: Scheduler loop started.
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:1355][0m Worker 2 ready to receive requests via shared memory
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:416][0m Worker 4: Process-scoped GPU memory after model loading: 68.68 GiB.
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:4, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:293][0m Worker 4: Initialization complete.
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:1511][0m Worker 4: Scheduler loop started.
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_worker.py:1355][0m Worker 4 ready to receive requests via shared memory
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:339][0m Model loading took 67.5809 GiB and 89.135584 seconds
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:47[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:   7% Completed | 1/14 [00:00<00:10,  1.29it/s]
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:48[0m [90m[diffusion_worker.py:416][0m Worker 7: Process-scoped GPU memory after model loading: 68.68 GiB.
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:48[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:7, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:48[0m [90m[diffusion_worker.py:293][0m Worker 7: Initialization complete.
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:48[0m [90m[diffusion_worker.py:1511][0m Worker 7: Scheduler loop started.
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m10-21 06:35:48[0m [90m[diffusion_worker.py:1355][0m Worker 7 ready to receive requests via shared memory
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  14% Completed | 2/14 [00:01<00:08,  1.44it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  21% Completed | 3/14 [00:02<00:08,  1.35it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  29% Completed | 4/14 [00:02<00:07,  1.39it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  36% Completed | 5/14 [00:03<00:06,  1.30it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  43% Completed | 6/14 [00:04<00:06,  1.33it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  50% Completed | 7/14 [00:05<00:05,  1.31it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  57% Completed | 8/14 [00:06<00:04,  1.28it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  64% Completed | 9/14 [00:06<00:03,  1.27it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  71% Completed | 10/14 [00:07<00:03,  1.28it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards:  79% Completed | 11/14 [00:07<00:01,  1.65it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards: 100% Completed | 14/14 [00:08<00:00,  3.32it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Multi-thread loading shards: 100% Completed | 14/14 [00:08<00:00,  1.74it/s]
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m 
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:55[0m [90m[diffusers_loader.py:954][0m Loading weights took 25.62 seconds
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:56[0m [90m[diffusion_model_runner.py:339][0m Model loading took 115.5647 GiB and 97.807042 seconds
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:56[0m [90m[diffusion_model_runner.py:345][0m Model runner: Model loaded successfully.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:56[0m [90m[compile.py:103][0m Regional compilation applied to 52 module(s) for repeated blocks ['MiniMaxH3DiTBlock'].
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:56[0m [90m[diffusion_model_runner.py:254][0m Model runner: transformer configured for lazy regional torch.compile with dynamic=True; compilation errors may surface on the first request.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:56[0m [90m[diffusion_model_runner.py:436][0m Model runner: Initialization complete.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:56[0m [90m[diffusion_worker.py:416][0m Worker 0: Process-scoped GPU memory after model loading: 116.69 GiB.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:57[0m [90m[manager.py:112][0m Initializing DiffusionLoRAManager: device=cuda:0, dtype=torch.bfloat16, max_cached_adapters=1, static_lora_path=None
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:57[0m [90m[diffusion_worker.py:293][0m Worker 0: Initialization complete.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:57[0m [90m[diffusion_worker.py:1511][0m Worker 0: Scheduler loop started.
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m10-21 06:35:57[0m [90m[diffusion_worker.py:1355][0m Worker 0 ready to receive requests via shared memory
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [multiproc_executor.py:861] Async result pump started for 8 worker queue(s)
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [diffusion_engine.py:399] [RequestBatch] engine init max_num_seqs=1 max_wait_ms=0.0
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [diffusion_engine.py:1139] Skipping dummy warmup run (num_frames=0)
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [inline_stage_diffusion_client.py:79] [InlineStageDiffusionClient] stage-0 [rep-0] initialized inline (max_num_seqs=1)
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [stage_runtime.py:885] [StageRuntime] Stage 0 replica 0 initialized (diffusion)
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [orchestrator.py:603] [Orchestrator] Starting event loop
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [async_omni_engine.py:292] [AsyncOmniEngine] Orchestrator ready with 1 stages
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [omni_base.py:226] [AsyncOmni] AsyncOmniEngine initialized in 115.81 seconds
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [omni_base.py:246] [AsyncOmni] Initialized with 1 stages for model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [api_server.py:888] Detected pure diffusion mode (single diffusion stage)
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [serving_video.py:127] Video response frame conversion pool configured: workers=8
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [speaker_cache.py:239] Speaker cache ready (max_bytes=536870912)
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [serving_speech.py:229] Speaker storage: dir=/root/.cache/vllm-omni/speakers, max_speakers=1000, restored=0
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [serving.py:91] Robot OpenPI serving disabled for model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [api_server.py:967] Pure diffusion API server initialized for model: /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [api_server.py:658] Starting vLLM API server (pure diffusion mode) on http://0.0.0.0:8000
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:61] Available routes are:
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /openapi.json, Methods: GET, HEAD
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /docs, Methods: GET, HEAD
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /docs/oauth2-redirect, Methods: GET, HEAD
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /redoc, Methods: GET, HEAD
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /load, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /version, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /metrics, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /tokenize, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /detokenize, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /ping, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /ping, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /invocations, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/responses, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/responses/{response_id}, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/responses/{response_id}/cancel, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/completions, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/messages, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/messages/count_tokens, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /generative_scoring, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /scale_elastic_ep, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /is_scaling_elastic_ep, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/chat/completions/render, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/messages/render, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/completions/render, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/chat/completions/derender, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/completions/derender, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /inference/v1/generate, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/chat/completions, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/chat/completions/batch, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/audio/speech, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/audio/speech/batch, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/audio/generate, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/audio/voices, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/audio/voices, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/audio/voices/{name}, Methods: DELETE
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /health, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/models, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/images/generations, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/images/edits, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/videos, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/videos/sync, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/videos, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/videos/{video_id}, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/videos/{video_id}, Methods: DELETE
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/videos/{video_id}/content, Methods: GET
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/omni/sleep, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:70] Route: /v1/omni/wakeup, Methods: POST
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:81] Route: /v1/audio/speech/stream, Endpoint: streaming_speech
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:81] Route: /v1/video/chat/stream, Endpoint: streaming_video_chat
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:81] Route: /v1/realtime/video, Endpoint: streaming_video_output
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:81] Route: /v1/realtime, Endpoint: realtime_websocket
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:81] Route: /v1/realtime/robot/openpi, Endpoint: realtime_robot_openpi
+[0;36m(APIServer pid=1)[0;0m INFO 10-21 06:35:57 [launcher.py:81] Route: /v1/duplex, Endpoint: duplex_websocket
+[0;36m(APIServer pid=1)[0;0m INFO:     Started server process [1]
+[0;36m(APIServer pid=1)[0;0m INFO:     Waiting for application startup.
+[0;36m(APIServer pid=1)[0;0m INFO:     Application startup complete.
+[0;36m(APIServer pid=1)[0;0m INFO:     172.17.0.1:54854 - "GET /health HTTP/1.1" 200 OK

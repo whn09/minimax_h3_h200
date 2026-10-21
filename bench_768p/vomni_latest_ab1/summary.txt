@@ -1,0 +1,1 @@
+t2va n=3 mean=43.96s min=43.84s max=44.05s stdev=0.089s

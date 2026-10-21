@@ -95,9 +95,16 @@ of the same prompt 1.7 ms. Either way it is <0.4% of the request.
 - The new vllm-omni is 10.4% faster than the `minimax-h3` image, but 2.5 s of that is MP4
   encoding (2.88 → 0.37 s); its DiT is only 2% faster. It still trails sglang by 7.6%, almost all
   in the DiT (0.848 vs 0.803 s/step).
-- Across vllm-omni releases the steady state is flat: 0.29 / 0.31 / nightly = 42.96 / 44.01 /
-  44.22 s (within 1.3 s of each other); 0.29's DiT is 2% faster per step (0.830 vs 0.848). Each number is one server start (stdev ≤0.16 s within it), so a 2% gap is within what a
-  restart can move. All of them are 7–11% behind sglang's 41.11–41.38 s.
+- Across vllm-omni releases the steady state is close: 0.29 / 0.31 / nightly = 42.96 / 44.01 /
+  44.22 s. The 0.29 lead is **real, not restart drift**: alternating 0.29 and 0.31 over two more
+  restarts each (`ab_029_031.sh`, `vomni_*_ab{1,2}/`) gives 0.29 = 42.84 / 42.90 / 42.96 s
+  (DiT 41.29–41.51 s) vs 0.31 = 43.79 / 43.96 / 44.01 s (DiT 42.41–42.43 s), ranges disjoint —
+  0.31 is ~1.0 s (2.4%) slower, all in the DiT. Output is the same trajectory (0.29 vs nightly SSIM
+  0.951, closer than 0.31 vs nightly 0.929; identical composition), so 0.29 is not skipping work.
+  The H3 block code (incl. the fused modulation kernels) is identical; torch / triton / cuDNN / FA3
+  are identical; the one DiT-relevant difference is NCCL 2.29.7 (0.29) vs 2.30.7 (0.31, nightly),
+  which carries the per-layer Ulysses all-to-all — a suspect, not yet tested. All vllm-omni versions
+  are 4–7% behind sglang's 41.11–41.38 s.
 - The stock `vllm/vllm-omni:v0.29.0rc1` image does not start: it ships vllm 0.28.0 while its
   vllm-omni CLI imports `vllm.entrypoints.launchers` (vllm 0.29), so `vllm serve` dies at import
   (`vomni_v0_29_0rc1_stock_broken/`). `Dockerfile.vomni029` adds only vllm 0.29.0 (torch 2.13.0
@@ -206,9 +213,13 @@ MP4 编码。text encoder TP 不改变延迟，但把显存摊平：rank 0 从 1
 - `lossless` 比 `exact` 快 0.65%（主要是 VAE decode 1.04 → 0.93 s）；两档都逐次逐位稳定（每格一个 md5）。
 - 新版 vllm-omni 比 `minimax-h3` 镜像快 10.4%，但其中 2.5 s 是 MP4 编码（2.88 → 0.37 s），DiT 只快 2%。
   仍比 sglang 慢 7.6%，几乎全在 DiT（0.848 vs 0.803 s/step）。
-- vllm-omni 各版本稳态基本持平：0.29 / 0.31 / nightly = 42.96 / 44.01 / 44.22 s；0.29 的 DiT 每步快 2%
-  （0.830 vs 0.848）。每个数都是单次起服务（服务内标准差 ≤0.16 s），2% 在重启漂移范围内。全部比 sglang 的
-  41.11–41.38 s 慢 7–11%。
+- vllm-omni 各版本稳态接近：0.29 / 0.31 / nightly = 42.96 / 44.01 / 44.22 s。0.29 领先**是真的，不是重启漂移**：
+  0.29 与 0.31 各再交替重启两次（`ab_029_031.sh`，`vomni_*_ab{1,2}/`），0.29 = 42.84 / 42.90 / 42.96 s
+  （DiT 41.29–41.51 s），0.31 = 43.79 / 43.96 / 44.01 s（DiT 42.41–42.43 s），区间不重叠 —— 0.31 稳定慢约 1.0 s
+  （2.4%），全在 DiT。输出是同一条轨迹（0.29 vs nightly SSIM 0.951，比 0.31 vs nightly 的 0.929 还近；构图一致），
+  0.29 没有少算。H3 block 代码（含融合 modulation kernel）相同；torch / triton / cuDNN / FA3 相同；唯一与 DiT 相关的
+  差异是 NCCL 2.29.7（0.29）vs 2.30.7（0.31、nightly），它承载每层的 Ulysses all-to-all —— 嫌疑项，尚未实测。
+  所有 vllm-omni 版本都比 sglang 的 41.11–41.38 s 慢 4–7%。
 - 原版 `vllm/vllm-omni:v0.29.0rc1` 镜像起不来：里面是 vllm 0.28.0，而 vllm-omni CLI 要 import
   `vllm.entrypoints.launchers`（vllm 0.29 才有），`vllm serve` 在 import 时就死（`vomni_v0_29_0rc1_stock_broken/`）。
   `Dockerfile.vomni029` 只加装 vllm 0.29.0（torch 2.13.0 不动）并设 `FLASHINFER_DISABLE_VERSION_CHECK=1` ——
