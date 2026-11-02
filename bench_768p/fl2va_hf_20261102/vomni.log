@@ -1,0 +1,11 @@
+curl: (22) The requested URL returned error: 500
+fl2va-warmup1 wall=64.153458s md5=ce9b7576e483 encode_prompt=4.918989s _encode_visual_conditions=0.413638s _encode_reference_audio_conditions=0.000041s diffuse=56.087248s decode=1.518287s forward=62.946362s engine_ms=63549.810 mp4_ms=386.09 
+fl2va-run1 wall=44.277920s md5=526edb473be9 encode_prompt=0.229523s _encode_visual_conditions=0.231060s _encode_reference_audio_conditions=0.000026s diffuse=42.172711s decode=0.715484s forward=43.360546s engine_ms=43808.073 mp4_ms=379.33 
+fl2va-run2 wall=44.275449s md5=526edb473be9 encode_prompt=0.226616s _encode_visual_conditions=0.230164s _encode_reference_audio_conditions=0.000023s diffuse=42.169295s decode=0.713595s forward=43.350215s engine_ms=43805.552 mp4_ms=379.99 
+fl2va-run3 wall=44.322009s md5=526edb473be9 encode_prompt=0.224143s _encode_visual_conditions=0.230158s _encode_reference_audio_conditions=0.000023s diffuse=42.208773s decode=0.711548s forward=43.386428s engine_ms=43844.501 mp4_ms=386.57 
+fl2va-run4 wall=44.348141s md5=526edb473be9 encode_prompt=0.222051s _encode_visual_conditions=0.230927s _encode_reference_audio_conditions=0.000026s diffuse=42.239553s decode=0.712508s forward=43.417886s engine_ms=43880.872 mp4_ms=376.88 
+fl2va-run5 wall=44.355457s md5=526edb473be9 encode_prompt=0.232099s _encode_visual_conditions=0.232053s _encode_reference_audio_conditions=0.000025s diffuse=42.234085s decode=0.711546s forward=43.421982s engine_ms=43881.768 mp4_ms=381.89 
+stream|index=0|codec_name=h264|width=1344|height=768|r_frame_rate=24/1|nb_frames=124
+stream|index=1|codec_name=aac|sample_rate=32000|channels=2|r_frame_rate=0/0|nb_frames=163
+decode OK
+fl2va n=5 mean=44.32s min=44.28s max=44.36s stdev=0.034s

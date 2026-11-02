@@ -3,7 +3,7 @@
 # warmups + N measured times back to back. Prints curl time_total per request and, when the server
 # runs with --enable-diffusion-pipeline-profiler, that request's stage times (rank-0 lines only).
 #   N=5 WARM=1 OUT=./out_vomni ./req_vomni.sh                  # TASK=t2va (the reference curl)
-#   TASK=fl2va|ref2va_image|ref2va_video ...                    # same inputs/prompts/seeds as req_matrix.py
+#   TASK=fl2va|fl2va_bedroom|ref2va_image|ref2va_video ...      # same inputs/prompts/seeds as req_matrix.py
 # ASSETS is the host dir with first.png / ref5s.mp4 (uploaded as multipart files).
 # ASPECT=16:9 adds the aspect_ratio field, which newer images (nightly 0.32) require for t2va and the
 # minimax-h3 image predates; leave it unset there.
@@ -11,12 +11,17 @@ set -euo pipefail
 N=${N:-5}; WARM=${WARM:-1}; OUT=${OUT:-out_vomni}; PORT=${PORT:-8000}; TASK=${TASK:-t2va}
 WIDTH=${WIDTH:-1344}; HEIGHT=${HEIGHT:-768}; NAME=${NAME:-h3-vomni}
 ASSETS=${ASSETS:-/opt/dlami/nvme/assets}
+HERE=$(cd "$(dirname "$0")" && pwd)
 ASPECT=${ASPECT:-}
 mkdir -p "$OUT"
 case $TASK in
   t2va) task=t2va; seed=1101; files=()
     prompt='At night, three cats march into a bedroom playing tiny brass instruments, then abruptly file out, with synchronized room ambience.' ;;
-  fl2va) task=fl2va; seed=2101; files=(-F "input_reference=@$ASSETS/first.png;type=image/png")
+  # vllm-omni-neuron #436's fl2va case: the HF model card's reproducible 768p fl2va request (its
+  # first keyframe, prompt and seed 0) at 124 frames; the files are in assets_fl2va/.
+  fl2va) task=fl2va; seed=0; files=(-F "input_reference=@$HERE/assets_fl2va/fl2va_input.png;type=image/png")
+    prompt=$(cat "$HERE/assets_fl2va/fl2va_prompt.txt") ;;
+  fl2va_bedroom) task=fl2va; seed=2101; files=(-F "input_reference=@$ASSETS/first.png;type=image/png")
     prompt='A dim bedroom at night. Three kittens keep tumbling and batting at each other on the patterned rug in front of the radiator, tails flicking, while the person in the bed stays asleep under the blanket. The bedside lamp keeps its steady warm glow, the tall curtains stir faintly, night sky outside the windows. Warm low-key lamp light, static cinematic camera, quiet room tone with soft paw pats and faint fabric rustle.' ;;
   ref2va_image) task=ref2va; seed=3101; files=(-F "input_reference=@$ASSETS/first.png;type=image/png")
     prompt='Use <Picture 1> as the visual subject. The same dim night bedroom: the three kittens go on tussling on the rug by the radiator, the sleeping person does not stir, the bedside lamp holds its warm glow and the curtains move slightly. Preserve the layout, colours and low-key lighting of the reference, realistic coherent motion, static cinematic camera, synchronized quiet ambience.' ;;
@@ -29,7 +34,7 @@ for i in $(seq 1 $((WARM + N))); do
   since=$(date +%s)
   t=$(curl --fail-with-body -sS -o "$OUT/$tag.mp4" -w '%{time_total}' \
     -X POST "http://127.0.0.1:$PORT/v1/videos/sync" \
-    -F "prompt=$prompt" -F "width=$WIDTH" -F "height=$HEIGHT" ${ASPECT:+-F "aspect_ratio=$ASPECT"} -F 'fps=24' \
+    --form-string "prompt=$prompt" -F "width=$WIDTH" -F "height=$HEIGHT" ${ASPECT:+-F "aspect_ratio=$ASPECT"} -F 'fps=24' \
     -F 'num_inference_steps=50' -F 'flow_shift=12' -F "seed=$seed" \
     -F "extra_params={\"task\":\"$task\",\"duration\":5.0,\"audio_flow_shift\":3.0}" "${files[@]}")
   sleep 1

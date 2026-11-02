@@ -1,0 +1,12 @@
+fl2va-warmup1 wall=64.153458s md5=ce9b7576e483 encode_prompt=4.918989s _encode_visual_conditions=0.413638s _encode_reference_audio_conditions=0.000041s diffuse=56.087248s decode=1.518287s forward=62.946362s engine_ms=63549.810 mp4_ms=386.09 
+fl2va-run1 wall=44.277920s md5=526edb473be9 encode_prompt=0.229523s _encode_visual_conditions=0.231060s _encode_reference_audio_conditions=0.000026s diffuse=42.172711s decode=0.715484s forward=43.360546s engine_ms=43808.073 mp4_ms=379.33 
+fl2va-run2 wall=44.275449s md5=526edb473be9 encode_prompt=0.226616s _encode_visual_conditions=0.230164s _encode_reference_audio_conditions=0.000023s diffuse=42.169295s decode=0.713595s forward=43.350215s engine_ms=43805.552 mp4_ms=379.99 
+fl2va-run3 wall=44.322009s md5=526edb473be9 encode_prompt=0.224143s _encode_visual_conditions=0.230158s _encode_reference_audio_conditions=0.000023s diffuse=42.208773s decode=0.711548s forward=43.386428s engine_ms=43844.501 mp4_ms=386.57 
+fl2va-run4 wall=44.348141s md5=526edb473be9 encode_prompt=0.222051s _encode_visual_conditions=0.230927s _encode_reference_audio_conditions=0.000026s diffuse=42.239553s decode=0.712508s forward=43.417886s engine_ms=43880.872 mp4_ms=376.88 
+fl2va-run5 wall=44.355457s md5=526edb473be9 encode_prompt=0.232099s _encode_visual_conditions=0.232053s _encode_reference_audio_conditions=0.000025s diffuse=42.234085s decode=0.711546s forward=43.421982s engine_ms=43881.768 mp4_ms=381.89 
+t2va-warmup1 wall=59.455790s md5=42426913e5f5 encode_prompt=4.041020s diffuse=52.823805s decode=1.563149s forward=58.433376s engine_ms=59055.062 mp4_ms=378.69 
+t2va-run1 wall=39.154361s md5=9a62c2d9eed5 encode_prompt=0.049416s diffuse=37.577189s decode=0.714781s forward=38.346125s engine_ms=38790.758 mp4_ms=356.82 
+t2va-run2 wall=39.109482s md5=9a62c2d9eed5 encode_prompt=0.044612s diffuse=37.526824s decode=0.713730s forward=38.290095s engine_ms=38742.808 mp4_ms=359.87 
+t2va-run3 wall=39.102532s md5=9a62c2d9eed5 encode_prompt=0.043065s diffuse=37.510631s decode=0.713937s forward=38.272445s engine_ms=38731.501 mp4_ms=364.26 
+t2va-run4 wall=39.167764s md5=9a62c2d9eed5 encode_prompt=0.041574s diffuse=37.573985s decode=0.714613s forward=38.334927s engine_ms=38796.369 mp4_ms=364.07 
+t2va-run5 wall=39.258978s md5=9a62c2d9eed5 encode_prompt=0.041096s diffuse=37.639624s decode=0.714868s forward=38.400323s engine_ms=38861.541 mp4_ms=386.82 

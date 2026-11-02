@@ -150,6 +150,24 @@ parallelism), default attention backend (SDPA). Same prompt/seed as the sglang r
 - `_flash_3_hub` could not be tried: the hub's `kernels-community/flash-attn3` has no torch 2.14 build
   (`diffusers_out/tp1_u8_fa3hub_failed.log`).
 
+## FL2VA on vllm-omni-neuron #436's case (2026-11-02, p5en.48xlarge spot us-west-2d, driver 595.112.07)
+
+vllm-omni-neuron #436 moved its fl2va tests to the [HF model card's reproducible 768p fl2va request](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/scripts/readme/reproducible-768p-fl2va-request.sh): its first keyframe and prompt (`assets_fl2va/fl2va_input.png`, `fl2va_prompt.txt`, copied from #436) and seed 0, at 1344×768 / 124 frames / 50 steps / shifts 12+3. `req_matrix.py` and `req_vomni.sh` now send that as `fl2va`; the earlier bedroom case is `fl2va_bedroom`. `lmsysorg/sglang:dev` has moved since 2026-10-21 (now `38d9e4a3f`), so t2va was re-measured on the same image the same day. `run_fl2va_hf.sh`; results in `fl2va_hf_20261102/`. 1 warmup + 5 runs per row, every run's output byte-identical within a row.
+
+| stack | task | client wall (n=5) | text encode | keyframe encode | denoise | VAE decode | MP4 | peak/GPU |
+|---|---|---|---|---|---|---|---|---|
+| sglang `dev` `38d9e4a3f`, exact | t2va | **37.71 s** | ~0 s* | — | 35.95 s | 0.99 s | in decode | 82,460 MB |
+| sglang `dev` `38d9e4a3f`, exact | **fl2va** | **42.20 s** | 0.13 s | 0.04 s | 40.14 s | 1.03 s | in decode | 82,656 MB |
+| vllm-omni 0.29.0rc1 + vllm 0.29.0 | t2va | 39.16 s | 0.04 s | — | 37.57 s | 0.71 s | 0.37 s | |
+| vllm-omni 0.29.0rc1 + vllm 0.29.0 | **fl2va** | **44.32 s** | 0.23 s | 0.23 s | 42.20 s | 0.71 s | 0.38 s | |
+
+\* sglang caches the text embedding of a repeated prompt.
+
+- fl2va costs **+4.5 s over t2va on sglang and +5.2 s on vllm-omni**, almost all of it in the denoise (+4.2 / +4.6 s): the keyframe's latent rows lengthen the packed sequence. The long IR prompt adds 0.1-0.2 s of text encoding.
+- sglang `dev` is 4.1 s faster on t2va than on 2026-10-21 (37.71 vs 41.81 s, denoise 35.95 vs 39.6 s), so compare Trainium2 against these rows, not the older ones.
+- vllm-omni 0.29 t2va needs an explicit `aspect_ratio` (`OmniClientError: t2va requires an explicit aspect_ratio`): `ASPECT=16:9`. fl2va takes it from the keyframe.
+- All outputs are 1344×768, 124 frames, AAC 32 kHz; `sglang/fl2va_run1.mp4` and `vomni/fl2va-run5.mp4` are kept.
+
 <details><summary>中文</summary>
 
 # 官方 SGLang 768p 稳态基线（8×H200）——用于和 Trainium2 对比
@@ -289,5 +307,23 @@ PR #14725（`ce1581f0f`，TP+CP 同一个 `ParallelConfig`）—— `modeling_ut
 - 在带 NVLink 的 8×H200 上，**TP 不帮延迟**：TP 每个 block 多出 all-reduce，所以 U8 > TP2×U4 > TP8。#14609 的 TP 买的是
   显存：rank 0 峰值 126 → 95 → 73 GiB（纯 Ulysses 下 62 GB 的 DiT 每卡一份）。这是显存受限硬件（Trn2 核）上的杠杆，不是这里。
 - `_flash_3_hub` 没法试：hub 上 `kernels-community/flash-attn3` 没有 torch 2.14 的构建（`diffusers_out/tp1_u8_fa3hub_failed.log`）。
+
+## vllm-omni-neuron #436 的 FL2VA 用例（2026-11-02，p5en.48xlarge spot us-west-2d，驱动 595.112.07）
+
+vllm-omni-neuron #436 把 fl2va 测试换成了 [HF 模型卡的 768p fl2va 示例请求](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/scripts/readme/reproducible-768p-fl2va-request.sh)：同一张首帧关键帧和 prompt（`assets_fl2va/fl2va_input.png`、`fl2va_prompt.txt`，从 #436 原样拷来），seed 0，1344×768 / 124 帧 / 50 步 / shift 12+3。`req_matrix.py` 和 `req_vomni.sh` 的 `fl2va` 现在发的就是它；原来的卧室用例改名为 `fl2va_bedroom`。`lmsysorg/sglang:dev` 自 10-21 以来更新过（现在是 `38d9e4a3f`），所以在同一镜像、同一天重测了 t2va。脚本 `run_fl2va_hf.sh`，结果在 `fl2va_hf_20261102/`。每行 1 次 warmup + 5 次，同一行内输出逐字节相同。
+
+| 栈 | 任务 | 客户端耗时（n=5） | 文本编码 | 关键帧编码 | denoise | VAE 解码 | MP4 | 每卡峰值 |
+|---|---|---|---|---|---|---|---|---|
+| sglang `dev` `38d9e4a3f`，exact | t2va | **37.71 s** | ~0 s* | — | 35.95 s | 0.99 s | 含在 decode | 82,460 MB |
+| sglang `dev` `38d9e4a3f`，exact | **fl2va** | **42.20 s** | 0.13 s | 0.04 s | 40.14 s | 1.03 s | 含在 decode | 82,656 MB |
+| vllm-omni 0.29.0rc1 + vllm 0.29.0 | t2va | 39.16 s | 0.04 s | — | 37.57 s | 0.71 s | 0.37 s | |
+| vllm-omni 0.29.0rc1 + vllm 0.29.0 | **fl2va** | **44.32 s** | 0.23 s | 0.23 s | 42.20 s | 0.71 s | 0.38 s | |
+
+\* sglang 对重复的 prompt 缓存了文本 embedding。
+
+- fl2va 比 t2va **在 sglang 上多 4.5 s、在 vllm-omni 上多 5.2 s**，几乎全在 denoise（+4.2 / +4.6 s）：关键帧的 latent 行让打包序列变长。长 IR prompt 只多 0.1–0.2 s 文本编码。
+- sglang `dev` 的 t2va 比 10-21 快了 4.1 s（37.71 vs 41.81 s，denoise 35.95 vs 39.6 s），所以和 Trainium2 对比要用这几行，不要用旧数。
+- vllm-omni 0.29 的 t2va 必须显式带 `aspect_ratio`（`OmniClientError: t2va requires an explicit aspect_ratio`），用 `ASPECT=16:9`；fl2va 从关键帧推断。
+- 所有输出都是 1344×768、124 帧、AAC 32 kHz；保留了 `sglang/fl2va_run1.mp4` 和 `vomni/fl2va-run5.mp4`。
 
 </details>

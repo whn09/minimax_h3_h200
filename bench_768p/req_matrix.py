@@ -6,7 +6,8 @@ Usage: req_matrix.py TASK OUT_DIR [--n 3] [--warm 1] [--quality exact|lossless|n
 
 TASK is one of
   t2va          the reference curl request (fixed prompt, seed 1101)
-  fl2va         first-frame keyframe = assets/first.png, seed 2101         (FL2VA partition)
+  fl2va         vllm-omni-neuron #436 / HF model card: assets_fl2va/fl2va_input.png + fl2va_prompt.txt, seed 0
+  fl2va_bedroom first-frame keyframe = assets/first.png, seed 2101 (the fl2va case before 2026-11)
   ref2va_image  image reference      = assets/first.png, seed 3101         (Ref2VA partition)
   ref2va_video  video reference      = assets/ref5s.mp4 (+ its soundtrack), seed 4101 (Ref2VA)
 All are 1344x768 (short edge 768, 16:9), 5 s target -> 124 frames, 50 steps, shifts 12 / 3.
@@ -28,7 +29,17 @@ TASKS = {
         task="t2va", seed=1101, conditions=[],
         prompt="Night-vision bedroom footage: while the owner sleeps, three cats burst in playing tiny "
                "brass instruments at full volume, freeze, then march out as if nothing happened."),
+    # vllm-omni-neuron #436's fl2va case: the HF model card's reproducible 768p fl2va request
+    # (scripts/readme/reproducible-768p-fl2va-request.sh): its first keyframe, prompt and seed 0,
+    # at the t2va cases' 124 frames. assets_fl2va/ holds both files; copy the png into ASSETS.
     "fl2va": dict(
+        task="fl2va", seed=0,
+        conditions=[{"type": "image", "uri": f"{ASSET}/fl2va_input.png", "role": "keyframe",
+                     "frame_index": 0}],
+        prompt=open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets_fl2va",
+                                 "fl2va_prompt.txt")).read().strip()),
+    # The fl2va case before 2026-11 (the numbers in results_* and matrix_* up to then).
+    "fl2va_bedroom": dict(
         task="fl2va", seed=2101,
         conditions=[{"type": "image", "uri": f"{ASSET}/first.png", "role": "keyframe", "frame_index": 0}],
         prompt="A dim bedroom at night. Three kittens keep tumbling and batting at each other on the "
