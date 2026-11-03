@@ -1,0 +1,905 @@
+INFO 11-03 05:41:58 [import_utils.py:478] DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+INFO 11-03 05:42:04 [patch.py:252] NVFP4 W4A4 weight_scale NaN-clamp: installed.
+INFO 11-03 05:42:05 [patch.py:503] inductor factorable-divisibility patch: installed.
+INFO 11-03 05:42:05 [patch.py:568] [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+INFO 11-03 05:42:10 [main.py:54] Delegating entrypoint handling to vllm-omni
+INFO 11-03 05:42:10 [serve.py:210] Detected diffusion model: /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+INFO 11-03 05:42:10 [logo.py:52]        [97m█     █     █▄   ▄█[0m    [34m   ▄▀▀[38;5;208m▀▀▄ [0m[97m█▄   ▄█ █▄    █ ▀█▀ [0m
+INFO 11-03 05:42:10 [logo.py:52]  [38;5;208m▄▄[0m [34m▄█[0m [97m█     █     █ ▀▄▀ █[0m[97m  ▄▄▄ [0m[34m █    [38;5;208m█ [0m[97m█ ▀▄▀ █ █ ▀▄  █  █  [0m
+INFO 11-03 05:42:10 [logo.py:52]   [38;5;208m█[0m[34m▄█▀[0m [97m█     █     █     █[0m[97m      [0m[34m █    [38;5;208m█ [0m[97m█     █ █   ▀▄█  █  [0m
+INFO 11-03 05:42:10 [logo.py:52]    [34m▀▀[0m  [97m▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀[0m      [35m  ▀▀▀▀  [0m[97m▀     ▀ ▀     ▀ ▀▀▀ [0m
+INFO 11-03 05:42:10 [logo.py:52] 
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:10 [api_utils.py:347] vLLM server version 0.29.0, serving model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:10 [api_utils.py:286] non-default args: {'model_tag': '/root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA', 'host': '0.0.0.0', 'port': 8010, 'model': '/root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA', 'trust_remote_code': True}
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:10 [omni_base.py:207] [AsyncOmni] Initializing with model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:10 [async_omni_engine.py:170] [AsyncOmniEngine] Initializing with model /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-H3/snapshots/42ed227ee7df40d41602854ae760620d6eb651fe/FL2VA
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:10 [config_factory.py:663] Resolved generic diffusion final_output_type='video' for model_class_name='MiniMaxH3Pipeline'.
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:10 [async_omni_engine.py:260] [AsyncOmniEngine] Launching Orchestrator thread with 1 stages
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:11 [multiproc_executor.py:318] Starting server...
+[32mINFO[0m [90m11-03 05:42:23[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:23[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:23[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:23[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:23[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:24[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:24[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:24[0m [90m[import_utils.py:478][0m DeepEP v2 requires NCCL >= 2.30.4 but found 2.29.7. deepep_v2 backend will not be available.
+[32mINFO[0m [90m11-03 05:42:25[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:25[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:25[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m11-03 05:42:25[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:252][0m NVFP4 W4A4 weight_scale NaN-clamp: installed.
+[32mINFO[0m [90m11-03 05:42:26[0m [90m[patch.py:503][0m inductor factorable-divisibility patch: installed.
+[32mINFO[0m [90m11-03 05:42:27[0m [90m[patch.py:568][0m [cumem-cuda] CuMemAllocator._python_free_callback patched: asleep guard extended to all platforms.
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:27[0m [90m[diffusion_worker.py:1054][0m Worker 0 created result MessageQueue
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:28[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:28[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:28[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:28[0m [90m[diffusion_worker.py:1054][0m Worker 7 created result MessageQueue
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:28[0m [90m[diffusion_worker.py:1054][0m Worker 1 created result MessageQueue
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:28[0m [90m[diffusion_worker.py:1054][0m Worker 2 created result MessageQueue
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:28[0m [90m[diffusion_worker.py:1054][0m Worker 3 created result MessageQueue
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:1054][0m Worker 6 created result MessageQueue
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:1054][0m Worker 4 created result MessageQueue
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:1054][0m Worker 5 created result MessageQueue
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[scheduler.py:277][0m Chunked prefill is enabled with max_num_batched_tokens=2048.
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[kernel.py:369][0m Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:323][0m Final IR op priority after setting vLLM-Omni overrides: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'])
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 0: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 1: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 2: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 4: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 3: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 5: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 7: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[diffusion_worker.py:335][0m Worker 6: Initialized device and distributed environment.
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 2: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[2]
+[0;36m(DiffusionWorker pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 5: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[5]
+[0;36m(DiffusionWorker pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 7: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[7]
+[0;36m(DiffusionWorker pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 4: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[4]
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 0: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[0]
+[0;36m(DiffusionWorker pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 1: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[1]
+[0;36m(DiffusionWorker pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 3: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[3]
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:599][0m Building SP subgroups from explicit sp_group_ranks (sp_size=8, ulysses=8, ring=1, use_ulysses_low=True).
+[0;36m(DiffusionWorker pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:29[0m [90m[parallel_state.py:641][0m SP group details for rank 6: sp_group=[0, 1, 2, 3, 4, 5, 6, 7], ulysses_group=[0, 1, 2, 3, 4, 5, 6, 7], ring_group=[6]
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:84][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='minimax_h3.token_refiner' (role_category='self') via platform default
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:30[0m [90m[selector.py:93][0m Resolved diffusion attention backend 'FLASH_ATTN' for role='self' via platform default
+[rank0]:[W1103 05:42:31.685025187 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 524288000 bytes (free: 205586432, total: 85019590656).
+[rank0]:[W1103 05:42:31.685219818 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 524288000 bytes (free: 205586432, total: 85019590656).
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Process DiffusionWorker-0:
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m Traceback (most recent call last):
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.run()
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self._target(*self._args, **self._kwargs)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/worker/diffusion_worker.py", line 1503, in worker_main
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     worker_proc = WorkerProc(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                   ^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/worker/diffusion_worker.py", line 1059, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.worker = self._create_worker(gpu_id, od_config, worker_extension_cls, custom_pipeline_args)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/worker/diffusion_worker.py", line 1094, in _create_worker
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     wrapper = WorkerWrapperBase(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m               ^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/worker/diffusion_worker.py", line 1575, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.worker = worker_class(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                   ^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/worker/diffusion_worker.py", line 291, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.load_model(load_format=self.od_config.diffusion_load_format)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/worker/diffusion_worker.py", line 407, in load_model
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.model_runner.load_model(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/worker/diffusion_model_runner.py", line 331, in load_model
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.pipeline = model_loader.load_model(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                     ^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/model_loader/diffusers_loader.py", line 579, in load_model
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     model = self._init_from_load_format(load_format, target_device, custom_pipeline_name, is_hsdp=False)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/model_loader/diffusers_loader.py", line 1064, in _init_from_load_format
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     model = initialize_model(self.od_config)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/registry.py", line 424, in initialize_model
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     model = model_class(od_config=od_config)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/models/minimax_h3/pipeline_minimax_h3.py", line 1033, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.text_encoder = MiniMaxH3Qwen3VLEncoder(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                         ^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/models/minimax_h3/encoder.py", line 1125, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.text_model = MiniMaxH3Qwen3VLTextModel(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/models/minimax_h3/encoder.py", line 948, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     MiniMaxH3Qwen3VLTextDecoderLayer(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/models/minimax_h3/encoder.py", line 897, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.mlp = MiniMaxH3Qwen3VLTextMLP(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                ^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/models/minimax_h3/encoder.py", line 850, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.gate_up_proj = MiniMaxH3Qwen3VLMergedColumnParallelLinear(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/models/minimax_h3/encoder.py", line 166, in __init__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     self.quant_method.create_weights(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/linear.py", line 192, in create_weights
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     data=torch.empty(
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m          ^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m   File "/usr/local/lib/python3.12/dist-packages/torch/utils/_device.py", line 122, in __torch_function__
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m     return func(*args, **kwargs)
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m            ^^^^^^^^^^^^^^^^^^^^^
+[0;36m(DiffusionWorker_SP0 pid=986)[0;0m torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 500.00 MiB. GPU 0 has a total capacity of 79.18 GiB of which 196.06 MiB is free. Including non-PyTorch memory, this process has 78.98 GiB memory in use. Of the allocated memory 78.18 GiB is allocated by PyTorch, and 207.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+[rank3]:[W1103 05:42:32.900042144 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=132, addr=[localhost]:36800, remote=[localhost]:49941): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:787 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7faec1963bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1964bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1965092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66acf0d (0x7fae2baf8f0d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x383 (0x7fae2baf23e3 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7fae0da5319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0xecdb4 (0x7fae9266edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x9cb84 (0x7faec2912b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x129d6c (0x7faec299fd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank3]:[W1103 05:42:32.904069499 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 3] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+[rank6]:[W1103 05:42:32.924392356 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=131, addr=[localhost]:36812, remote=[localhost]:49941): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:787 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x79bedf563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66acf0d (0x79be496f8f0d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x383 (0x79be496f23e3 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x79be2b65319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0xecdb4 (0x79beb026edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x9cb84 (0x79bee0540b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x129d6c (0x79bee05cdd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank6]:[W1103 05:42:32.925927196 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 6] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+[rank4]:[W1103 05:42:32.941268981 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=132, addr=[localhost]:36816, remote=[localhost]:49941): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:787 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x71cb5d763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66acf0d (0x71cac74f8f0d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x383 (0x71cac74f23e3 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x71caa945319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0xecdb4 (0x71cb2e06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x9cb84 (0x71cb5e428b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x129d6c (0x71cb5e4b5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank4]:[W1103 05:42:32.942926208 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 4] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+[rank5]:[W1103 05:42:32.964160998 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=132, addr=[localhost]:36822, remote=[localhost]:49941): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:787 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7f968d363bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d364bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d365092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66acf0d (0x7f95f70f8f0d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x383 (0x7f95f70f23e3 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7f95d905319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0xecdb4 (0x7f965dc6edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x9cb84 (0x7f968e048b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x129d6c (0x7f968e0d5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank5]:[W1103 05:42:32.965826365 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 5] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+[rank7]:[W1103 05:42:33.419937407 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=130, addr=[localhost]:52926, remote=[localhost]:49941): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:787 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x763ec1763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66acf0d (0x763e2b4f8f0d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x383 (0x763e2b4f23e3 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x763e0d45319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0xecdb4 (0x763e9206edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x9cb84 (0x763ec23feb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x129d6c (0x763ec248bd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank7]:[W1103 05:42:33.421523050 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 7] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+[rank1]:[W1103 05:42:33.564826106 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=132, addr=[localhost]:52938, remote=[localhost]:49941): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:787 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7dda39763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66acf0d (0x7dd9a34f8f0d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x383 (0x7dd9a34f23e3 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7dd98545319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0xecdb4 (0x7dda0a06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x9cb84 (0x7dda3a433b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x129d6c (0x7dda3a4c0d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[W1103 05:42:33.566395618 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+[rank2]:[W1103 05:42:33.645562510 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=132, addr=[localhost]:52948, remote=[localhost]:49941): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:787 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x72391d563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66acf0d (0x7238876f8f0d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x383 (0x7238876f23e3 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x72386965319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0xecdb4 (0x7238ee26edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x9cb84 (0x72391e5cfb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x129d6c (0x72391e65cd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank2]:[W1103 05:42:33.647195235 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 2] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+[rank3]:[W1103 05:42:33.904212091 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36800, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7faec1963bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1964bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1965092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7fae2baf8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7fae2baf93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7fae2baf958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7fae2baf23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7fae0da5319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7fae9266edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7faec2912b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7faec299fd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank3]:[W1103 05:42:33.906861466 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 3] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank6]:[W1103 05:42:33.926072168 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=131, addr=[localhost]:36812, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x79bedf563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x79be496f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x79be496f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x79be496f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x79be496f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x79be2b65319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x79beb026edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x79bee0540b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x79bee05cdd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank6]:[W1103 05:42:33.928623717 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 6] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank4]:[W1103 05:42:33.943082801 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36816, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x71cb5d763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x71cac74f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x71cac74f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x71cac74f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x71cac74f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x71caa945319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x71cb2e06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x71cb5e428b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x71cb5e4b5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank4]:[W1103 05:42:33.945763417 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 4] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank5]:[W1103 05:42:33.965990738 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36822, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7f968d363bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d364bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d365092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7f95f70f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7f95f70f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7f95f70f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7f95f70f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7f95d905319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7f965dc6edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7f968e048b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7f968e0d5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank5]:[W1103 05:42:33.968602080 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 5] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank7]:[W1103 05:42:34.421704725 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=130, addr=[localhost]:52926, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x763ec1763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x763e2b4f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x763e2b4f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x763e2b4f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x763e2b4f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x763e0d45319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x763e9206edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x763ec23feb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x763ec248bd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank7]:[W1103 05:42:34.424351639 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 7] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank1]:[W1103 05:42:34.566511219 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:52938, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7dda39763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7dd9a34f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7dd9a34f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7dd9a34f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7dd9a34f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7dd98545319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7dda0a06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7dda3a433b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7dda3a4c0d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[W1103 05:42:34.569053247 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank2]:[W1103 05:42:34.647324967 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:52948, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x72391d563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7238876f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7238876f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7238876f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7238876f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x72386965319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7238ee26edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x72391e5cfb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x72391e65cd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank2]:[W1103 05:42:34.650124781 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 2] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank3]:[W1103 05:42:34.906988017 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36800, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7faec1963bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1964bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1965092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7fae2baf8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7fae2baf93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7fae2baf958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7fae2baf23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7fae0da5319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7fae9266edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7faec2912b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7faec299fd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank3]:[W1103 05:42:34.909689325 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 3] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank6]:[W1103 05:42:34.928767829 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=131, addr=[localhost]:36812, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x79bedf563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x79be496f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x79be496f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x79be496f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x79be496f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x79be2b65319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x79beb026edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x79bee0540b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x79bee05cdd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank6]:[W1103 05:42:34.931870360 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 6] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank4]:[W1103 05:42:34.945894409 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36816, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x71cb5d763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x71cac74f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x71cac74f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x71cac74f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x71cac74f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x71caa945319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x71cb2e06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x71cb5e428b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x71cb5e4b5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank4]:[W1103 05:42:34.948546093 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 4] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank5]:[W1103 05:42:34.968756584 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36822, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7f968d363bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d364bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d365092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7f95f70f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7f95f70f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7f95f70f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7f95f70f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7f95d905319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7f965dc6edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7f968e048b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7f968e0d5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank5]:[W1103 05:42:34.971564737 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 5] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [multiproc_executor.py:366] Rank 0 scheduler is dead. Please check if there are relevant logs.
+[rank7]:[W1103 05:42:35.424551444 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=130, addr=[localhost]:52926, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x763ec1763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x763e2b4f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x763e2b4f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x763e2b4f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x763e2b4f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x763e0d45319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x763e9206edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x763ec23feb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x763ec248bd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank7]:[W1103 05:42:35.427747131 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 7] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank1]:[W1103 05:42:35.569152247 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:52938, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7dda39763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7dd9a34f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7dd9a34f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7dd9a34f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7dd9a34f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7dd98545319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7dda0a06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7dda3a433b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7dda3a4c0d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[W1103 05:42:35.571625541 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank2]:[W1103 05:42:35.650222130 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:52948, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x72391d563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7238876f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7238876f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7238876f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7238876f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x72386965319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7238ee26edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x72391e5cfb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x72391e65cd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank2]:[W1103 05:42:35.652670973 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 2] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [multiproc_executor.py:368] Exit code: 1
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257] [StageRuntime] Stage initialization failed; shutting down 0 initialized client(s)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257] Traceback (most recent call last):
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 244, in initialize
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 516, in _initialize_stage_replicas
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     raise primary_exc
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 477, in _init_group
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     client = self._initialize_replica(
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]              ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 706, in _initialize_replica
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     return self._initialize_local_diffusion_replica(plan, stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 873, in _initialize_local_diffusion_replica
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     client, resources = launch_diffusion_stage_replica(
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_engine_startup.py", line 1577, in launch_diffusion_stage_replica
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     client = initialize_diffusion_stage(
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_init_utils.py", line 1951, in initialize_diffusion_stage
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     return create_diffusion_client(model, od_config, metadata, stage_init_timeout, use_inline)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/stage_diffusion_client.py", line 58, in create_diffusion_client
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     return InlineStageDiffusionClient(model, od_config, metadata)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/inline_stage_diffusion_client.py", line 67, in __init__
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     self._engine = DiffusionEngine.make_engine(self.od_config)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 843, in make_engine
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     engine = engine_class(config, scheduler=scheduler)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 254, in __init__
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     self._init_executor(od_config)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 325, in _init_executor
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     self.executor = executor_class(od_config)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/abstract.py", line 75, in __init__
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     self._init_executor()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 135, in _init_executor
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     processes, result_handles = self._launch_workers(broadcast_handle, self.wake_events)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 364, in _launch_workers
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     data = reader.recv()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]            ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/lib/python3.12/multiprocessing/connection.py", line 250, in recv
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     buf = self._recv_bytes()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]           ^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/lib/python3.12/multiprocessing/connection.py", line 430, in _recv_bytes
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     buf = self._recv(4)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]           ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]   File "/usr/lib/python3.12/multiprocessing/connection.py", line 399, in _recv
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257]     raise EOFError
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [stage_runtime.py:257] EOFError
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438] [AsyncOmniEngine] Orchestrator thread crashed
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438] Traceback (most recent call last):
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 432, in _bootstrap_orchestrator
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     loop.run_until_complete(_run_orchestrator())
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     return future.result()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]            ^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 389, in _run_orchestrator
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     self._initialize_stages(stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 336, in _initialize_stages
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     self._runtime.initialize()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 263, in initialize
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     raise exc
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 244, in initialize
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 516, in _initialize_stage_replicas
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     raise primary_exc
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 477, in _init_group
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     client = self._initialize_replica(
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]              ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 706, in _initialize_replica
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     return self._initialize_local_diffusion_replica(plan, stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 873, in _initialize_local_diffusion_replica
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     client, resources = launch_diffusion_stage_replica(
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_engine_startup.py", line 1577, in launch_diffusion_stage_replica
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     client = initialize_diffusion_stage(
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_init_utils.py", line 1951, in initialize_diffusion_stage
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     return create_diffusion_client(model, od_config, metadata, stage_init_timeout, use_inline)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/stage_diffusion_client.py", line 58, in create_diffusion_client
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     return InlineStageDiffusionClient(model, od_config, metadata)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/inline_stage_diffusion_client.py", line 67, in __init__
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     self._engine = DiffusionEngine.make_engine(self.od_config)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 843, in make_engine
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     engine = engine_class(config, scheduler=scheduler)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 254, in __init__
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     self._init_executor(od_config)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 325, in _init_executor
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     self.executor = executor_class(od_config)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/abstract.py", line 75, in __init__
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     self._init_executor()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 135, in _init_executor
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     processes, result_handles = self._launch_workers(broadcast_handle, self.wake_events)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 364, in _launch_workers
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     data = reader.recv()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]            ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/lib/python3.12/multiprocessing/connection.py", line 250, in recv
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     buf = self._recv_bytes()
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]           ^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/lib/python3.12/multiprocessing/connection.py", line 430, in _recv_bytes
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     buf = self._recv(4)
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]           ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]   File "/usr/lib/python3.12/multiprocessing/connection.py", line 399, in _recv
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438]     raise EOFError
+[0;36m(APIServer pid=1)[0;0m ERROR 11-03 05:42:35 [async_omni_engine.py:438] EOFError
+[0;36m(APIServer pid=1)[0;0m INFO 11-03 05:42:35 [async_omni_engine.py:1723] [AsyncOmniEngine] Shutting down Orchestrator
+[0;36m(APIServer pid=1)[0;0m Exception in thread orchestrator:
+[0;36m(APIServer pid=1)[0;0m Traceback (most recent call last):
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+[0;36m(APIServer pid=1)[0;0m     self.run()
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/threading.py", line 1010, in run
+[0;36m(APIServer pid=1)[0;0m     self._target(*self._args, **self._kwargs)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 432, in _bootstrap_orchestrator
+[0;36m(APIServer pid=1)[0;0m     loop.run_until_complete(_run_orchestrator())
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+[0;36m(APIServer pid=1)[0;0m     return future.result()
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 389, in _run_orchestrator
+[0;36m(APIServer pid=1)[0;0m     self._initialize_stages(stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 336, in _initialize_stages
+[0;36m(APIServer pid=1)[0;0m     self._runtime.initialize()
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 263, in initialize
+[0;36m(APIServer pid=1)[0;0m     raise exc
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 244, in initialize
+[0;36m(APIServer pid=1)[0;0m     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 516, in _initialize_stage_replicas
+[0;36m(APIServer pid=1)[0;0m     raise primary_exc
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 477, in _init_group
+[0;36m(APIServer pid=1)[0;0m     client = self._initialize_replica(
+[0;36m(APIServer pid=1)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 706, in _initialize_replica
+[0;36m(APIServer pid=1)[0;0m     return self._initialize_local_diffusion_replica(plan, stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 873, in _initialize_local_diffusion_replica
+[0;36m(APIServer pid=1)[0;0m     client, resources = launch_diffusion_stage_replica(
+[0;36m(APIServer pid=1)[0;0m                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_engine_startup.py", line 1577, in launch_diffusion_stage_replica
+[0;36m(APIServer pid=1)[0;0m     client = initialize_diffusion_stage(
+[0;36m(APIServer pid=1)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_init_utils.py", line 1951, in initialize_diffusion_stage
+[0;36m(APIServer pid=1)[0;0m     return create_diffusion_client(model, od_config, metadata, stage_init_timeout, use_inline)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/stage_diffusion_client.py", line 58, in create_diffusion_client
+[0;36m(APIServer pid=1)[0;0m     return InlineStageDiffusionClient(model, od_config, metadata)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/inline_stage_diffusion_client.py", line 67, in __init__
+[0;36m(APIServer pid=1)[0;0m     self._engine = DiffusionEngine.make_engine(self.od_config)
+[0;36m(APIServer pid=1)[0;0m                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 843, in make_engine
+[0;36m(APIServer pid=1)[0;0m     engine = engine_class(config, scheduler=scheduler)
+[0;36m(APIServer pid=1)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 254, in __init__
+[0;36m(APIServer pid=1)[0;0m     self._init_executor(od_config)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 325, in _init_executor
+[0;36m(APIServer pid=1)[0;0m     self.executor = executor_class(od_config)
+[0;36m(APIServer pid=1)[0;0m                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/abstract.py", line 75, in __init__
+[0;36m(APIServer pid=1)[0;0m     self._init_executor()
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 135, in _init_executor
+[0;36m(APIServer pid=1)[0;0m     processes, result_handles = self._launch_workers(broadcast_handle, self.wake_events)
+[0;36m(APIServer pid=1)[0;0m                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 364, in _launch_workers
+[0;36m(APIServer pid=1)[0;0m     data = reader.recv()
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/multiprocessing/connection.py", line 250, in recv
+[0;36m(APIServer pid=1)[0;0m     buf = self._recv_bytes()
+[0;36m(APIServer pid=1)[0;0m           ^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/multiprocessing/connection.py", line 430, in _recv_bytes
+[0;36m(APIServer pid=1)[0;0m     buf = self._recv(4)
+[0;36m(APIServer pid=1)[0;0m           ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/multiprocessing/connection.py", line 399, in _recv
+[0;36m(APIServer pid=1)[0;0m     raise EOFError
+[0;36m(APIServer pid=1)[0;0m EOFError
+[0;36m(APIServer pid=1)[0;0m Traceback (most recent call last):
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+[0;36m(APIServer pid=1)[0;0m     self.run()
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/threading.py", line 1010, in run
+[0;36m(APIServer pid=1)[0;0m     self._target(*self._args, **self._kwargs)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 432, in _bootstrap_orchestrator
+[0;36m(APIServer pid=1)[0;0m     loop.run_until_complete(_run_orchestrator())
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+[0;36m(APIServer pid=1)[0;0m     return future.result()
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 389, in _run_orchestrator
+[0;36m(APIServer pid=1)[0;0m     self._initialize_stages(stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 336, in _initialize_stages
+[0;36m(APIServer pid=1)[0;0m     self._runtime.initialize()
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 263, in initialize
+[0;36m(APIServer pid=1)[0;0m     raise exc
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 244, in initialize
+[0;36m(APIServer pid=1)[0;0m     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 516, in _initialize_stage_replicas
+[0;36m(APIServer pid=1)[0;0m     raise primary_exc
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 477, in _init_group
+[0;36m(APIServer pid=1)[0;0m     client = self._initialize_replica(
+[0;36m(APIServer pid=1)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 706, in _initialize_replica
+[0;36m(APIServer pid=1)[0;0m     return self._initialize_local_diffusion_replica(plan, stage_init_timeout)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_runtime.py", line 873, in _initialize_local_diffusion_replica
+[0;36m(APIServer pid=1)[0;0m     client, resources = launch_diffusion_stage_replica(
+[0;36m(APIServer pid=1)[0;0m                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_engine_startup.py", line 1577, in launch_diffusion_stage_replica
+[0;36m(APIServer pid=1)[0;0m     client = initialize_diffusion_stage(
+[0;36m(APIServer pid=1)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/stage_init_utils.py", line 1951, in initialize_diffusion_stage
+[0;36m(APIServer pid=1)[0;0m     return create_diffusion_client(model, od_config, metadata, stage_init_timeout, use_inline)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/stage_diffusion_client.py", line 58, in create_diffusion_client
+[0;36m(APIServer pid=1)[0;0m     return InlineStageDiffusionClient(model, od_config, metadata)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/inline_stage_diffusion_client.py", line 67, in __init__
+[0;36m(APIServer pid=1)[0;0m     self._engine = DiffusionEngine.make_engine(self.od_config)
+[0;36m(APIServer pid=1)[0;0m                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 843, in make_engine
+[0;36m(APIServer pid=1)[0;0m     engine = engine_class(config, scheduler=scheduler)
+[0;36m(APIServer pid=1)[0;0m              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 254, in __init__
+[0;36m(APIServer pid=1)[0;0m     self._init_executor(od_config)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/diffusion_engine.py", line 325, in _init_executor
+[0;36m(APIServer pid=1)[0;0m     self.executor = executor_class(od_config)
+[0;36m(APIServer pid=1)[0;0m                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/abstract.py", line 75, in __init__
+[0;36m(APIServer pid=1)[0;0m     self._init_executor()
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 135, in _init_executor
+[0;36m(APIServer pid=1)[0;0m     processes, result_handles = self._launch_workers(broadcast_handle, self.wake_events)
+[0;36m(APIServer pid=1)[0;0m                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/diffusion/executor/multiproc_executor.py", line 364, in _launch_workers
+[0;36m(APIServer pid=1)[0;0m     data = reader.recv()
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/multiprocessing/connection.py", line 250, in recv
+[0;36m(APIServer pid=1)[0;0m     buf = self._recv_bytes()
+[0;36m(APIServer pid=1)[0;0m           ^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/multiprocessing/connection.py", line 430, in _recv_bytes
+[0;36m(APIServer pid=1)[0;0m     buf = self._recv(4)
+[0;36m(APIServer pid=1)[0;0m           ^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/multiprocessing/connection.py", line 399, in _recv
+[0;36m(APIServer pid=1)[0;0m     raise EOFError
+[0;36m(APIServer pid=1)[0;0m EOFError
+[0;36m(APIServer pid=1)[0;0m 
+[0;36m(APIServer pid=1)[0;0m The above exception was the direct cause of the following exception:
+[0;36m(APIServer pid=1)[0;0m 
+[0;36m(APIServer pid=1)[0;0m Traceback (most recent call last):
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/bin/vllm", line 6, in <module>
+[0;36m(APIServer pid=1)[0;0m     sys.exit(main())
+[0;36m(APIServer pid=1)[0;0m              ^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/cli/main.py", line 55, in main
+[0;36m(APIServer pid=1)[0;0m     omni_main()
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/cli/main.py", line 72, in main
+[0;36m(APIServer pid=1)[0;0m     args.dispatch_function(args)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/cli/serve.py", line 135, in cmd
+[0;36m(APIServer pid=1)[0;0m     uvloop.run(omni_run_server(args))
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py", line 96, in run
+[0;36m(APIServer pid=1)[0;0m     return __asyncio.run(
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+[0;36m(APIServer pid=1)[0;0m     return runner.run(main)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+[0;36m(APIServer pid=1)[0;0m     return self._loop.run_until_complete(task)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py", line 48, in wrapper
+[0;36m(APIServer pid=1)[0;0m     return await main
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/openai/api_server.py", line 578, in omni_run_server
+[0;36m(APIServer pid=1)[0;0m     await omni_run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/openai/api_server.py", line 605, in omni_run_server_worker
+[0;36m(APIServer pid=1)[0;0m     async with build_async_omni(
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+[0;36m(APIServer pid=1)[0;0m     return await anext(self.gen)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/openai/api_server.py", line 783, in build_async_omni
+[0;36m(APIServer pid=1)[0;0m     async with build_async_omni_from_stage_config(
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+[0;36m(APIServer pid=1)[0;0m     return await anext(self.gen)
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/openai/api_server.py", line 849, in build_async_omni_from_stage_config
+[0;36m(APIServer pid=1)[0;0m     async_omni = AsyncOmni(model=model, **kwargs)
+[0;36m(APIServer pid=1)[0;0m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/async_omni.py", line 156, in __init__
+[0;36m(APIServer pid=1)[0;0m     OmniBase.__init__(self, model=model, **kwargs)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/entrypoints/omni_base.py", line 214, in __init__
+[0;36m(APIServer pid=1)[0;0m     self.engine = AsyncOmniEngine(
+[0;36m(APIServer pid=1)[0;0m                   ^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 275, in __init__
+[0;36m(APIServer pid=1)[0;0m     self._wait_for_orchestrator_init(startup_future, startup_timeout)
+[0;36m(APIServer pid=1)[0;0m   File "/usr/local/lib/python3.12/dist-packages/vllm_omni/engine/async_omni_engine.py", line 483, in _wait_for_orchestrator_init
+[0;36m(APIServer pid=1)[0;0m     startup_future.result(
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+[0;36m(APIServer pid=1)[0;0m     return self.__get_result()
+[0;36m(APIServer pid=1)[0;0m            ^^^^^^^^^^^^^^^^^^^
+[0;36m(APIServer pid=1)[0;0m   File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+[0;36m(APIServer pid=1)[0;0m     raise self._exception
+[0;36m(APIServer pid=1)[0;0m RuntimeError: Orchestrator initialization failed: 
+[rank3]:[W1103 05:42:35.909891971 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36800, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7faec1963bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1964bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7faec1965092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7fae2baf8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7fae2baf93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7fae2baf958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7fae2baf23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7fae0da5319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7fae9266edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7faec2912b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7faec299fd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank3]:[W1103 05:42:35.912423298 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 3] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank6]:[W1103 05:42:35.932074886 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=131, addr=[localhost]:36812, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x79bedf563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x79bedf565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x79be496f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x79be496f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x79be496f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x79be496f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x79be2b65319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x79beb026edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x79bee0540b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x79bee05cdd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank6]:[W1103 05:42:35.935039589 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 6] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank4]:[W1103 05:42:35.948782141 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36816, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x71cb5d763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x71cb5d765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x71cac74f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x71cac74f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x71cac74f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x71cac74f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x71caa945319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x71cb2e06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x71cb5e428b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x71cb5e4b5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank4]:[W1103 05:42:35.951634898 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 4] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank5]:[W1103 05:42:35.971762443 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:36822, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7f968d363bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d364bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7f968d365092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7f95f70f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7f95f70f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7f95f70f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7f95f70f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7f95d905319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7f965dc6edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7f968e048b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7f968e0d5d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank5]:[W1103 05:42:35.974440099 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 5] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank7]:[W1103 05:42:36.427946697 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=130, addr=[localhost]:52926, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x763ec1763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x763ec1765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x763e2b4f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x763e2b4f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x763e2b4f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x763e2b4f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x763e0d45319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x763e9206edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x763ec23feb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x763ec248bd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank7]:[W1103 05:42:36.430796733 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 7] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[rank1]:[W1103 05:42:36.571870249 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:52938, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x7dda39763bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39764bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x7dda39765092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7dd9a34f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7dd9a34f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7dd9a34f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7dd9a34f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x7dd98545319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7dda0a06edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x7dda3a433b84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x7dda3a4c0d6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[W1103 05:42:36.574722686 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[0;36m(DiffusionWorker_SP3 pid=989)[0;0m [32mINFO[0m [90m11-03 05:42:36[0m [90m[diffusion_worker.py:1520][0m Worker 3: Shutdown signal received, starting cleanup.
+[0;36m(DiffusionWorker_SP1 pid=987)[0;0m [32mINFO[0m [90m11-03 05:42:36[0m [90m[diffusion_worker.py:1520][0m Worker 1: Shutdown signal received, starting cleanup.
+[rank2]:[W1103 05:42:36.652840787 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=132, addr=[localhost]:52948, remote=[localhost]:49941): Broken pipe
+Exception raised from sendBytes at /__w/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:758 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x9d (0x72391d563bfd in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #1: c10::DistError::DistError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d564bd2 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #2: c10::DistNetworkError::DistNetworkError(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x72 (0x72391d565092 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+frame #3: <unknown function> + 0x66ac332 (0x7238876f8332 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x66ad3e1 (0x7238876f93e1 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x66ad58d (0x7238876f958d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x35d (0x7238876f23bd in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+frame #7: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x43d (0x72386965319d in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+frame #8: <unknown function> + 0xecdb4 (0x7238ee26edb4 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #9: <unknown function> + 0x9cb84 (0x72391e5cfb84 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #10: <unknown function> + 0x129d6c (0x72391e65cd6c in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank2]:[W1103 05:42:36.655606968 ProcessGroupNCCL.cpp:1876] [PG ID 0 PG GUID 0 Rank 2] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+[0;36m(DiffusionWorker_SP4 pid=990)[0;0m [32mINFO[0m [90m11-03 05:42:36[0m [90m[diffusion_worker.py:1520][0m Worker 4: Shutdown signal received, starting cleanup.
+[0;36m(DiffusionWorker_SP2 pid=988)[0;0m [32mINFO[0m [90m11-03 05:42:36[0m [90m[diffusion_worker.py:1520][0m Worker 2: Shutdown signal received, starting cleanup.
+[0;36m(DiffusionWorker_SP6 pid=992)[0;0m [32mINFO[0m [90m11-03 05:42:36[0m [90m[diffusion_worker.py:1520][0m Worker 6: Shutdown signal received, starting cleanup.
+[0;36m(DiffusionWorker_SP5 pid=991)[0;0m [32mINFO[0m [90m11-03 05:42:36[0m [90m[diffusion_worker.py:1520][0m Worker 5: Shutdown signal received, starting cleanup.
+[0;36m(DiffusionWorker_SP7 pid=993)[0;0m [32mINFO[0m [90m11-03 05:42:36[0m [90m[diffusion_worker.py:1520][0m Worker 7: Shutdown signal received, starting cleanup.

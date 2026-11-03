@@ -29,6 +29,16 @@ TASKS = {
         task="t2va", seed=1101, conditions=[],
         prompt="Night-vision bedroom footage: while the owner sleeps, three cats burst in playing tiny "
                "brass instruments at full volume, freeze, then march out as if nothing happened."),
+    # vllm-omni-neuron's own t2va E2E / examples/minimax_h3/run.py request (prompt and seed 42), which
+    # the Trainium2 E2E numbers use.
+    "t2va_parrot": dict(
+        task="t2va", seed=42, conditions=[],
+        prompt="A sun conure parrot springs off a pale perch, opens its orange and green wings and flies toward a glass office tower, sunlight flashing off the windows"),
+    # The vllm-omni reference request's own prompt (seed 1101): the 2026-10 vllm-omni and Trn2 API rows.
+    "t2va_atnight": dict(
+        task="t2va", seed=1101, conditions=[],
+        prompt="At night, three cats march into a bedroom playing tiny brass instruments, then abruptly "
+               "file out, with synchronized room ambience."),
     # vllm-omni-neuron #436's fl2va case: the HF model card's reproducible 768p fl2va request
     # (scripts/readme/reproducible-768p-fl2va-request.sh): its first keyframe, prompt and seed 0,
     # at the t2va cases' 124 frames. assets_fl2va/ holds both files; copy the png into ASSETS.

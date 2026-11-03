@@ -1,0 +1,40 @@
+t2va-warmup1 wall=60.642685s md5=2480b98caafb encode_prompt=4.187480s diffuse=53.877931s decode=1.553583s forward=59.628798s engine_ms=60259.576 mp4_ms=361.79 
+t2va-run1 wall=39.343004s md5=82d32ecb163a encode_prompt=0.044631s diffuse=37.791210s decode=0.713488s forward=38.554671s engine_ms=38988.337 mp4_ms=348.04 
+t2va-run2 wall=39.319373s md5=82d32ecb163a encode_prompt=0.042905s diffuse=37.679859s decode=0.716934s forward=38.443993s engine_ms=38893.119 mp4_ms=419.44 
+t2va-run3 wall=39.365086s md5=82d32ecb163a encode_prompt=0.042058s diffuse=37.792820s decode=0.715273s forward=38.554876s engine_ms=39004.819 mp4_ms=353.04 
+t2va-run4 wall=39.340531s md5=82d32ecb163a encode_prompt=0.041231s diffuse=37.787292s decode=0.717113s forward=38.550550s engine_ms=39000.600 mp4_ms=332.74 
+t2va-run5 wall=39.369553s md5=82d32ecb163a encode_prompt=0.041908s diffuse=37.815568s decode=0.717044s forward=38.579634s engine_ms=39029.266 mp4_ms=333.71 
+stream|index=0|codec_name=h264|width=1344|height=768|r_frame_rate=24/1|nb_frames=124
+stream|index=1|codec_name=aac|sample_rate=32000|channels=2|r_frame_rate=0/0|nb_frames=163
+decode OK
+t2va n=5 mean=39.35s min=39.32s max=39.37s stdev=0.018s
+t2va_parrot-warmup1 wall=39.531711s md5=25cc34f95496 encode_prompt=0.152465s diffuse=37.791199s decode=0.716358s forward=38.664821s engine_ms=39111.942 mp4_ms=409.12 
+t2va_parrot-run1 wall=39.473458s md5=25cc34f95496 encode_prompt=0.046923s diffuse=37.822306s decode=0.717030s forward=38.590965s engine_ms=39036.390 mp4_ms=426.93 
+t2va_parrot-run2 wall=39.352241s md5=25cc34f95496 encode_prompt=0.042978s diffuse=37.710136s decode=0.716550s forward=38.474438s engine_ms=38921.502 mp4_ms=421.12 
+t2va_parrot-run3 wall=39.455058s md5=25cc34f95496 encode_prompt=0.043096s diffuse=37.811967s decode=0.717960s forward=38.578032s engine_ms=39024.737 mp4_ms=420.79 
+t2va_parrot-run4 wall=39.446479s md5=25cc34f95496 encode_prompt=0.042715s diffuse=37.817891s decode=0.718995s forward=38.584541s engine_ms=39026.425 mp4_ms=410.52 
+t2va_parrot-run5 wall=39.419046s md5=25cc34f95496 encode_prompt=0.043398s diffuse=37.784921s decode=0.717216s forward=38.550353s engine_ms=38992.977 mp4_ms=416.29 
+stream|index=0|codec_name=h264|width=1344|height=768|r_frame_rate=24/1|nb_frames=124
+stream|index=1|codec_name=aac|sample_rate=32000|channels=2|r_frame_rate=0/0|nb_frames=163
+decode OK
+t2va_parrot n=5 mean=39.43s min=39.35s max=39.47s stdev=0.042s
+t2va_atnight-warmup1 wall=39.453008s md5=9a62c2d9eed5 encode_prompt=0.081949s diffuse=37.826047s decode=0.718821s forward=38.631849s engine_ms=39077.729 mp4_ms=368.28 
+t2va_atnight-run1 wall=39.468570s md5=9a62c2d9eed5 encode_prompt=0.043865s diffuse=37.879014s decode=0.716666s forward=38.644053s engine_ms=39087.656 mp4_ms=374.35 
+t2va_atnight-run2 wall=39.435400s md5=9a62c2d9eed5 encode_prompt=0.041853s diffuse=37.852118s decode=0.716516s forward=38.615024s engine_ms=39057.709 mp4_ms=370.40 
+t2va_atnight-run3 wall=39.336907s md5=9a62c2d9eed5 encode_prompt=0.042096s diffuse=37.761393s decode=0.716878s forward=38.524704s engine_ms=38966.387 mp4_ms=364.05 
+t2va_atnight-run4 wall=39.406859s md5=9a62c2d9eed5 encode_prompt=0.042344s diffuse=37.830716s decode=0.716968s forward=38.594558s engine_ms=39036.207 mp4_ms=363.98 
+t2va_atnight-run5 wall=39.456449s md5=9a62c2d9eed5 encode_prompt=0.045003s diffuse=37.867588s decode=0.719222s forward=38.636393s engine_ms=39075.671 mp4_ms=373.96 
+stream|index=0|codec_name=h264|width=1344|height=768|r_frame_rate=24/1|nb_frames=124
+stream|index=1|codec_name=aac|sample_rate=32000|channels=2|r_frame_rate=0/0|nb_frames=163
+decode OK
+t2va_atnight n=5 mean=39.42s min=39.34s max=39.47s stdev=0.047s
+fl2va-warmup1 wall=46.404529s md5=559a057c1944 encode_prompt=0.833221s _encode_visual_conditions=0.270135s _encode_reference_audio_conditions=0.000033s diffuse=43.625730s decode=0.715007s forward=45.451760s engine_ms=45894.074 mp4_ms=353.62 
+fl2va-run1 wall=44.580835s md5=559a057c1944 encode_prompt=0.221028s _encode_visual_conditions=0.228900s _encode_reference_audio_conditions=0.000026s diffuse=42.495152s decode=0.717552s forward=43.679469s engine_ms=44120.213 mp4_ms=370.83 
+fl2va-run2 wall=44.496841s md5=559a057c1944 encode_prompt=0.231548s _encode_visual_conditions=0.228205s _encode_reference_audio_conditions=0.000022s diffuse=42.406380s decode=0.716631s forward=43.596100s engine_ms=44036.813 mp4_ms=369.63 
+fl2va-run3 wall=44.504498s md5=559a057c1944 encode_prompt=0.228468s _encode_visual_conditions=0.228295s _encode_reference_audio_conditions=0.000026s diffuse=42.411919s decode=0.715354s forward=43.597362s engine_ms=44044.249 mp4_ms=369.28 
+fl2va-run4 wall=44.490441s md5=559a057c1944 encode_prompt=0.226354s _encode_visual_conditions=0.228817s _encode_reference_audio_conditions=0.000027s diffuse=42.408042s decode=0.715878s forward=43.590637s engine_ms=44032.838 mp4_ms=368.22 
+fl2va-run5 wall=44.495207s md5=559a057c1944 encode_prompt=0.224868s _encode_visual_conditions=0.228344s _encode_reference_audio_conditions=0.000023s diffuse=42.417182s decode=0.716642s forward=43.598872s engine_ms=44041.671 mp4_ms=359.17 
+stream|index=0|codec_name=h264|width=1344|height=768|r_frame_rate=24/1|nb_frames=124
+stream|index=1|codec_name=aac|sample_rate=32000|channels=2|r_frame_rate=0/0|nb_frames=163
+decode OK
+fl2va n=5 mean=44.51s min=44.49s max=44.58s stdev=0.034s

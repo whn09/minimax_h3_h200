@@ -3,7 +3,7 @@
 # warmups + N measured times back to back. Prints curl time_total per request and, when the server
 # runs with --enable-diffusion-pipeline-profiler, that request's stage times (rank-0 lines only).
 #   N=5 WARM=1 OUT=./out_vomni ./req_vomni.sh                  # TASK=t2va (the reference curl)
-#   TASK=fl2va|fl2va_bedroom|ref2va_image|ref2va_video ...      # same inputs/prompts/seeds as req_matrix.py
+#   TASK=t2va_atnight|t2va_parrot|fl2va|fl2va_bedroom|ref2va_image|ref2va_video ...      # same inputs/prompts/seeds as req_matrix.py
 # ASSETS is the host dir with first.png / ref5s.mp4 (uploaded as multipart files).
 # ASPECT=16:9 adds the aspect_ratio field, which newer images (nightly 0.32) require for t2va and the
 # minimax-h3 image predates; leave it unset there.
@@ -15,8 +15,15 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 ASPECT=${ASPECT:-}
 mkdir -p "$OUT"
 case $TASK in
+  # The original reference request (req_768p.py / sglang, 2026-10-21): every stack's t2va baseline.
   t2va) task=t2va; seed=1101; files=()
+    prompt='Night-vision bedroom footage: while the owner sleeps, three cats burst in playing tiny brass instruments at full volume, freeze, then march out as if nothing happened.' ;;
+  # The vllm-omni reference request's own prompt, which the 2026-10 vllm-omni and Trainium2 API rows used.
+  t2va_atnight) task=t2va; seed=1101; files=()
     prompt='At night, three cats march into a bedroom playing tiny brass instruments, then abruptly file out, with synchronized room ambience.' ;;
+  # vllm-omni-neuron's own t2va E2E / run.py request (prompt and seed 42), as the Trainium2 E2E runs it.
+  t2va_parrot) task=t2va; seed=42; files=()
+    prompt='A sun conure parrot springs off a pale perch, opens its orange and green wings and flies toward a glass office tower, sunlight flashing off the windows' ;;
   # vllm-omni-neuron #436's fl2va case: the HF model card's reproducible 768p fl2va request (its
   # first keyframe, prompt and seed 0) at 124 frames; the files are in assets_fl2va/.
   fl2va) task=fl2va; seed=0; files=(-F "input_reference=@$HERE/assets_fl2va/fl2va_input.png;type=image/png")

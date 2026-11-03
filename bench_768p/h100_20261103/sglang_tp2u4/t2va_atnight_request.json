@@ -1,0 +1,18 @@
+{
+  "model": "MiniMaxAI/MiniMax-H3",
+  "prompt": "At night, three cats march into a bedroom playing tiny brass instruments, then abruptly file out, with synchronized room ambience.",
+  "seconds": 5,
+  "task": "t2va",
+  "conditions": [],
+  "target": {
+    "short_edge": 768,
+    "aspect_ratio": "16:9",
+    "duration_seconds": 5.0
+  },
+  "num_outputs_per_prompt": 1,
+  "num_inference_steps": 50,
+  "flow_shift": 12.0,
+  "audio_flow_shift": 3.0,
+  "seed": 1101,
+  "quality": "exact"
+}

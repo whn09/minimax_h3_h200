@@ -15,6 +15,7 @@ Reference config, no patches / quantization / cache: `lmsysorg/sglang:dev`, 8 GP
 | `Dockerfile.vomni029` | `v0.29.0rc1` image made startable (matching vllm 0.29.0) |
 | `Dockerfile.nccl` | swap only the NCCL wheel in a vllm-omni image (NCCL A/B) |
 | `h3_diffusers_bench.py` / `run_diffusers.sh` | diffusers-native H3 under torchrun, TP×Ulysses, per-stage timing |
+| `ALIGNED_20261103.md` | **Trn2 vs 8×H200 vs 8×H100 on one method and one prompt set (t2va + fl2va)** |
 | `results_20261021_034117/` | the run below (one mp4 kept; all 5 fixed-prompt mp4s are md5-identical) |
 
 ## Result (2026-10-21, p5en.48xlarge, driver 595.91.07, sglang `c1c287a42`, image `sha256:b0473834…`)
@@ -164,7 +165,7 @@ vllm-omni-neuron #436 moved its fl2va tests to the [HF model card's reproducible
 \* sglang caches the text embedding of a repeated prompt.
 
 - fl2va costs **+4.5 s over t2va on sglang and +5.2 s on vllm-omni**, almost all of it in the denoise (+4.2 / +4.6 s): the keyframe's latent rows lengthen the packed sequence. The long IR prompt adds 0.1-0.2 s of text encoding.
-- sglang `dev` is 4.1 s faster on t2va than on 2026-10-21 (37.71 vs 41.81 s, denoise 35.95 vs 39.6 s), so compare Trainium2 against these rows, not the older ones.
+- t2va is 4.1 s faster than on 2026-10-21 (37.71 vs 41.81 s). This is the instance, not sglang: vllm-omni 0.29 on the same request moved by the same 9% with a byte-identical output. See `ALIGNED_20261103.md`, which also re-measures all of this on one method and one prompt set across H200, H100 and Trn2.
 - vllm-omni 0.29 t2va needs an explicit `aspect_ratio` (`OmniClientError: t2va requires an explicit aspect_ratio`): `ASPECT=16:9`. fl2va takes it from the keyframe.
 - All outputs are 1344×768, 124 frames, AAC 32 kHz; `sglang/fl2va_run1.mp4` and `vomni/fl2va-run5.mp4` are kept.
 
@@ -322,7 +323,7 @@ vllm-omni-neuron #436 把 fl2va 测试换成了 [HF 模型卡的 768p fl2va 示�
 \* sglang 对重复的 prompt 缓存了文本 embedding。
 
 - fl2va 比 t2va **在 sglang 上多 4.5 s、在 vllm-omni 上多 5.2 s**，几乎全在 denoise（+4.2 / +4.6 s）：关键帧的 latent 行让打包序列变长。长 IR prompt 只多 0.1–0.2 s 文本编码。
-- sglang `dev` 的 t2va 比 10-21 快了 4.1 s（37.71 vs 41.81 s，denoise 35.95 vs 39.6 s），所以和 Trainium2 对比要用这几行，不要用旧数。
+- t2va 比 10-21 快了 4.1 s（37.71 vs 41.81 s）。原因是实例不是 sglang：vllm-omni 0.29 同一请求也快了同样的 9%，输出逐字节相同。见 `ALIGNED_20261103.md`，那里在同一测法、同一组 prompt 下重测了 H200、H100 和 Trn2。
 - vllm-omni 0.29 的 t2va 必须显式带 `aspect_ratio`（`OmniClientError: t2va requires an explicit aspect_ratio`），用 `ASPECT=16:9`；fl2va 从关键帧推断。
 - 所有输出都是 1344×768、124 帧、AAC 32 kHz；保留了 `sglang/fl2va_run1.mp4` 和 `vomni/fl2va-run5.mp4`。
 

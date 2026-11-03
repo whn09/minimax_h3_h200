@@ -4,7 +4,8 @@
 # speed) -- no patches, no quantization, no cache. Only the HF cache path is adapted: weights live on
 # the instance NVMe, mounted at the container's default HF cache.
 #   HF_CACHE=/opt/dlami/nvme/hf ./serve_sglang.sh        # then: docker logs -f h3-sglang
-# Defaults reproduce the reference command exactly. bench_matrix.sh overrides VARIANT (fl2va|ref2va),
+# Defaults reproduce the reference command exactly. On 80 GB cards (H100) the replicated 62 GB DiT does
+# not fit under Ulysses 8: TP=2 ULYSSES=4 shards it (TP is the memory lever, Ulysses is not). bench_matrix.sh overrides VARIANT (fl2va|ref2va),
 # EXTRA (extra serve flags), ENVS (extra `-e K=V` docker args); ASSETS is mounted read-only at
 # /data/minimax-h3 so conditioned requests can use file:// URIs.
 set -euo pipefail
@@ -27,8 +28,8 @@ docker run -d --name "$NAME" --gpus all \
   "$IMAGE" \
   sglang serve \
     --model-path MiniMaxAI/MiniMax-H3 \
-    --num-gpus 8 \
-    --ulysses-degree 8 \
+    --num-gpus "${NGPU:-8}" \
+    --ulysses-degree "${ULYSSES:-8}" ${TP:+--tp-size "$TP"} \
     --host 0.0.0.0 \
     --port "$PORT" \
     --model-variant "$VARIANT" \

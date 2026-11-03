@@ -1,0 +1,4 @@
+Name: vllm
+Version: 0.29.0
+Name: vllm-omni
+Version: 0.29.0rc1

@@ -1,0 +1,4 @@
+t2va n=5 mean=45.55s min=45.42s max=45.61s stdev=0.069s
+t2va_parrot n=5 mean=45.63s min=45.58s max=45.67s stdev=0.035s
+t2va_atnight n=5 mean=45.61s min=45.54s max=45.67s stdev=0.042s
+fl2va n=5 mean=51.25s min=51.24s max=51.26s stdev=0.010s
